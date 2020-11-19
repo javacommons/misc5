@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
+    }
+}
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = "Main"
+group 'pl.smiesznadomena'
+version '0.0.2'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:22.0'
+    compile 'org.apache.httpcomponents:httpclient:4.3.1'
+    //compile 'org.jsoup:jsoup:1.7.3'
+    compile 'org.jsoup:jsoup:1.11.3'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8'
+    implementation 'com.squareup.okhttp3:okhttp:3.13.1'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.16'
+    testCompile 'junit:junit:4.12'
+    // https://mvnrepository.com/artifact/org.eclipse.swt/org.eclipse.swt.win32.win32.x86_64
+	compile group: 'org.eclipse.swt', name: 'org.eclipse.swt.win32.win32.x86_64', version: '4.3'
+	// https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+	compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.30.1'
+	// https://mvnrepository.com/artifact/org.apache.poi/poi
+	compile group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+	// https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+}
+
+// This task will generate your fat JAR and put it in the ./build/libs/ directory
+shadowJar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}

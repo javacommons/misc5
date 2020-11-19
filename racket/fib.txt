@@ -1,0 +1,39 @@
+$ time racket fib.rkt 
+1134903170
+
+real    0m24.814s
+user    0m0.015s
+sys     0m0.000s
+
+$ raco exe fib.rkt 
+
+$ time ./fib.exe
+1134903170
+
+real    0m24.312s
+user    0m0.015s
+sys     0m0.031s
+
+$ g++ fib.cpp
+
+$ time ./a.exe
+1134903170
+
+real    0m6.823s
+user    0m0.000s
+sys     0m0.031s
+
+$ gsc -exe fib
+
+$ time ./fib.exe
+
+real    0m49.833s
+user    0m0.000s
+sys     0m0.000s
+
+$ time ./luajit.exe fib.lua 
+1134903170
+
+real    0m12.506s
+user    0m0.000s
+sys     0m0.000s

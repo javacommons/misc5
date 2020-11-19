@@ -1,0 +1,71 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0305
+header_name {.h}
+code_name {.cxx}
+decl {\#include <FL/fl_ask.H>} {public global
+}
+
+Function {} {open
+} {
+  code {printf("Hello, World!\\n");
+fl_cancel = "エフエルキャンセル";} {}
+  Fl_Window {} {open
+    xywh {762 479 365 292} type Double hide
+  } {
+    Fl_Button m_button_01 {
+      label m_button_01
+      user_data {"b\#01"}
+      callback cb_button_01
+      private xywh {10 10 110 30}
+      code0 {m_button_01->label(fl_cancel);}
+    }
+    Fl_Table m_table_01 {open selected
+      xywh {10 50 340 225}
+    } {}
+  }
+}
+
+Function {cb_button_01(Fl_Widget *, void *vp)} {open return_type {static void}
+} {
+  code {const char* name = (const char *)vp;
+printf("Hello, Button(%s)!\\n", vp);} {}
+}
+
+class MyUI {open
+} {
+  Function {make_window()} {open
+  } {
+    code {printf("Hello, World!\\n");} {}
+    Fl_Window {} {open
+      xywh {138 161 120 100} type Double hide
+    } {
+      Fl_Button m_button_02 {
+        label m_button_02
+        xywh {10 25 90 25}
+      }
+    }
+  }
+}
+
+class UI {open
+} {
+  Function {UI()} {open
+  } {
+    Fl_Window m_win {open
+      xywh {476 284 800 600} type Single hide
+    } {
+      Fl_Button m_button {
+        callback cb_button
+        xywh {25 25 25 25}
+      }
+    }
+  }
+  Function {show(int argc, char **argv)} {open
+  } {
+    code {m_win->show(argc, argv);} {}
+  }
+  Function {cb_button(Fl_Widget *, void *vp)} {open return_type {static void}
+  } {
+    code {printf("Hello, World!\\n");} {}
+  }
+}

@@ -1,0 +1,5 @@
+﻿input-1 abc
+input-2 xyz
+input-3 漢字
+input-4 ©
+
