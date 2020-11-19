@@ -5,6 +5,6 @@ else
   arch=x64
 fi
 rm -f Makefile
-premake4 --file=calc.lua --platform=$arch gmake
+premake4 --file=calc.premake4 --platform=$arch gmake
 rm -rf obj
 make
