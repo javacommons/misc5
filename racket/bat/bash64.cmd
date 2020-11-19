@@ -1,7 +1,7 @@
 @echo OFF
 setlocal
 set SCRIPT_CURRENT_DIR=%~dp0
-set PATH=PATH=%SCRIPT_CURRENT_DIR%\mingw64\bin;%SCRIPT_CURRENT_DIR%\usr\local\bin;%SCRIPT_CURRENT_DIR%\usr\bin;%PATH%
+set PATH=%SCRIPT_CURRENT_DIR%\mingw64\bin;%SCRIPT_CURRENT_DIR%\usr\local\bin;%SCRIPT_CURRENT_DIR%\usr\bin;%PATH%
 set HOME=%SCRIPT_CURRENT_DIR%\home\%USERNAME%
 IF NOT EXIST %HOME% mkdir %HOME%
 set MINGW_CHOST=x86_64-w64-mingw32

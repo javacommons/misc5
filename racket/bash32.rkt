@@ -1,10 +1,5 @@
 #lang racket
 
-"あいう"
-;(exit 123)
-;(define $line (read-line))
-;(string-replace $line "\r" "")
-
 (define $path (find-system-path 'run-file))
 $path
 (define $path-text (path->string $path))
