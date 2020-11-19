@@ -7,5 +7,4 @@ pacman -S --needed --noconfirm \
 	$PACKAGE_PREFIX-libarchive \
 	$PACKAGE_PREFIX-postgresql \
 	$PACKAGE_PREFIX-sqlite3
-cp -rp nlohmann /mingw32/include/
-cp -rp nlohmann /mingw64/include/
+cp -rp nlohmann $MINGW_PREFIX/include/
