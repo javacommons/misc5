@@ -44,11 +44,11 @@
   (class
    object% (super-new)
    (init :width :height)
-   (define $width :width)
-   (define $height :height)
-   (define/public (:get-width) $width)
-   (define/public (:set-width %n) (set! $width %n))
-   (define/public (:area) (* $width $height))
+   (define %%width :width)
+   (define %%height :height)
+   (define/public (:get-width) %%width)
+   (define/public (:set-width %n) (set! %%width %n))
+   (define/public (:area) (* %%width %%height))
    )
   )
 
