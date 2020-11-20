@@ -1,4 +1,3 @@
-#! racket
 #lang racket
 ; https://docs.racket-lang.org/guide/concurrency.html
 (define output-semaphore (make-semaphore 1))
