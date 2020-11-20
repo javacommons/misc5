@@ -1,3 +1,4 @@
+#! racket32
 #lang racket
 
 ; https://learnxinyminutes.com/docs/racket/
@@ -42,17 +43,18 @@
 
 (define rectangle%
   (class
-   object% (super-new)
-   (init :width :height)
-   (define %:width :width)
-   (define %:height :height)
-   (define/public (:get-width) %:width)
-   (define/public (:set-width %n) (set! %:width %n))
-   (define/public (:area) (* %:width %:height))
-   )
+    object% (super-new)
+    (init :width :height [:bonus 0])
+    (define %:width :width)
+    (define %:height :height)
+    (define %:bonus :bonus)
+    (define/public (:get-width) %:width)
+    (define/public (:set-width %n) (set! %:width %n))
+    (define/public (:area) (+ (* %:width %:height) %:bonus))
+    )
   )
 
-(define $rect (new rectangle% [:width 15] [:height 20]))
+(define $rect (new rectangle% [:width 15] [:height 20] [:bonus 12]))
 (send $rect :get-width)
 (send $rect :area)
 (send $rect :set-width 5)
