@@ -21,6 +21,7 @@ $unix-home
 (make-directory* $unix-home)
 ;(set-registry-env! "USER" "HOME" $unix-home)
 
+(copy-file (format "~a\\.bashrc" $cwd) (format "~a\\.bashrc" $unix-home) #t)
 (copy-file (format "~a\\.emacs" $cwd) (format "~a\\.emacs" $unix-home) #t)
 (copy-file (format "~a\\c-quick-2.el" $cwd) (format "~a\\c-quick-2.el" $unix-home) #t)
 
