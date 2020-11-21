@@ -45,7 +45,7 @@
   (write_to_pipe $hPipe (encode-output $value))
   )
 
-(define ::pipe-server%
+(define ::pipe-client%
   (class
    object%
    (super-new)
@@ -67,7 +67,7 @@
    )
   )
 
-(define ::pipe-client%
+(define ::pipe-server%
   (class
    object%
    (super-new)
