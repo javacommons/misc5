@@ -26,6 +26,13 @@
     (com-release %wshell)
     %result))
 
+(define (run-file-dir)
+  (let*-values
+   ([(%run-file)
+     (simplify-path (path->complete-path (find-system-path 'run-file)))]
+    [(%base %name %must-be-dir?) (split-path %run-file)])
+   %base))
+
 (define prepare-dir%
   (class
    object%
@@ -35,7 +42,8 @@
    (define $software-dir (build-path :root-dir ".software"))
    (define $target-dir (build-path $software-dir :zip-base))
    (println $target-dir)
-   (define $zip-path (format "~a.zip" :zip-base))
+   (define $run-file-dir (run-file-dir))
+   (define $zip-path (format "~a\\~a.zip" $run-file-dir :zip-base))
    (define $file-in (open-input-file $zip-path #:mode 'binary))
    (println $file-in)
    (cond
@@ -86,6 +94,7 @@
   get-registry-env
   set-registry-env!
   delete-registry-env!
+  run-file-dir
   prepare-dir%
   set-path%
   create-simple-shortcut%)
