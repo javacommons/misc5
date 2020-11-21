@@ -1,4 +1,4 @@
-#include "calc.hpp"
+#include "apiv1.hpp"
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -57,10 +57,10 @@ int handle_pipe_events(const std::string &pipe_name)
 {
     std::map<std::string, json_function> func_map;
     func_map["func1"] = func1;
-    std::string hPipe = open_pipe_client(pipe_name.c_str());
+    const void *hPipe = make_server_pipe(pipe_name.c_str());
     while (true)
     {
-        std::string input_json = read_from_pipe(hPipe.c_str());
+        std::string input_json = read_from_pipe(hPipe);
         std::cout << "input_json=" << input_json << std::endl;
         if (input_json.empty())
             break;
@@ -74,7 +74,7 @@ int handle_pipe_events(const std::string &pipe_name)
         output["name"] = api_name;
         output["value"] = result;
         std::cout << output << std::endl;
-        write_to_pipe(hPipe.c_str(), output.dump().c_str());
+        write_to_pipe(hPipe, output.dump().c_str());
     }
     return 0;
 }

@@ -1,18 +1,19 @@
+#! racket32
 #lang racket
 
-(require "ipc.rkt")
+(require "apiv1.rkt")
 
-(define $pipe-server
-  (new ::pipe-server%
+(define $pipe-client
+  (new ::pipe-client%
        [$prefix "prefix"]
        ;[$client "racket.exe client.rkt"]
        [$client "json-cli.exe"]
        ;[$client "json-cliXXX.exe"]
        [$debug 1]))
 ;(send $pipe-server get-name)
-(send $pipe-server get-hpipe)
-(send $pipe-server call-api "name0" (hash 'a 18446744073709551615 'b 456.7))
-(send $pipe-server dbg "debug メッセージ")
-(send $pipe-server dbg '("abc" xyz "debug メッセージ"))
+(send $pipe-client get-hpipe)
+(send $pipe-client call-api "name0" (hash 'a 18446744073709551615 'b 456.7))
+(send $pipe-client dbg "debug メッセージ")
+(send $pipe-client dbg '("abc" xyz "debug メッセージ"))
 
-(send $pipe-server dbg "end-of-server")
+(send $pipe-client dbg "end-of-server")
