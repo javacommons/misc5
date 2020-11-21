@@ -1,4 +1,3 @@
--- premake4.lua
 solution "Hello Premake"
 
   configurations { "Release", "Debug" }
@@ -10,9 +9,10 @@ solution "Hello Premake"
     language "C++"
     files {
       "apiv1.hpp",
+      "strconv.h",
       "vardecl.h",
       "apiv1.cpp"
-      }
+    }
     buildoptions { "-std=c++17" }
     includedirs {
       -- ".."
@@ -28,7 +28,6 @@ solution "Hello Premake"
     configuration "Debug"
       defines { "DEBUG" }
       flags { "Symbols" }
-      --targetsuffix "-d"
     configuration "Release"
       defines { "NDEBUG" }
       flags { "Optimize" }

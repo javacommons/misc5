@@ -1,18 +1,56 @@
 #include "apiv1.hpp"
 
-//#include <nlohmann/json.hpp>
-//using json = nlohmann::json;
-
+#include <windows.h>
 #include <string>
 #include <iostream>
-
-#include "pipe.hpp"
 #include "strconv.h"
 #include "vardecl.h"
 
-const char *open_pipe_server(const char *prefix,
+static inline HANDLE win32_make_client_pipe(const std::string &name, DWORD buffer_size) {
+    std::string pipe_name = std::string(R"(\\.\pipe\)") + name;
+    HANDLE hPipe = CreateNamedPipeA(pipe_name.c_str(),
+                                    PIPE_ACCESS_DUPLEX,
+                                    PIPE_TYPE_BYTE,
+                                    PIPE_UNLIMITED_INSTANCES,
+                                    buffer_size,
+                                    buffer_size,
+                                    0,
+                                    NULL);
+    return hPipe;
+}
+
+static inline HANDLE win32_make_server_pipe(const std::string &name) {
+    std::string pipe_name = std::string(R"(\\.\pipe\)") + name;
+    HANDLE hPipe = CreateFileA(pipe_name.c_str(),
+                               GENERIC_READ | GENERIC_WRITE,
+                               0,
+                               NULL,
+                               OPEN_EXISTING,
+                               0,
+                               NULL);
+    return hPipe;
+}
+
+static inline std::string win32_read_from_pipe(HANDLE hPipe) {
+    char c;
+    std::string read = "";
+    while(true) {
+        DWORD  dwResult;
+        if(!ReadFile(hPipe, &c, sizeof(c), &dwResult, NULL)) break;
+        if(c=='\0') break;
+        read.push_back(c);
+    }
+    return read;
+}
+
+static inline void win32_wite_to_pipe(HANDLE hPipe, const std::string &s) {
+    DWORD  dwResult;
+    WriteFile(hPipe, s.c_str(), s.size()+1, &dwResult, NULL);
+}
+
+const void *make_client_pipe(const char *prefix,
                              const char *client,
-                             int show_client)
+                             int debug)
 {
   FILETIME file_time;
   GetSystemTimeAsFileTime(&file_time);
@@ -20,7 +58,7 @@ const char *open_pipe_server(const char *prefix,
   std::string name = prefix;
   name += ":";
   name += std::to_string(ull);
-  HANDLE hPipe = create_pipe_server(name, 4096);
+  HANDLE hPipe = win32_make_client_pipe(name, 4096);
   if (hPipe == INVALID_HANDLE_VALUE)
   {
     MessageBoxW(NULL, L"サーバーパイプの作成に失敗しました。", NULL, MB_ICONWARNING);
@@ -38,7 +76,7 @@ const char *open_pipe_server(const char *prefix,
       NULL,
       NULL,
       FALSE,
-      show_client ? 0 : CREATE_NO_WINDOW,
+      debug ? 0 : CREATE_NO_WINDOW,
       NULL,
       NULL,
       &si,
@@ -49,25 +87,23 @@ const char *open_pipe_server(const char *prefix,
     exit(1);
   }
   ConnectNamedPipe(hPipe, NULL);
-  std::string addr = address_to_string(hPipe);
-  return strdup(addr.c_str());
+  return hPipe;
 }
 
-const char *open_pipe_client(const char *name)
+const void *make_server_pipe(const char *name)
 {
-  HANDLE hPipe = create_pipe_client(name);
-  std::string addr = address_to_string(hPipe);
-  return strdup(addr.c_str());
+  HANDLE hPipe = win32_make_server_pipe(name);
+  return hPipe;
 }
 
-const char *read_from_pipe(const char *hPipe)
+const char *read_from_pipe(const void *hPipe)
 {
   static TLS_VARIABLE_DECL std::string read;
-  read = read_string_from_pipe(string_to_address(hPipe));
+  read = win32_read_from_pipe((HANDLE)hPipe);
   return read.c_str();
 }
 
-void write_to_pipe(const char *hPipe, const char *s)
+void write_to_pipe(const void *hPipe, const char *s)
 {
-  write_string_to_pipe(string_to_address(hPipe), s);
+  win32_wite_to_pipe((HANDLE)hPipe, s);
 }

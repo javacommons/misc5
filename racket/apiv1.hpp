@@ -1,19 +1,17 @@
 #ifndef APIV1_HPP
 #define APIV1_HPP
 
-#include <windows.h>
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-  const char *open_pipe_server(const char *prefix,
+  const void *make_client_pipe(const char *prefix,
                                const char *client,
-                               int show_client);
-  const char *open_pipe_client(const char *name);
-  const char *read_from_pipe(const char *hPipe);
-  void write_to_pipe(const char *hPipe, const char *s);
+                               int debug);
+  const void *make_server_pipe(const char *name);
+  const char *read_from_pipe(const void *hPipe);
+  void write_to_pipe(const void *hPipe, const char *s);
 
 #ifdef __cplusplus
 } // extern "C" {
