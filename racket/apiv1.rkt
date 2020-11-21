@@ -92,10 +92,5 @@
   )
 
 (provide
- ::open-pipe-server
- ::open-pipe-client
- ::call-thru-pipe
- ::receive-input-thru-pipe
- ::return-output-thru-pipe
  ::pipe-server%
  ::pipe-client%)
