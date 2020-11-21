@@ -7,7 +7,7 @@
   (new ::pipe-client%
        [$prefix "prefix"]
        ;[$client "racket.exe client.rkt"]
-       [$client "json-cli.exe"]
+       [$client (format "json-svr-~abit.exe" (system-type 'word))]
        ;[$client "json-cliXXX.exe"]
        [$debug 1]))
 ;(send $pipe-server get-name)
