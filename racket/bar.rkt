@@ -1,8 +1,9 @@
 #! racket32
 #lang racket
 
-(require net/http-easy) ; raco pkg install --auto http-easy
-(require dyoo-while-loop) ; raco pkg install --auto while-loop
+;(require net/http-easy) ; raco pkg install --auto http-easy
+;https://docs.racket-lang.org/dyoo-while-loop/index.html
+;(require dyoo-while-loop) ; raco pkg install --auto while-loop
 (require http)
 
 (define (listen-for-progress in)
