@@ -12,20 +12,6 @@
     (printf "\rbytes read: ~a" pos)
     (listen-for-progress in)))
 
-(define (read-with-progress)
-  ;(define res (get "https://www.google.com/" #:stream? #t))
-  (define res (get "https://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20200903.tar.xz" #:stream? #t))
-  (define in (response-output res))
-  ;(thread (λ () (listen-for-progress in)))
-  #| do something with in |#
-  (define %bytes (port->bytes in))
-  (printf "\n")
-  %bytes
-  )
-
-;(define $bytes (read-with-progress))
-;(bytes-length $bytes)
-
 (define (::reader %in %response-headers)
   (thread (λ () (listen-for-progress %in)))
   (define %bytes (read-entity/bytes %in %response-headers))
