@@ -1,15 +1,12 @@
-#! racket32
 #lang racket
 
 (require racket/gui)
 
-(find-system-path 'run-file)
-
 
 (define frame (new frame%
-                   [label "Example"]
-                   [width 800]
-                   [height 600]
+                   [label "My GUI Program"]
+                   [width 400]
+                   [height 300]
                    ))
 
 (define list-box (new list-box%

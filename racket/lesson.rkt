@@ -44,17 +44,30 @@
 (define rectangle%
   (class
     object% (super-new)
-    (init :width :height [:bonus 0])
-    (define %:width :width)
-    (define %:height :height)
-    (define %:bonus :bonus)
+    (init :width :height)
+    (field [%:width :width])
+    (field [%:height :height])
     (define/public (:get-width) %:width)
     (define/public (:set-width %n) (set! %:width %n))
-    (define/public (:area) (+ (* %:width %:height) %:bonus))
+    (define/public (:area) (* %:width %:height))
     )
   )
 
-(define $rect (new rectangle% [:width 15] [:height 20] [:bonus 12]))
+(define subclass%
+  (class
+    rectangle% (init :width :height [:bonus 0])
+    (super-new [:width :width] [:height :height])
+    (inherit-field %:width)
+    (inherit-field %:height)
+    (field [%:bonus :bonus])
+    (define/public (:test) %:width)
+    (define/override (:area)
+      (+ (super :area) %:bonus)
+      )
+    )
+  )
+
+(define $rect (new rectangle% [:width 15] [:height 20]))
 (send $rect :get-width)
 (send $rect :area)
 (send $rect :set-width 5)
@@ -81,3 +94,7 @@ n
 
 (/ 1.0 3.0)
 (exact->inexact 0.2)
+
+(define $subclass (new subclass% [:width 10] [:height 20] [:bonus 12]))
+(send $subclass :test)
+(send $subclass :area)
