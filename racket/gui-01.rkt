@@ -1,3 +1,4 @@
+#! racket32
 #lang racket
 
 (require racket/gui)
@@ -18,7 +19,7 @@
                       (style (list 'single
                                    'column-headers))
                       (columns (list "First Column"))
-                      [callback (lambda (button event)
+                      [callback (λ (button event)
                                   (println (send event get-event-type))
                                   (send msg set-label "Listbox click"))]
                       ))
@@ -28,7 +29,7 @@
 
 (define btn (new button% [parent frame]
                  [label "Click Me"]
-                 [callback (lambda (button event)
+                 [callback (λ (button event)
                              (println (send event get-event-type))
                              (send msg set-label "Button click"))]))
 
