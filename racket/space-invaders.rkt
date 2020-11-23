@@ -1,3 +1,4 @@
+#! racket32
 #lang racket
 (require racket/gui)
 
@@ -45,9 +46,8 @@
   (invader x y invader-size patrol-x speed-x))
 
 (define (new-player x y)
-  (define size 15)
   (define dead? #f)
-  (player x y size dead?))
+  (player x y player-size dead?))
 
 ;;;
 ;;; MODEL
