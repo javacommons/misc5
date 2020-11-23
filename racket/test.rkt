@@ -1,37 +1,103 @@
 #! racket32
 #lang racket
 
-(require ffi/com)
+; https://learnxinyminutes.com/docs/racket/
 
-(define (get-registry-env %scope %name)
-  (let* ([%wshell (com-create-instance "WScript.Shell" 'local)]
-         [%env (com-get-property* %wshell "Environment" %scope)]
-         [%result (com-get-property %env (list "Item" %name))])
-    (com-release %wshell)
-    %result))
+#| Block comments
+   can span multiple lines and...
+    #|
+       they can be nested!
+    |#
+|#
 
-(define (set-registry-env! %scope %name %value)
-  (let* ([%wshell (com-create-instance "WScript.Shell" 'local)]
-         [%env (com-get-property* %wshell "Environment" %scope)])
-    (com-set-property! %env (list "Item" %name) %value)
-    (com-release %wshell)
-    (get-registry-env %scope %name)))
+#; (this expression is discarded)
 
-(define (delete-registry-env! %scope %name)
-  (let* ([%wshell (com-create-instance "WScript.Shell" 'local)]
-         [%env (com-get-property* %wshell "Environment" %scope)]
-         [%result #t])
-    (with-handlers ([exn:fail? (lambda (%exn) (set! %result #f))])
-      (com-invoke %env "Remove" %name))
-    (com-release %wshell)
-    %result))
+(println "hello")
 
-(delete-registry-env! "USER" "XYZ")
+18446744073709551615
+18446744073709551615777
+(require json)
+(jsexpr->string 18446744073709551615777)
 
-;  (begin
-;    (displayln "First line")
-;    (call-with-exception-handler (lambda (x) (displayln "Exception handler")) (lambda () (error "Some error")))
-;    (displayln "This line is not printed"))
+#;(error "my-error")
 
+(/ 1 3) ; => 1/3
+(exact->inexact 1/3) ; => 0.3333333333333333
+(+ 1+2i  2-3i) ; => 3-1i
 
+;; Strings can be added too!
+(string-append "Hello " "world!") ; => "Hello world!"
 
+;; A string can be treated like a list of characters
+(string-ref "Apple" 0) ; => #\A
+
+;; format can be used to format strings:
+(format "~a can be ~a" "strings" "formatted")
+
+;; Printing is pretty easy
+(printf "I'm Racket. Nice to meet you!\n")
+
+;; You can also use unicode characters
+(define ⊆ subset?)
+(⊆ (set 3 2) (set 1 2 3)) ; => #t
+
+(define rectangle%
+  (class
+    object% (super-new)
+    (init :width :height)
+    (field [%:width :width])
+    (field [%:height :height])
+    (define/public (:get-width) %:width)
+    (define/public (:set-width %n) (set! %:width %n))
+    (define/public (:area) (* %:width %:height))
+    )
+  )
+
+(define subclass%
+  (class
+    rectangle% (init :width :height [:bonus 0])
+    (super-new [:width :width] [:height :height])
+    (inherit-field %:width)
+    (inherit-field %:height)
+    (field [%:bonus :bonus])
+    (inherit :get-width)
+    (inherit :set-width)
+    ;(define/public (:test) %:width)
+    (define/public (:test) (:get-width))
+    (define/override (:area)
+      (+ (super :area) %:bonus)
+      )
+    )
+  )
+
+(define $rect (new rectangle% [:width 15] [:height 20]))
+(send $rect :get-width)
+(send $rect :area)
+(send $rect :set-width 5)
+(send $rect :area)
+
+(define (square %n #:bonus [%bonus 0]) (+ (* %n %n) %bonus))
+(square 100)
+(square 100 #:bonus 123)
+(square #:bonus 4567 100)
+
+(define (test %x #:bonus %bonus)
+  (println %x)
+  (println %bonus)
+  )
+
+(test 123 #:bonus 456)
+
+(require json)
+
+(define n (/ 1 3))
+n
+
+(jsexpr->string (exact->inexact n))
+
+(/ 1.0 3.0)
+(exact->inexact 0.2)
+
+(define $subclass (new subclass% [:width 10] [:height 20] [:bonus 12]))
+(send $subclass :test)
+(send $subclass :area)
