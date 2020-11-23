@@ -60,10 +60,12 @@
     (inherit-field %:width)
     (inherit-field %:height)
     (field [%:bonus :bonus])
-    (inherit :get-width)
-    (inherit :set-width)
+    (println %:bonus)
+    ;(inherit [:get-width :my-get-width])
+    (inherit [:my-get-width :get-width])
+    ;(inherit :set-width)
     ;(define/public (:test) %:width)
-    (define/public (:test) (:get-width))
+    (define/public (:test) (:my-get-width))
     (define/override (:area)
       (+ (super :area) %:bonus)
       )
@@ -101,3 +103,24 @@ n
 (define $subclass (new subclass% [:width 10] [:height 20] [:bonus 12]))
 (send $subclass :test)
 (send $subclass :area)
+(send $subclass :set-width 15)
+(send $subclass :area)
+(read-line)
+
+(define calc0%
+  (class object% (super-new)
+    (define/public (:add2 %x %y) (+ %x %y))
+    )
+  )
+
+(define $c0 (new calc0%))
+(send $c0 :add2 11 22)
+
+(define calc1%
+  (class calc0% (super-new)
+    (define/override (:add2 %x %y) (* (super :add2 %x %y) 10))
+    )
+  )
+
+(define $c1 (new calc1%))
+(send $c1 :add2 11 22)
