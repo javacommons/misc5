@@ -15,19 +15,8 @@
   (println $e)
   )
 
-(require compatibility/defmacro)
+(require "push-pop.rkt")
 
-
-(define-macro (push %x %l)
-  `(let ([%%new (cons ,%x ,%l)])
-     (set! ,%l %%new)
-     %%new))
- 
-(define-macro (pop %l)
-  `(let ([%%car (car ,%l)])
-     (set! ,%l (cdr ,%l))
-     %%car))
- 
 (pop $list)
 $list
 (push 100 $list)
