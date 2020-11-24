@@ -1,0 +1,16 @@
+#! racket32
+#lang racket
+
+(define $list '(11 22 33))
+
+(do ([$l $list (cdr $l)])
+    ((null? $l) (void))
+  (println (car $l))
+  )
+
+(define $e (void))
+(do ([$l $list (cdr $l)])
+    ((null? $l) (void))
+  (set! $e (car $l))
+  (println $e)
+  )
