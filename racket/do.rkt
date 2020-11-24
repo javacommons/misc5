@@ -19,14 +19,14 @@
 
 
 (define-macro (push %x %l)
-  `(let ([%new (cons ,%x ,%l)])
-     (set! ,%l %new)
-     %new))
+  `(let ([%%new (cons ,%x ,%l)])
+     (set! ,%l %%new)
+     %%new))
  
 (define-macro (pop %l)
-  `(let ([%car (car ,%l)])
+  `(let ([%%car (car ,%l)])
      (set! ,%l (cdr ,%l))
-     %car))
+     %%car))
  
 (pop $list)
 $list
