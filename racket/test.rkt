@@ -1,39 +1,22 @@
-#! racket32
 #lang racket
+(provide push pop)
 
-(for ([i '(1 2 3)]
-        [j "abc"]
-        #:when (odd? i)
-        [k #(#t #f)])
-    (display (list i j k)))
+(require compatibility/defmacro)
 
-(println "<newline>")
+(define (push %x %l)
+  (define %%pair (gensym "%%pair-"))
+  `(let ([,%%pair (cons ,%x ,%l)])
+     (set! ,%l ,%%pair)
+     ,%%pair))
+ 
+(define (pop %l)
+  (define %%car (gensym "%%car-"))
+  `(if (or (null? ,%l) (not (pair? ,%l)))
+       (void)
+       (let ([,%%car (car ,%l)])
+         (set! ,%l (cdr ,%l))
+         ,%%car)))
 
-(for ([i '(1 2 3)]
-        [j "abc"]
-        [k #(#t #f)])
-    (display (list i j k)))
-
-(println "<newline>")
-
-(for ([i '(1 2 3)]
-        #:when #t
-        [j "abc"]
-        #:when #t
-        [k #(#t #f)])
-    (display (list i j k)))
-
-(println "<newline>")
-
-(for ([i '(1 2 3)] #:break (>= i 2))
-    (display (list i)))
-
-(println "<newline>")
-
-(for ([i '(1 2 3)] #:final (>= i 2))
-    (display (list i)))
-
-(println "<newline>")
-
-(for ([i 5])
-    (display (list i)))
+(pretty-print (push 'X 'L))
+(pretty-print (pop 'L))
+(pretty-print (pop 'L))
