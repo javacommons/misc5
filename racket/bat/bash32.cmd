@@ -24,5 +24,5 @@ set MSYSTEM_CARCH=i686
 set MSYSTEM_CHOST=i686-w64-mingw32
 set MSYSTEM_PREFIX=/mingw32
 set MSYSTEM=MINGW32
-cmd.exe /k %~dp0usr\bin\bash.exe
+%~dp0usr\bin\bash.exe
 endlocal
