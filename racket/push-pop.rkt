@@ -8,7 +8,7 @@
   `(let ([,%%pair (cons ,%x ,%l)])
      (set! ,%l ,%%pair)
      ,%%pair))
- 
+
 (define-macro (pop %l)
   (define %%car (gensym "%%car-"))
   `(if (or (null? ,%l) (not (pair? ,%l)))
