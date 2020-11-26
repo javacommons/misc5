@@ -105,7 +105,7 @@ n
 (send $subclass :area)
 (send $subclass :set-width 15)
 (send $subclass :area)
-(read-line)
+;(read-line)
 
 (define calc0%
   (class object% (super-new)
