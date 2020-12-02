@@ -2,6 +2,7 @@
 \.\#*
 *.a
 *.bak
+*.cbproj.local
 *.dll
 *.egg-info
 *.exe
@@ -21,6 +22,7 @@
 .settings
 .vs
 .vscode
+__history
 __pycache__
 bin
 build

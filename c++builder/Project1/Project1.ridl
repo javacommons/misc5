@@ -1,0 +1,43 @@
+// ************************************************************************ //
+// 警告
+// -------
+// このファイルはタイプ ライブラリ インポータまたはタイプ ライブラリ エディタで生成されています。
+// 構文エラーがない場合には、エディタはファイルへの変更を構文解析します。
+// ただし、エディタで変更したときは、このファイルは再生成され、
+// コメントやフォーマットの変更は失われます。
+// ************************************************************************ //
+// 2020/12/01 11:48:27 に生成されたファイル (- $Rev: 12980 $, 507065125)
+
+[
+  uuid(AE49D51F-AFF3-41BA-9D66-C09D38754E77),
+  version(1.0)
+
+]
+library Project1
+{
+
+  importlib("stdole2.tlb");
+
+  coclass CoClass1;
+  dispinterface DispInterface1;
+
+
+  [
+    uuid(CF2B8A63-94AC-42CA-B962-AC2C9C06F252)
+  ]
+  dispinterface DispInterface1
+  {
+    properties:
+    methods:
+    [id(0x000000C9)]
+    HRESULT Add2([in] double a, [in] double b, [out, retval] double* retval);
+  };
+
+  [
+    uuid(F664C712-EC63-4E2A-B5D7-EA45328E89F4)
+  ]
+  coclass CoClass1
+  {
+  };
+
+};

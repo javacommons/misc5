@@ -1,0 +1,37 @@
+﻿// ATLProject1.idl : ATLProject1 の IDL ソース
+//
+
+// このファイルは、タイプ ライブラリ ([!output SAFE_IDL_NAME].tlb) およびマーシャリング コードを
+// タイプ ライブラリ (ATLProject1.tlb) とマーシャリング コードを生成します。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(12805d7d-5014-48e2-ab35-d91c8d2077d6),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IATLSimpleObject : IDispatch
+{
+	[id(1)] HRESULT Add2([in] DOUBLE a, [in] DOUBLE b, [out, retval] DOUBLE* retval);
+};
+[
+	uuid(2a0532b1-93da-4572-8aa4-b03e77857167),
+	version(1.0),
+]
+library ATLProject1Lib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(17eb186b-4677-4d9c-b179-9b3715e5d1e6)
+	]
+	coclass ATLSimpleObject
+	{
+		[default] interface IATLSimpleObject;
+	};
+};
+
+import "shobjidl.idl";
