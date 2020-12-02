@@ -44,3 +44,4 @@
 (set! $list2 (void))
 (collect-garbage)
 (hash-count $oid-ht)
+(eq? $list $list2)
