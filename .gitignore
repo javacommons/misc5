@@ -25,6 +25,7 @@ __pycache__
 bin
 build
 build-*
+compiled
 debug
 desktop.ini
 dist
