@@ -45,3 +45,6 @@
 (collect-garbage)
 (hash-count $oid-ht)
 (eq? $list $list2)
+
+(define $th (current-thread))
+(to-oid $th)
