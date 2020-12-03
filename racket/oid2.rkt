@@ -3,6 +3,7 @@
 ; https://stackoverflow.com/questions/56386674/unique-identifier-for-racket-objects
 
 (define $oid-ht (make-weak-hasheq))
+(define $oid-reverse-ht (make-hasheq))
 (define $oid-next 0)
 (define $oid-semaphore (make-semaphore 1))
 
@@ -15,16 +16,22 @@
          (begin0
            $oid-next
            (hash-set! $oid-ht %x $oid-next)
+           (hash-set! $oid-reverse-ht $oid-next (make-weak-box %x))
            (set! $oid-next (+ $oid-next 1)))))))
 
+(void (to-oid #f))
+
 (define (from-oid %oid)
-  (define $result (void))
-  (hash-for-each
-   $oid-ht
-   (lambda (%key %value)
-     (when (= %value %oid)
-       (set! $result %key))))
-  $result)
+  (call-with-semaphore
+   $oid-semaphore
+   (lambda ()
+     (define %box (hash-ref $oid-reverse-ht %oid #f))
+     (and %box
+          (weak-box-value %box)))))
+
+
+
+;;;;; test ;;;;;
 
 (to-oid 'a)
 (to-oid 'b)
@@ -35,16 +42,19 @@
 (to-oid $list2)
 (to-oid $list)
 
-(from-oid 2)
+(from-oid 3)
 
 (to-oid (void))
 
-(hash-count $oid-ht)
+(printf "count-1=~s\n" (hash-count $oid-ht))
 (set! $list (void))
 (set! $list2 (void))
 (collect-garbage)
-(hash-count $oid-ht)
+(printf "count-2=~s\n" (hash-count $oid-ht))
 (eq? $list $list2)
 
 (define $th (current-thread))
 (to-oid $th)
+(define $n1 18446744073709551615)
+(define $n2 18446744073709551615)
+(eq? $n1 $n2)
