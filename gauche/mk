@@ -1,0 +1,8 @@
+#! bash -uvx
+SRC=$1.c
+OUT=a.exe
+INCLUDE_DIR=`gauche-config -I`
+LIBRARY_DIR=`gauche-config -L`
+LIBRARIES=`gauche-config -l`
+
+gcc -std=gnu99 -Ofast -Wall -Werror -o ${OUT} ${INCLUDE_DIR} ${SRC} ${LIBRARY_DIR} ${LIBRARIES} && ./${OUT}
