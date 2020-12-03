@@ -10,6 +10,7 @@
 *.make
 *.spec
 *.swp
+*.tgz
 *.tmp
 *.user
 *.user.*
