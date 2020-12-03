@@ -2,6 +2,8 @@
 #lang racket
 ; https://stackoverflow.com/questions/56386674/unique-identifier-for-racket-objects
 
+(provide to-oid from-oid oid-count)
+
 (define $oid-ht (make-weak-hasheq))
 (define $oid-reverse-ht (make-hasheq))
 (define $oid-next 0)
@@ -29,7 +31,8 @@
      (and %box
           (weak-box-value %box)))))
 
-
+(define (oid-count)
+  (hash-count $oid-ht))
 
 ;;;;; test ;;;;;
 
@@ -46,11 +49,11 @@
 
 (to-oid (void))
 
-(printf "count-1=~s\n" (hash-count $oid-ht))
+(printf "count-1=~s\n" (oid-count))
 (set! $list (void))
 (set! $list2 (void))
 (collect-garbage)
-(printf "count-2=~s\n" (hash-count $oid-ht))
+(printf "count-2=~s\n" (oid-count))
 (eq? $list $list2)
 
 (define $th (current-thread))
