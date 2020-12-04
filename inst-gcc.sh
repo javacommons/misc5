@@ -4,6 +4,7 @@ echo $PACKAGE_PREFIX
 pacman -S --needed --noconfirm \
 	autoconf \
 	make \
+	libtool \
 	$PACKAGE_PREFIX-toolchain \
 	$PACKAGE_PREFIX-cmake \
 	$PACKAGE_PREFIX-premake
