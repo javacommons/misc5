@@ -8,7 +8,7 @@ set MSYSTEM_CARCH=x86_64
 set MSYSTEM_CHOST=x86_64-w64-mingw32
 set MSYSTEM_PREFIX=/mingw64
 set MSYSTEM=MINGW64
-IF not exist %~dp0home\%USERNAME% mkdir %~dp0home\%USERNAME%
+if not exist %~dp0home\%USERNAME% mkdir %~dp0home\%USERNAME%
 goto :eof
 
 :subroutine
