@@ -8,6 +8,9 @@
 (define $home-dir (find-system-path 'home-dir))
 $home-dir
 
+(set! $home-dir (simplify-path (build-path $home-dir 'up "Public")))
+$home-dir
+
 ;(define $run-file-dir (run-file-dir))
 ;$run-file-dir
 
@@ -20,3 +23,5 @@ $home-dir
 $target-dir
 
 (new set-path% [:member (build-path $target-dir "bin")])
+
+(new fix-path%)

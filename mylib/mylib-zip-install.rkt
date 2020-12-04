@@ -77,6 +77,21 @@
     )
   )
 
+(define fix-path%
+  (class object%
+    (init) (super-new)
+    (define &path (get-registry-env "USER" "PATH"))
+    (println &path)
+    (define &path-list (string-split &path ";"))
+    (println &path-list)
+    (set! &path-list (filter (lambda (%x) (or (string-contains? %x "%") (directory-exists? %x))) &path-list))
+    (println &path-list)
+    (set! &path (string-join &path-list ";"))
+    (println &path)
+    (set-registry-env! "USER" "PATH" &path)
+    )
+  )
+
 (define create-simple-shortcut%
   (class object% (super-new)
     (init :shortcut-path :target-path)
@@ -94,4 +109,5 @@
  run-file-dir
  prepare-dir%
  set-path%
+ fix-path%
  create-simple-shortcut%)
