@@ -49,7 +49,7 @@ static inline void win32_wite_to_pipe(HANDLE hPipe, const std::string &s) {
 }
 
 const void *make_client_pipe(const char *prefix,
-                             const char *client,
+                             const char *server,
                              int debug)
 {
   FILETIME file_time;
@@ -64,7 +64,7 @@ const void *make_client_pipe(const char *prefix,
     MessageBoxW(NULL, L"サーバーパイプの作成に失敗しました。", NULL, MB_ICONWARNING);
     return "";
   }
-  std::wstring cmdline = utf8_to_wide(client);
+  std::wstring cmdline = utf8_to_wide(server);
   cmdline += L" ";
   cmdline += utf8_to_wide(name);
   std::cout << wide_to_utf8(cmdline) << std::endl;

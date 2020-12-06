@@ -13,6 +13,7 @@ INCLUDEPATH += $$PWD/..
 #LIBS +=        $$PWD/../lib01/liblib01-$${QMAKE_HOST.arch}.a
 
 SOURCES += \
+        ../apiv1.cpp \
         libarchive.cpp \
         main.cpp
 

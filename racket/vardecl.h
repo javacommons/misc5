@@ -3,10 +3,14 @@
 
 #include <windows.h>
 
+#if __cplusplus >= 201103L
+#define TLS_VARIABLE_DECL thread_local
+#else
 #ifdef __GNUC__
 #define TLS_VARIABLE_DECL __thread
 #else
 #define TLS_VARIABLE_DECL __declspec(thread)
+#endif
 #endif
 
 #ifdef __GNUC__
