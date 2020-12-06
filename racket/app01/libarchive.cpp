@@ -67,14 +67,22 @@ void set_hendle_params(void *p, const json &j)
     handle_map[p] = j;
 }
 
+void *get_handle_addr(const json &j, const std::string &name)
+{
+    auto addr = j[name].get<std::string>();
+    return string_to_address(addr);
+}
+void set_handle_addr(json &j, const std::string &name, void *p)
+{
+    auto addr = address_to_string(p);
+    j[name] = addr;
+}
+
 std::string to_native_path(const std::string &s)
 {
     std::filesystem::path path = utf8_to_wide(s);
     auto native = path.native();
-    //replaceAll(native, L"/", L"\\");
     replaceAll(native, L"\\", L"/");
-    wcout << native << endl;
-    //native = std::regex_replace(native, std::wregex(L"\\\\+$"), L"");
     native = std::regex_replace(native, std::wregex(L"/+$"), L"");
     return wide_to_utf8(native);
 }
@@ -96,14 +104,15 @@ json api_open_archive_for_extract(const json &args)
         std::cout << "Could not open:" << wide_to_utf8(archive_path) << std::endl;
         return false;
     }
-    auto addr = address_to_string(a);
     auto params = get_hendle_params(a);
-    params["archive"] = addr;
+    set_handle_addr(params, "archive", a);
     params["path"] = path;
     params["target"] = target;
     set_hendle_params(a, params);
     cout << "handle_map[a].dump()=" << get_hendle_params(a) << endl;
-    return json({{"archive", addr}});
+    auto result = json({});
+    set_handle_addr(result, "archive", a);
+    return result;
 }
 
 json api_close_archive(const json &args)
@@ -111,8 +120,7 @@ json api_close_archive(const json &args)
     auto copy = args;
     copy["api"] = "api_close_archive";
     cout << utf8_to_ansi(copy.dump(4)) << endl;
-    auto addr = args["archive"].get<std::string>();
-    struct archive *a = (struct archive *)string_to_address(addr);
+    struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     archive_read_close(a);
     archive_read_free(a);
     return true;
@@ -122,9 +130,8 @@ json api_archive_get_params(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_archive_get_params";
-    cout << utf8_to_ansi(copy.dump(4)) << endl;
-    auto addr = args["archive"].get<std::string>();
-    struct archive *a = (struct archive *)string_to_address(addr);
+    //cout << utf8_to_ansi(copy.dump(4)) << endl;
+    struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     return get_hendle_params(a);
 }
 
@@ -133,8 +140,7 @@ json api_archive_read_next_header(const json &args)
     auto copy = args;
     copy["api"] = "api_archive_read_next_header";
     //cout << utf8_to_ansi(copy.dump(4)) << endl;
-    auto addr = args["archive"].get<std::string>();
-    struct archive *a = (struct archive *)string_to_address(addr);
+    struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     struct archive_entry *entry;
     int r;
     r = archive_read_next_header(a, &entry);
@@ -162,7 +168,32 @@ json api_archive_extract_entry(const json &args)
     if(pathname == "") return false;
     auto params = api_archive_get_params(args);
     auto target = params["target"].get<std::string>();
-    cout << target << " + " << pathname << endl;
+    //cout << target << " + " << pathname << endl;
+    std::string realpath = to_native_path(target + "/" + pathname);
+    cout << realpath << endl;
+    bool isDir = args["isDir"];
+    struct archive *a = (struct archive *)get_handle_addr(args, "archive");
+    struct archive_entry *entry = (struct archive_entry *)get_handle_addr(args, "entry");
+
+    time_t mtime = archive_entry_mtime(entry);
+    std::wstring expFilePath = utf8_to_wide(realpath);
+    if(isDir) {
+        std::filesystem::create_directories(expFilePath);
+        return true;
+    }
+    std::filesystem::path file = expFilePath;
+    std::filesystem::path dir = file.parent_path();
+    std::filesystem::create_directories(dir);
+    FILE *fp;;
+    if((fp = _wfopen(expFilePath.c_str(), L"wb"))) {
+        int fd = fileno(fp);
+        archive_read_data_into_fd(a, fd);
+        fclose(fp);
+        _utimbuf utbuff;
+        utbuff.actime = mtime;
+        utbuff.modtime = mtime;
+        _wutime(expFilePath.c_str(), &utbuff);
+    }
     return true;
 }
 
