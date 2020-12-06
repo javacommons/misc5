@@ -139,7 +139,6 @@ json api_archive_read_next_header(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_archive_read_next_header";
-    //cout << utf8_to_ansi(copy.dump(4)) << endl;
     struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     struct archive_entry *entry;
     int r;
@@ -150,11 +149,12 @@ json api_archive_read_next_header(const json &args)
         fprintf(stderr, "%s\n", archive_error_string(a));
     if (r < ARCHIVE_WARN)
         return false;
-    auto entry_addr = address_to_string(entry);
+    //auto entry_addr = address_to_string(entry);
     std::wstring entry_pathname = archive_entry_pathname_w(entry);
     la_int64_t entry_size = archive_entry_size(entry);
     time_t mtime = archive_entry_mtime(entry);
-    copy["entry"] = entry_addr;
+    //copy["entry"] = entry_addr;
+    set_handle_addr(copy, "entry", entry);
     copy["pathname"] = wide_to_utf8(entry_pathname);;
     copy["size"] = entry_size;
     copy["mtime"] = mtime;
@@ -164,13 +164,16 @@ json api_archive_read_next_header(const json &args)
 
 json api_archive_extract_entry(const json &args)
 {
+    auto copy = args;
+    copy["api"] = "api_archive_read_next_header";
     auto pathname = args["pathname"].get<std::string>();
-    if(pathname == "") return false;
+    //if(pathname == "") return false;
     auto params = api_archive_get_params(args);
     auto target = params["target"].get<std::string>();
     //cout << target << " + " << pathname << endl;
     std::string realpath = to_native_path(target + "/" + pathname);
-    cout << realpath << endl;
+    copy["extractPath"] = realpath;
+    //cout << realpath << endl;
     bool isDir = args["isDir"];
     struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     struct archive_entry *entry = (struct archive_entry *)get_handle_addr(args, "entry");
@@ -179,11 +182,12 @@ json api_archive_extract_entry(const json &args)
     std::wstring expFilePath = utf8_to_wide(realpath);
     if(isDir) {
         std::filesystem::create_directories(expFilePath);
-        return true;
+        return copy;
     }
     std::filesystem::path file = expFilePath;
     std::filesystem::path dir = file.parent_path();
     std::filesystem::create_directories(dir);
+    if(std::filesystem::exists(file)) return copy;
     FILE *fp;;
     if((fp = _wfopen(expFilePath.c_str(), L"wb"))) {
         int fd = fileno(fp);
@@ -194,10 +198,11 @@ json api_archive_extract_entry(const json &args)
         utbuff.modtime = mtime;
         _wutime(expFilePath.c_str(), &utbuff);
     }
-    return true;
+    return copy;
 }
 
 
+#if 0x0
 bool extract_archive(const std::wstring &archive_path, const std::wstring &output_path) {
     //QDir dir(output_path);
     //dir.removeRecursively();
@@ -262,3 +267,4 @@ bool extract_archive(const std::wstring &archive_path, const std::wstring &outpu
     archive_read_free(a);
     return true;
 }
+#endif

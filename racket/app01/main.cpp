@@ -66,36 +66,25 @@ int main(int argc, char *argv[])
     fs::current_path(L"/");
     std::cout << fs::current_path() << std::endl;
 
-    std::map<std::string, double> map = {{"a", 123.0}, {"b", 567.8}};
-    nlohmann::json j =  map;
-    std::cout << j.dump(4) << std::endl;
-    QString tarXzPath = wide_to_qstr(LR"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)");
-    QFile tarXz(tarXzPath);
-    qDebug() << tarXz.size();
-    std::cout << "main(1)" << std::endl;
-#if 0x0
-    bool b = extract_archive(LR"(C:\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)",
-                             LR"(C:\Users\javac\Documents\misc4\racket\@out.tmp)");
-    //qDebug() << "b:" << b;
-    std::cout << "main(2)" << b << std::endl;
-#endif
-
     std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
     json archive = api_open_archive_for_extract(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
     cout << archive << endl;
     //exit(0);
     for(;;) {
         json entry = api_archive_read_next_header(archive);
-        //cout << entry.dump() << endl;
         if(false==entry) {
             break;
         }
-        //cout << entry["pathname"].dump() << endl;
         auto pathname = entry["pathname"].get<std::string>();
         auto realname = std::regex_replace(pathname, std::regex("^[^/]+/(.*)$"), "$1");
-        cout << realname << " isDir=" << entry["isDir"] << endl;
+        //cout << realname << " isDir=" << entry["isDir"] << endl;
         entry["pathname"] = realname;
-        api_archive_extract_entry(entry);
+        auto written = api_archive_extract_entry(entry);
+        if(written==false) break;
+        bool isDir = entry["isDir"];
+        //std::string indicator = isDir?std::string("[D] "):std::string("[F] ");
+        std::string indicator = isDir?"[D] ":"[F] ";
+        cout << indicator << written["extractPath"].get<std::string>() << endl;
         //if(r=="") break;
     }
     json params = api_archive_get_params(archive);
