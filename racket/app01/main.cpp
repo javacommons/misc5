@@ -1,3 +1,4 @@
+#include "libarchive.h"
 #include "apiv1.hpp"
 #include <QtCore>
 #include <iostream>
@@ -43,55 +44,6 @@ namespace data
 
 
 
-json api_open_archive_for_read(const json &args)
-{
-    auto copy = args;
-    copy["api"] = "api_open_archive_for_read";
-    cout << utf8_to_ansi(copy.dump(4)) << endl;
-    auto path = args["path"].get<std::string>();
-    auto archive_path = utf8_to_wide(path);
-    cout << utf8_to_ansi(path) << endl;
-    int r;
-    struct archive *a = archive_read_new();
-    archive_read_support_filter_all(a); // https://manpages.debian.org/stretch/libarchive-dev/libarchive_changes.3.en.html
-    archive_read_support_format_all(a);
-    if ((r = archive_read_open_filename_w(a, archive_path.c_str(), 10240))) {
-        std::cout << "Could not open:" << wide_to_utf8(archive_path) << std::endl;
-        return false;
-    }
-    auto addr = address_to_string(a);
-    //return json({{"archive", addr}, {"path", path}});
-    return json({{"archive", addr}});
-}
-
-json api_archive_read_next_header(const json &args)
-{
-    auto copy = args;
-    copy["api"] = "api_archive_read_next_header";
-    //cout << utf8_to_ansi(copy.dump(4)) << endl;
-    auto addr = args["archive"].get<std::string>();
-    struct archive *a = (struct archive *)string_to_address(addr);
-    struct archive_entry *entry;
-    int r;
-    r = archive_read_next_header(a, &entry);
-    if (r == ARCHIVE_EOF)
-        return false;
-    if (r < ARCHIVE_OK)
-        fprintf(stderr, "%s\n", archive_error_string(a));
-    if (r < ARCHIVE_WARN)
-        return false;
-    auto entry_addr = address_to_string(entry);
-    std::wstring entry_pathname = archive_entry_pathname_w(entry);
-    la_int64_t entry_size = archive_entry_size(entry);
-    time_t mtime = archive_entry_mtime(entry);
-    copy["entry"] = entry_addr;
-    copy["pathname"] = wide_to_utf8(entry_pathname);;
-    copy["size"] = entry_size;
-    copy["mtime"] = mtime;
-    return copy;
-}
-
-
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -129,8 +81,9 @@ int main(int argc, char *argv[])
 #endif
 
     std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
-    json archive = api_open_archive_for_read(json{{"path", msys2TarXz}});
-    cout << archive.dump() << endl;
+    json archive = api_open_archive_for_extract(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
+    cout << archive << endl;
+    //exit(0);
     for(;;) {
         json entry = api_archive_read_next_header(archive);
         //cout << entry.dump() << endl;
@@ -140,9 +93,12 @@ int main(int argc, char *argv[])
         //cout << entry["pathname"].dump() << endl;
         auto pathname = entry["pathname"].get<std::string>();
         auto realname = std::regex_replace(pathname, std::regex("^[^/]+/(.*)$"), "$1");
-        cout << realname << endl;
+        cout << realname << " isDir=" << entry["isDir"] << endl;
         //if(r=="") break;
     }
+    json params = api_archive_get_params(archive);
+    cout << params << endl;
+    api_close_archive(archive);
 
     return 0;
 }
