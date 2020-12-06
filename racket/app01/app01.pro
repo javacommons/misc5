@@ -8,10 +8,15 @@ TARGET = app01-$${TARGET_BIT}bit
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+INCLUDEPATH += $$PWD/..
 #INCLUDEPATH += $$PWD/../lib01
 #LIBS +=        $$PWD/../lib01/liblib01-$${QMAKE_HOST.arch}.a
 
 SOURCES += \
+        libarchive.cpp \
         main.cpp
 
 QMAKE_LIBS += -larchive -lz -lbz2 -llzma -liconv -lbcrypt -lexpat -llz4 -lzstd
+
+HEADERS += \
+    libarchive.h

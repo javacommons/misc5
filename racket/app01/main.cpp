@@ -3,8 +3,8 @@
 #include <filesystem>
 #include <map>
 #include <string>
-#include "../strconv.h"
-#include "../vardecl.h"
+#include "strconv.h"
+#include "vardecl.h"
 
 #include <archive.h>
 #include <archive_entry.h>
@@ -13,81 +13,39 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-inline bool ends_with(std::string const & value, std::string const & ending)
-{
-    if (ending.size() > value.size()) return false;
-    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
-}
+using namespace std;
 
-inline bool ends_with(std::wstring const & value, std::wstring const & ending)
+namespace data
 {
-    if (ending.size() > value.size()) return false;
-    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
-}
+    struct person
+    {
+        std::string name;
+        std::string address;
+        int age;
+    };
+} // namespace ns
 
-bool extract_archive(const std::wstring &archive_path, const std::wstring &output_path) {
-    //QDir dir(output_path);
-    //dir.removeRecursively();
-    int r;
-    struct archive *a = archive_read_new();
-#if 0x0
-    archive_read_support_compression_all(a);
-#else
-    archive_read_support_filter_all(a); // https://manpages.debian.org/stretch/libarchive-dev/libarchive_changes.3.en.html
-#endif
-    archive_read_support_format_all(a);
-    if ((r = archive_read_open_filename_w(a, archive_path.c_str(), 10240))) {
-        std::cout << "Could not open:" << wide_to_utf8(archive_path) << std::endl;
-        return false;
+namespace data
+{
+    void to_json(json &j, const person &p)
+    {
+        j = json{{"name", p.name}, {"address", p.address}, {"age", p.age}};
     }
-    std::cout << "Open:" << wide_to_utf8(archive_path) << std::endl;
-    for (;;) {
-        struct archive_entry *entry;
-        r = archive_read_next_header(a, &entry);
-        if (r == ARCHIVE_EOF)
-            break;
-        if (r < ARCHIVE_OK)
-            fprintf(stderr, "%s\n", archive_error_string(a));
-        if (r < ARCHIVE_WARN)
-            return false;
-        std::wstring entry_pathname = archive_entry_pathname_w(entry);
-        //qDebug() << "entry_pathname:" << entry_pathname;
-        la_int64_t entry_size = archive_entry_size(entry);
-        UNUSED_VARIABLE(entry_size);
-        //qDebug() << "entry_size:" << entry_size;
-        time_t mtime = archive_entry_mtime(entry);
-        //QDateTime mtime_dt = QDateTime::fromTime_t(mtime);
-        //qDebug() << "mtime:" << mtime_dt;
-        std::wstring expFilePath = output_path + L"/" + entry_pathname;
-        //qDebug() << "expFilePath:" << expFilePath;
-        if(ends_with(entry_pathname, L"/")) {
-            std::filesystem::create_directories(expFilePath);
-            //QDir dir;
-            //dir.mkpath(expFilePath);
-            continue;
-        }
-        //QFile file(expFilePath);
-        std::filesystem::path file = expFilePath;
-        //QFileInfo finfo(file);
-        //QDir dir = finfo.dir();
-        std::filesystem::path dir = file.parent_path();
-        //qDebug() << dir.absolutePath();
-        //dir.mkpath(dir.absolutePath());
-        std::filesystem::create_directories(dir);
-        FILE *fp;;
-        if((fp = _wfopen(expFilePath.c_str(), L"wb"))) {
-            int fd = fileno(fp);
-            archive_read_data_into_fd(a, fd);
-            fclose(fp);
-            _utimbuf utbuff;
-            utbuff.actime = mtime;
-            utbuff.modtime = mtime;
-            _wutime(expFilePath.c_str(), &utbuff);
-        }
+    void from_json(const json &j, person &p)
+    {
+        j.at("name").get_to(p.name); // get_to(T& arg) は arg = get<T>() と同じ
+        j.at("address").get_to(p.address);
+        j.at("age").get_to(p.age);
     }
-    archive_read_close(a);
-    archive_read_free(a);
-    return true;
+} // namespace ns
+
+
+
+json open_archive_for_read(const json &args)
+{
+    cout << utf8_to_ansi(args.dump(4)) << endl;
+    nlohmann::json result = false;
+    return result;
 }
 
 int main(int argc, char *argv[])
@@ -113,11 +71,30 @@ int main(int argc, char *argv[])
     std::cout << fs::current_path() << std::endl;
 
     std::map<std::string, double> map = {{"a", 123.0}, {"b", 567.8}};
-    json j =  map;
+    nlohmann::json j =  map;
     std::cout << j.dump(4) << std::endl;
     QString tarXzPath = wide_to_qstr(LR"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)");
     QFile tarXz(tarXzPath);
     qDebug() << tarXz.size();
+    std::cout << "main(1)" << std::endl;
+#if 0x0
+    bool b = extract_archive(LR"(C:\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)",
+                             LR"(C:\Users\javac\Documents\misc4\racket\@out.tmp)");
+    //qDebug() << "b:" << b;
+    std::cout << "main(2)" << b << std::endl;
+#endif
+
+    std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
+    data::person psn;
+    psn.name = "tom";
+    psn.age = 35;
+    psn.address = "new york";
+    json r = open_archive_for_read(psn);
+    cout << r.dump() << endl;
+    //data::variant_map vmap = {{"a", 123}, {"b", "XYZ"}};
+    json jj = {{"a", 123}, {"b", "XYZ"}, {"c", {1, 2, 3}}};
+    json r2 = open_archive_for_read(jj);
+    json r3 = open_archive_for_read(json{{"path", msys2TarXz}, {"b1", "XYZ漢字"}});
 
     return 0;
 }
