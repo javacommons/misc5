@@ -3,6 +3,7 @@
 #include <iostream>
 #include <filesystem>
 #include <map>
+#include <regex>
 #include <string>
 #include "strconv.h"
 #include "vardecl.h"
@@ -132,10 +133,15 @@ int main(int argc, char *argv[])
     cout << archive.dump() << endl;
     for(;;) {
         json entry = api_archive_read_next_header(archive);
-        cout << entry.dump() << endl;
+        //cout << entry.dump() << endl;
         if(false==entry) {
             break;
         }
+        //cout << entry["pathname"].dump() << endl;
+        auto pathname = entry["pathname"].get<std::string>();
+        auto realname = std::regex_replace(pathname, std::regex("^[^/]+/(.*)$"), "$1");
+        cout << realname << endl;
+        //if(r=="") break;
     }
 
     return 0;
