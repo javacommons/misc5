@@ -12,11 +12,10 @@ public:
     LibArchive();
 };
 
-//bool extract_archive(const std::wstring &archive_path, const std::wstring &output_path);
-json api_open_archive_for_extract(const json &args);
+json api_open_archive(const json &args);
 json api_close_archive(const json &args);
 json api_archive_get_params(const json &args);
-json api_archive_read_next_header(const json &args);
-json api_archive_extract_entry(const json &args);
+json api_archive_next_entry(const json &args);
+json api_archive_entry_extract(const json &args);
 
 #endif // LIBARCHIVE_H

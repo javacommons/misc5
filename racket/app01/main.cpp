@@ -18,6 +18,21 @@ using json = nlohmann::json;
 
 using namespace std;
 
+typedef json (*json_api)(const json &args);
+std::map<std::string, json_api> json_api_map;
+void register_json_api(const std::string &name, json_api func)
+{
+    json_api_map[name] = func;
+}
+json_api retrieve_json_api(const std::string &name)
+{
+    if(json_api_map.count(name)==0) return nullptr;
+    return json_api_map[name];
+}
+
+#define REGISTER_JSON_API(X) (register_json_api(#X, X))
+#define RETRIEVE_JSON_API(X) (retrieve_json_api(#X))
+
 namespace data
 {
     struct person
@@ -66,29 +81,43 @@ int main(int argc, char *argv[])
     fs::current_path(L"/");
     std::cout << fs::current_path() << std::endl;
 
+#if 0x0
+    json api_open_archive(const json &args);
+    json api_close_archive(const json &args);
+    json api_archive_get_params(const json &args);
+    json api_archive_next_entry(const json &args);
+    json api_archive_entry_extract(const json &args);
+#endif
+    REGISTER_JSON_API(api_open_archive);
+    REGISTER_JSON_API(api_close_archive);
+    REGISTER_JSON_API(api_archive_get_params);
+    REGISTER_JSON_API(api_archive_next_entry);
+    REGISTER_JSON_API(api_archive_entry_extract);
+
     std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
-    json archive = api_open_archive_for_extract(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
-    //cout << archive << endl;
+    //json archive = api_open_archive(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
+    json archive = RETRIEVE_JSON_API(api_open_archive)(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
     if(archive==false) return 1;
-    //exit(0);
     for(;;) {
-        json entry = api_archive_read_next_header(archive);
+        //json entry = api_archive_next_entry(archive);
+        json entry = RETRIEVE_JSON_API(api_archive_next_entry)(archive);
         if(false==entry) {
             break;
         }
         auto pathname = entry["pathname"].get<std::string>();
         auto realname = std::regex_replace(pathname, std::regex("^[^/]+/(.*)$"), "$1");
-        //cout << realname << " isDir=" << entry["isDir"] << endl;
         entry["pathname"] = realname;
-        auto written = api_archive_extract_entry(entry);
+        //auto written = api_archive_entry_extract(entry);
+        auto written = RETRIEVE_JSON_API(api_archive_entry_extract)(entry);
         if(written==false) break;
         bool isDir = entry["isDir"];
         std::string indicator = isDir?"[D] ":"[F] ";
         cout << indicator << written["extractPath"] << endl;
     }
-    json params = api_archive_get_params(archive);
+    //json params = api_archive_get_params(archive);
+    json params = RETRIEVE_JSON_API(api_archive_get_params)(archive);
     //cout << params << endl;
-    api_close_archive(archive);
+    RETRIEVE_JSON_API(api_close_archive)(archive);
 
     return 0;
 }

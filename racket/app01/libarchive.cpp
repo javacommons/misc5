@@ -87,7 +87,7 @@ std::string to_native_path(const std::string &s)
     return wide_to_utf8(native);
 }
 
-json api_open_archive_for_extract(const json &args)
+json api_open_archive(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_open_archive_for_extract";
@@ -134,7 +134,7 @@ json api_archive_get_params(const json &args)
     return get_hendle_params(a);
 }
 
-json api_archive_read_next_header(const json &args)
+json api_archive_next_entry(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_archive_read_next_header";
@@ -161,7 +161,7 @@ json api_archive_read_next_header(const json &args)
     return copy;
 }
 
-json api_archive_extract_entry(const json &args)
+json api_archive_entry_extract(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_archive_extract_entry";
