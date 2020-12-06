@@ -161,7 +161,7 @@ json api_archive_next_entry(const json &args)
     return copy;
 }
 
-json api_archive_entry_extract(const json &args)
+json api_archive_entry_write(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_archive_extract_entry";
@@ -170,15 +170,15 @@ json api_archive_entry_extract(const json &args)
     auto params = api_archive_get_params(args);
     auto target = params["target"].get<std::string>();
     //cout << target << " + " << pathname << endl;
-    std::string realpath = to_native_path(target + "/" + pathname);
-    copy["extractPath"] = realpath;
+    std::string writePath = to_native_path(target + "/" + pathname);
+    copy["writePath"] = writePath;
     //cout << realpath << endl;
     bool isDir = args["isDir"];
     struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     struct archive_entry *entry = (struct archive_entry *)get_handle_addr(args, "entry");
 
     time_t mtime = archive_entry_mtime(entry);
-    std::wstring expFilePath = utf8_to_wide(realpath);
+    std::wstring expFilePath = utf8_to_wide(writePath);
     if(isDir) {
         std::filesystem::create_directories(expFilePath);
         return copy;

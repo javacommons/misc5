@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     REGISTER_JSON_API(api_close_archive);
     REGISTER_JSON_API(api_archive_get_params);
     REGISTER_JSON_API(api_archive_next_entry);
-    REGISTER_JSON_API(api_archive_entry_extract);
+    REGISTER_JSON_API(api_archive_entry_write);
 
     std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
     //json archive = api_open_archive(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
@@ -108,11 +108,11 @@ int main(int argc, char *argv[])
         auto realname = std::regex_replace(pathname, std::regex("^[^/]+/(.*)$"), "$1");
         entry["pathname"] = realname;
         //auto written = api_archive_entry_extract(entry);
-        auto written = RETRIEVE_JSON_API(api_archive_entry_extract)(entry);
+        auto written = RETRIEVE_JSON_API(api_archive_entry_write)(entry);
         if(written==false) break;
         bool isDir = entry["isDir"];
         std::string indicator = isDir?"[D] ":"[F] ";
-        cout << indicator << written["extractPath"] << endl;
+        cout << indicator << written["writePath"] << endl;
     }
     //json params = api_archive_get_params(archive);
     json params = RETRIEVE_JSON_API(api_archive_get_params)(archive);
