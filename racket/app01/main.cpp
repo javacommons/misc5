@@ -94,6 +94,12 @@ int main(int argc, char *argv[])
     REGISTER_JSON_API(api_archive_next_entry);
     REGISTER_JSON_API(api_archive_entry_write);
 
+    std::vector<std::string> api_names;
+    for(auto const& imap: json_api_map)
+        api_names.push_back(imap.first);
+    json api_names_json = api_names;
+    cout << api_names_json << endl;
+
     std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
     //json archive = api_open_archive(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
     json archive = RETRIEVE_JSON_API(api_open_archive)(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
