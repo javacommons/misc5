@@ -156,6 +156,15 @@ json api_archive_read_next_header(const json &args)
     return copy;
 }
 
+json api_archive_extract_entry(const json &args)
+{
+    auto pathname = args["pathname"].get<std::string>();
+    if(pathname == "") return false;
+    auto params = api_archive_get_params(args);
+    auto target = params["target"].get<std::string>();
+    cout << target << " + " << pathname << endl;
+    return true;
+}
 
 
 bool extract_archive(const std::wstring &archive_path, const std::wstring &output_path) {

@@ -94,6 +94,8 @@ int main(int argc, char *argv[])
         auto pathname = entry["pathname"].get<std::string>();
         auto realname = std::regex_replace(pathname, std::regex("^[^/]+/(.*)$"), "$1");
         cout << realname << " isDir=" << entry["isDir"] << endl;
+        entry["pathname"] = realname;
+        api_archive_extract_entry(entry);
         //if(r=="") break;
     }
     json params = api_archive_get_params(archive);

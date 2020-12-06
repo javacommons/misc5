@@ -17,5 +17,6 @@ json api_open_archive_for_extract(const json &args);
 json api_close_archive(const json &args);
 json api_archive_get_params(const json &args);
 json api_archive_read_next_header(const json &args);
+json api_archive_extract_entry(const json &args);
 
 #endif // LIBARCHIVE_H
