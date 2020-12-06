@@ -6,5 +6,7 @@ pacman -S --needed --noconfirm \
 	$PACKAGE_PREFIX-fltk \
 	$PACKAGE_PREFIX-libarchive \
 	$PACKAGE_PREFIX-postgresql \
-	$PACKAGE_PREFIX-sqlite3
+	$PACKAGE_PREFIX-sqlite3 \
+	$PACKAGE_PREFIX-zeromq
+rm -rf $MINGW_PREFIX/include/nlohmann
 cp -rp nlohmann $MINGW_PREFIX/include/
