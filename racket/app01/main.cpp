@@ -68,7 +68,8 @@ int main(int argc, char *argv[])
 
     std::string msys2TarXz = u8R"(C:\Users\Public\root\Dropbox\_data_\msys2-base-x86_64-20200903.tar.xz)";
     json archive = api_open_archive_for_extract(json{{"path", msys2TarXz}, {"target", "D:/temp/"}});
-    cout << archive << endl;
+    //cout << archive << endl;
+    if(archive==false) return 1;
     //exit(0);
     for(;;) {
         json entry = api_archive_read_next_header(archive);
@@ -82,13 +83,11 @@ int main(int argc, char *argv[])
         auto written = api_archive_extract_entry(entry);
         if(written==false) break;
         bool isDir = entry["isDir"];
-        //std::string indicator = isDir?std::string("[D] "):std::string("[F] ");
         std::string indicator = isDir?"[D] ":"[F] ";
-        cout << indicator << written["extractPath"].get<std::string>() << endl;
-        //if(r=="") break;
+        cout << indicator << written["extractPath"] << endl;
     }
     json params = api_archive_get_params(archive);
-    cout << params << endl;
+    //cout << params << endl;
     api_close_archive(archive);
 
     return 0;

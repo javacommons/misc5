@@ -90,18 +90,18 @@ std::string to_native_path(const std::string &s)
 json api_open_archive_for_extract(const json &args)
 {
     auto copy = args;
-    copy["api"] = "api_open_archive_for_read";
-    cout << utf8_to_ansi(copy.dump(4)) << endl;
+    copy["api"] = "api_open_archive_for_extract";
+    //cout << utf8_to_ansi(copy.dump(4)) << endl;
     auto path = to_native_path(args["path"].get<std::string>());
     auto target = to_native_path(args["target"].get<std::string>());
     auto archive_path = utf8_to_wide(path);
-    cout << utf8_to_ansi(path) << endl;
+    //cout << utf8_to_ansi(path) << endl;
     int r;
     struct archive *a = archive_read_new();
     archive_read_support_filter_all(a); // https://manpages.debian.org/stretch/libarchive-dev/libarchive_changes.3.en.html
     archive_read_support_format_all(a);
     if ((r = archive_read_open_filename_w(a, archive_path.c_str(), 10240))) {
-        std::cout << "Could not open:" << wide_to_utf8(archive_path) << std::endl;
+        //std::cout << "Could not open:" << wide_to_utf8(archive_path) << std::endl;
         return false;
     }
     auto params = get_hendle_params(a);
@@ -109,7 +109,6 @@ json api_open_archive_for_extract(const json &args)
     params["path"] = path;
     params["target"] = target;
     set_hendle_params(a, params);
-    cout << "handle_map[a].dump()=" << get_hendle_params(a) << endl;
     auto result = json({});
     set_handle_addr(result, "archive", a);
     return result;
@@ -119,7 +118,7 @@ json api_close_archive(const json &args)
 {
     auto copy = args;
     copy["api"] = "api_close_archive";
-    cout << utf8_to_ansi(copy.dump(4)) << endl;
+    //cout << utf8_to_ansi(copy.dump(4)) << endl;
     struct archive *a = (struct archive *)get_handle_addr(args, "archive");
     archive_read_close(a);
     archive_read_free(a);
@@ -165,7 +164,7 @@ json api_archive_read_next_header(const json &args)
 json api_archive_extract_entry(const json &args)
 {
     auto copy = args;
-    copy["api"] = "api_archive_read_next_header";
+    copy["api"] = "api_archive_extract_entry";
     auto pathname = args["pathname"].get<std::string>();
     //if(pathname == "") return false;
     auto params = api_archive_get_params(args);
