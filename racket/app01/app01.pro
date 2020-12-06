@@ -13,3 +13,5 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp
+
+QMAKE_LIBS += -larchive -lz -lbz2 -llzma -liconv -lbcrypt -lexpat -llz4 -lzstd

@@ -25,6 +25,6 @@
 #define ALIGNED_ARRAY_DECL(TYPE, VAR, SIZE, ALIGN) __declspec(align(ALIGN)) TYPE VAR[SIZE]
 #endif
 
-#define UNUSED_PARAMETER(P) (void)P
+#define UNUSED_VARIABLE(P) (void)P
 
 #endif /* _TLSDECL_H_ */
