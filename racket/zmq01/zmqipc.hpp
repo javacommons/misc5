@@ -2,10 +2,10 @@
 #define ZMQIPC_HPP
 
 #include <zmq.hpp>
-#include <iostream>
 #include <string>
-#include <vector>
 #include <windows.h>
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
 
 #include "strconv.h"
 
@@ -34,6 +34,8 @@ public:
     bool open_server(const std::string &endpoint);
     void send_msg(const std::string &msg);
     std::string recv_msg();
+    void send_json(const json &j);
+    json recv_json();
 };
 
 class ZmqProcess

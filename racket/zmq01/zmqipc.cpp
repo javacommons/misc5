@@ -1,4 +1,5 @@
 #include "zmqipc.hpp"
+#include <iostream>
 #include <thread>
 #include <chrono>
 #include "strutil.h"
@@ -128,6 +129,26 @@ void ZmqIPC::send_msg(const std::string &msg)
 std::string ZmqIPC::recv_msg()
 {
     return this->context.recv_msg();
+}
+
+void ZmqIPC::send_json(const json &j)
+{
+    this->context.send_msg(j.dump());
+}
+
+json ZmqIPC::recv_json()
+{
+    std::string msg = this->context.recv_msg();
+    try
+    {
+        json j = json::parse(msg);
+        return j;
+    }
+    catch (nlohmann::detail::parse_error &e)
+    {
+        json j = msg;
+        return j;
+    }
 }
 
 extern "C" void __wgetmainargs(int*, wchar_t***, wchar_t***, int, int*);
