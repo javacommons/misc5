@@ -196,19 +196,12 @@ ZmqProcess::ZmqProcess(const std::wstring &cmdline, bool debug)
 ZmqProcess::~ZmqProcess()
 {
     if(!this->m_started) return;
+#if 0x0
     std::cout << "kill the server" << std::endl;
     TerminateProcess(m_pi.hProcess, 0);
-#if 0x0
-    const DWORD result = WaitForSingleObject(m_pi.hProcess, 500);
-    if (result == WAIT_OBJECT_0) {
-        // Success
-    }
-    else {
-        // Timed out or an error occurred
-    }
-#endif
     CloseHandle(m_pi.hThread);
     CloseHandle(m_pi.hProcess);
+#endif
 }
 
 bool ZmqProcess::started()

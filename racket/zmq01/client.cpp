@@ -31,6 +31,6 @@ int main(int argc, char *argv[])
         json j2 = ipc.recv_json();
         cout << "return=" << utf8_to_ansi(j2.dump()) << endl;
     }
-    ipc.send_json("#end");
+    //ipc.send_json("#end");
     return 0;
 }
