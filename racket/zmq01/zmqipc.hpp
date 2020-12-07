@@ -9,141 +9,87 @@
 
 #include "strconv.h"
 
+class ZmqProcess;
+
 class ZmqContext {
     zmq::context_t *context = nullptr;
     zmq::socket_t *socket = nullptr;
 public:
-    explicit ZmqContext()
-    {
-        this->context = new zmq::context_t(1);
-    }
-    virtual ~ZmqContext()
-    {
-        if(this->socket)
-        {
-            this->socket->close();
-            delete this->socket;
-        }
-        if(this->context)
-        {
-            this->context->close();
-            delete this->context;
-        }
-    }
-    bool open_client(std::string &endpoint)
-    {
-        endpoint = "";
-        this->socket = new zmq::socket_t(*this->context, ZMQ_REP);
-        std::vector<char> port(128);
-        size_t size = port.size();
-        try
-        {
-    #if 0x1
-            this->socket->bind("tcp://127.0.0.1:*");
-    #else
-            this->socket->bind("tcp://127.0.0.1:50862");
-    #endif
-        }
-        catch (zmq::error_t &e)
-        {
-            return false;
-        }
-        this->socket->getsockopt(ZMQ_LAST_ENDPOINT, &port[0], &size);
-        endpoint = &port[0];
-        return true;
-    }
-    bool open_server(const std::string &endpoint)
-    {
-        this->socket = new zmq::socket_t(*this->context, ZMQ_REQ);
-        try
-        {
-            this->socket->connect(endpoint.c_str());
-            return true;
-        }
-        catch (zmq::error_t &e)
-        {
-            return false;
-        }
-    }
-    void send_msg(const std::string &msg)
-    {
-        if(!this->socket) return;
-        zmq::message_t response(msg.size());
-        memcpy(response.data(), msg.c_str(), msg.size());
-        this->socket->send(response, zmq::send_flags::none);
-    }
-    std::string recv_msg()
-    {
-        if(!this->socket) return "";
-        zmq::message_t request;
-        zmq::detail::recv_result_t result;
-        try
-        {
-            result = this->socket->recv(request);
-        }
-        catch (zmq::error_t &e)
-        {
-            return "";
-        }
-        if (!result)
-        {
-            return "";
-        }
-        size_t size = result.value();
-        std::string msg((char *)request.data(), size);
-        return msg;
-    }
+    explicit ZmqContext();
+    virtual ~ZmqContext();
+    bool open_client(std::string &endpoint);
+    bool open_server(const std::string &endpoint);
+    void send_msg(const std::string &msg);
+    std::string recv_msg();
 };
 
 class ZmqIPC
 {
     ZmqContext context;
+    class ZmqProcess *server_process = nullptr;
 public:
-    explicit ZmqIPC()
+    explicit ZmqIPC();
+    virtual ~ZmqIPC();
+    bool open_client(const std::string &server, bool debug);
+    bool open_server(const std::string &endpoint);
+    void send_msg(const std::string &msg);
+    std::string recv_msg();
+};
+
+class ZmqProcess
+{
+    bool m_started = false;
+    STARTUPINFOW m_si;
+    PROCESS_INFORMATION m_pi;
+public:
+    explicit ZmqProcess(const std::wstring &cmdline, bool debug)
     {
-    }
-    virtual ~ZmqIPC()
-    {
-    }
-    bool open_client(const std::string &server, int debug)
-    {
-        std::string endpoint;
-        if(!this->context.open_client(endpoint)) return false;
-        std::wstring cmdline = utf8_to_wide(server);
-        cmdline += L" ";
-        cmdline += utf8_to_wide(endpoint);
-        std::cout << wide_to_utf8(cmdline) << std::endl;
-        PROCESS_INFORMATION ps = {0};
-        STARTUPINFOW si = {0};
+        std::cout << "(b)" << std::endl;
+        memset(&m_si, 0, sizeof(m_si));
+        memset(&m_pi, 0, sizeof(m_pi));
         WINBOOL b = CreateProcessW(
-            NULL,
-            (LPWSTR)cmdline.c_str(),
-            NULL,
-            NULL,
-            FALSE,
-            debug ? 0 : CREATE_NO_WINDOW,
-            NULL,
-            NULL,
-            &si,
-            &ps);
+                    NULL,
+                    (LPWSTR)cmdline.c_str(),
+                    NULL,
+                    NULL,
+                    FALSE,
+                    debug ? 0 : CREATE_NO_WINDOW,
+                    NULL,
+                    NULL,
+                    &m_si,
+                    &m_pi);
+        std::cout << "(c)" << std::endl;
         if (!b)
         {
-          std::cout << "Could not start client." << std::endl;
-          return false;
+            std::cout << "Could not start client." << std::endl;
+            this->m_started = false;
         }
+        std::cout << "(d)" << std::endl;
+        this->m_started = true;
+        std::cout << "(e)" << std::endl;
     }
-    bool open_server(const std::string &endpoint)
+    virtual ~ZmqProcess()
     {
-        return this->context.open_server(endpoint);
+        if(!this->m_started) return;
+        std::cout << "kill the server" << std::endl;
+        TerminateProcess(m_pi.hProcess, 0);
+        // 500 ms timeout; use INFINITE for no timeout
+        const DWORD result = WaitForSingleObject(m_pi.hProcess, 500);
+        if (result == WAIT_OBJECT_0) {
+            // Success
+        }
+        else {
+            // Timed out or an error occurred
+        }
+        CloseHandle(m_pi.hProcess);
+        CloseHandle(m_pi.hThread);
     }
-    void send_msg(const std::string &msg)
+    bool started()
     {
-        this->context.send_msg(msg);
-    }
-    std::string recv_msg()
-    {
-        return this->context.recv_msg();
+        return this->m_started;
     }
 };
+
+bool find_endpont_from_args(std::string &endpoint);
 
 #endif //ZMQIPC_HPP

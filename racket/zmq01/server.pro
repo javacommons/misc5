@@ -9,6 +9,7 @@ INCLUDEPATH += ..
 HEADERS += zmqipc.hpp
 
 SOURCES += \
-        server.cpp
+        server.cpp \
+        zmqipc.cpp
 
 QMAKE_LIBS += -lzmq
