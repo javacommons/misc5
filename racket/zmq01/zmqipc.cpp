@@ -1,4 +1,6 @@
 #include "zmqipc.hpp"
+#include <thread>
+#include <chrono>
 #include "strutil.h"
 
 ZmqContext::ZmqContext()
@@ -89,6 +91,7 @@ ZmqIPC::ZmqIPC()
 
 ZmqIPC::~ZmqIPC()
 {
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     if(!this->server_process) return;
     delete this->server_process;
 }
@@ -102,7 +105,7 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
     cmdline += utf8_to_wide(endpoint);
     std::cout << wide_to_utf8(cmdline) << std::endl;
     this->server_process = new ZmqProcess(cmdline, debug);
-    std::cout << "(a)" << std::endl;
+    //std::cout << "(a)" << std::endl;
     if(!this->server_process->started())
     {
         delete this->server_process;
@@ -110,27 +113,6 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
         return false;
     }
     return true;
-#if 0x0
-    PROCESS_INFORMATION ps = {0};
-    STARTUPINFOW si = {0};
-    WINBOOL b = CreateProcessW(
-                NULL,
-                (LPWSTR)cmdline.c_str(),
-                NULL,
-                NULL,
-                FALSE,
-                debug ? 0 : CREATE_NO_WINDOW,
-                NULL,
-                NULL,
-                &si,
-                &ps);
-    if (!b)
-    {
-        std::cout << "Could not start client." << std::endl;
-        return false;
-    }
-    return true;
-#endif
 }
 
 bool ZmqIPC::open_server(const std::string &endpoint)
@@ -160,4 +142,49 @@ bool find_endpont_from_args(std::string &endpoint)
     if(!starts_with(arg1, L"tcp://")) return false;
     endpoint = wide_to_utf8(arg1);
     return true;
+}
+
+ZmqProcess::ZmqProcess(const std::wstring &cmdline, bool debug)
+{
+    //std::cout << "(b)" << std::endl;
+    memset(&m_si, 0, sizeof(m_si));
+    m_si.cb = sizeof(m_si);
+    memset(&m_pi, 0, sizeof(m_pi));
+    WINBOOL b = CreateProcessW(
+                NULL,
+                (LPWSTR)cmdline.c_str(),
+                NULL,
+                NULL,
+                FALSE,
+                debug ? 0 : CREATE_NO_WINDOW,
+                NULL,
+                NULL,
+                &m_si,
+                &m_pi);
+    //std::cout << "(c)" << std::endl;
+    if (!b)
+    {
+        std::cout << "Could not start client." << std::endl;
+        this->m_started = false;
+    }
+    //std::cout << "(d)" << std::endl;
+    this->m_started = true;
+    //std::cout << "(e)" << std::endl;
+}
+
+ZmqProcess::~ZmqProcess()
+{
+    if(!this->m_started) return;
+    std::cout << "kill the server" << std::endl;
+    TerminateProcess(m_pi.hProcess, 0);
+    // 500 ms timeout; use INFINITE for no timeout
+    const DWORD result = WaitForSingleObject(m_pi.hProcess, 500);
+    if (result == WAIT_OBJECT_0) {
+        // Success
+    }
+    else {
+        // Timed out or an error occurred
+    }
+    CloseHandle(m_pi.hProcess);
+    CloseHandle(m_pi.hThread);
 }
