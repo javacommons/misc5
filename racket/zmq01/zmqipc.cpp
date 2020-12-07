@@ -177,7 +177,7 @@ ZmqProcess::~ZmqProcess()
     if(!this->m_started) return;
     std::cout << "kill the server" << std::endl;
     TerminateProcess(m_pi.hProcess, 0);
-    // 500 ms timeout; use INFINITE for no timeout
+#if 0x0
     const DWORD result = WaitForSingleObject(m_pi.hProcess, 500);
     if (result == WAIT_OBJECT_0) {
         // Success
@@ -185,6 +185,12 @@ ZmqProcess::~ZmqProcess()
     else {
         // Timed out or an error occurred
     }
-    CloseHandle(m_pi.hProcess);
+#endif
     CloseHandle(m_pi.hThread);
+    CloseHandle(m_pi.hProcess);
+}
+
+bool ZmqProcess::started()
+{
+    return this->m_started;
 }

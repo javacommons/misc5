@@ -44,10 +44,7 @@ class ZmqProcess
 public:
     explicit ZmqProcess(const std::wstring &cmdline, bool debug);
     virtual ~ZmqProcess();
-    bool started()
-    {
-        return this->m_started;
-    }
+    bool started();
 };
 
 bool find_endpont_from_args(std::string &endpoint);
