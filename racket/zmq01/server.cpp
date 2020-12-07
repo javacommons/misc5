@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    ZmqIPC ipc;
+    ZmqContext ipc;
     bool b = ipc.open_server("tcp://127.0.0.1:50862");
     if(!b) return 1;
     ipc.send_msg("#begin");

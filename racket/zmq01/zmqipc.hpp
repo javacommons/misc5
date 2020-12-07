@@ -4,15 +4,15 @@
 #include <zmq.hpp>
 #include <vector>
 
-class ZmqIPC {
+class ZmqContext {
     zmq::context_t *context = nullptr;
     zmq::socket_t *socket = nullptr;
 public:
-    explicit ZmqIPC()
+    explicit ZmqContext()
     {
         this->context = new zmq::context_t(1);
     }
-    virtual ~ZmqIPC()
+    virtual ~ZmqContext()
     {
         if(this->socket)
         {
@@ -25,11 +25,10 @@ public:
             delete this->context;
         }
     }
-    std::string open_client()
+    bool open_client(std::string &endpoint)
     {
+        endpoint = "";
         this->socket = new zmq::socket_t(*this->context, ZMQ_REP);
-        //char port[1024];
-        //size_t size = sizeof(port);
         std::vector<char> port(128);
         size_t size = port.size();
         try
@@ -42,10 +41,11 @@ public:
         }
         catch (zmq::error_t &e)
         {
-            return "";
+            return false;
         }
         this->socket->getsockopt(ZMQ_LAST_ENDPOINT, &port[0], &size);
-        return &port[0];
+        endpoint = &port[0];
+        return true;
     }
     bool open_server(const std::string &endpoint)
     {
