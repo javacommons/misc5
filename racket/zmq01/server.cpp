@@ -37,33 +37,7 @@ std::wstring parent_programW()
     return parent->second;
 }
 
-DWORD parent_process_id()
-{
-    HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    PROCESSENTRY32W pe;
-    memset(&pe, 0, sizeof(pe));
-    pe.dwSize = sizeof(pe);
-    DWORD pid = GetCurrentProcessId();
-    DWORD ppid = 0;
-    if( Process32First(h, &pe)) {
-        do {
-            if (pe.th32ProcessID == pid) {
-                ppid = pe.th32ParentProcessID;
-            }
-        } while( Process32Next(h, &pe));
-    }
-    CloseHandle(h);
-    return ppid;
-}
-
-bool is_process_running(DWORD pid)
-{
-    HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
-    DWORD ret = WaitForSingleObject(process, 0);
-    CloseHandle(process);
-    return ret == WAIT_TIMEOUT;
-}
-
+#if 0x0
 void worker()
 {
     DWORD ppid = parent_process_id();
@@ -78,24 +52,35 @@ void worker()
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
+#endif
 
 void on_exit()
 {
-  std::cout << "on exit" << std::endl;
-  ::MessageBoxW(NULL, L"on_exit()", L"server.exe", MB_OK);
+    std::cout << "on exit" << std::endl;
+    ::MessageBoxW(NULL, L"on_exit()", L"server.exe", MB_OK);
 }
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    std::thread th(worker);
+    cout << "server(1)" << endl;
+
+    //std::thread th(worker);
     std::atexit(on_exit);
+
+    cout << "server(2)" << endl;
 
     std::string endpoint;
     if(!find_endpont_from_args(endpoint)) return 1;
+
+    cout << "server(3)" << endl;
+
     ZmqIPC ipc;
     if(!ipc.open_server(endpoint)) return 1;
+
+    cout << "server(4)" << endl;
+
     ipc.send_json("#begin");
     while(true)
     {

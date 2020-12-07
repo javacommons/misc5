@@ -3,6 +3,8 @@
 #include <thread>
 #include <chrono>
 #include "strutil.h"
+#include <windows.h>
+#include <tlhelp32.h>
 
 ZmqContext::ZmqContext()
 {
@@ -64,6 +66,48 @@ void ZmqContext::send_msg(const std::string &msg)
     this->socket->send(response, zmq::send_flags::none);
 }
 
+static DWORD parent_process_id()
+{
+    HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    PROCESSENTRY32W pe;
+    memset(&pe, 0, sizeof(pe));
+    pe.dwSize = sizeof(pe);
+    DWORD pid = GetCurrentProcessId();
+    DWORD ppid = 0;
+    if( Process32First(h, &pe)) {
+        do {
+            if (pe.th32ProcessID == pid) {
+                ppid = pe.th32ParentProcessID;
+            }
+        } while( Process32Next(h, &pe));
+    }
+    CloseHandle(h);
+    return ppid;
+}
+
+static bool is_process_running(DWORD pid)
+{
+    HANDLE process = OpenProcess(SYNCHRONIZE, FALSE, pid);
+    DWORD ret = WaitForSingleObject(process, 0);
+    CloseHandle(process);
+    return ret == WAIT_TIMEOUT;
+}
+
+void ZmqIPC::worker()
+{
+    DWORD ppid = parent_process_id();
+    for(;;)
+    {
+        //cout << "worker" << endl;
+        if(!is_process_running(ppid))
+        {
+            //::MessageBoxW(NULL, L"exiting...", L"server.exe", MB_OK);
+            exit(0);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+}
+
 std::string ZmqContext::recv_msg()
 {
     if(!this->socket) return "";
@@ -118,7 +162,9 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
 
 bool ZmqIPC::open_server(const std::string &endpoint)
 {
-    return this->context.open_server(endpoint);
+    bool b = this->context.open_server(endpoint);
+    std::thread *th = new std::thread(worker);
+    return b;
 }
 
 void ZmqIPC::send_msg(const std::string &msg)

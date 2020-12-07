@@ -27,6 +27,7 @@ class ZmqIPC
 {
     ZmqContext context;
     class ZmqProcess *server_process = nullptr;
+    static void worker();
 public:
     explicit ZmqIPC();
     virtual ~ZmqIPC();
