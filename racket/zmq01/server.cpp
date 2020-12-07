@@ -72,7 +72,7 @@ void worker()
         cout << "worker" << endl;
         if(!is_process_running(ppid))
         {
-            ::MessageBoxW(NULL, L"exiting...", L"server.exe", MB_OK);
+            //::MessageBoxW(NULL, L"exiting...", L"server.exe", MB_OK);
             exit(0);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -82,7 +82,7 @@ void worker()
 void on_exit()
 {
   std::cout << "on exit" << std::endl;
-  ::MessageBoxW(NULL, L"on_exit()...", L"server.exe", MB_OK);
+  ::MessageBoxW(NULL, L"on_exit()", L"server.exe", MB_OK);
 }
 
 int main(int argc, char *argv[])
