@@ -1,7 +1,7 @@
 #include <QtCore>
 #include <iostream>
 #include <zmq.hpp>
-#include <zmq_addon.hpp>
+//#include <zmq_addon.hpp>
 
 #include "strconv.h"
 
@@ -18,15 +18,18 @@ std::string recv_msg(zmq::socket_t &socket)
 {
     zmq::message_t request;
     zmq::detail::recv_result_t result;
-    try{
+    try
+    {
         result = socket.recv(request);
-    } catch (zmq::error_t &e){
+    }
+    catch (zmq::error_t &e)
+    {
         return "";
     }
     if (!result) {
         return "";
     }
-    size_t size = result.value(); // 有効値を取り出す
+    size_t size = result.value();
     std::string msg((char *)request.data(), size);
     return msg;
 }
@@ -37,16 +40,28 @@ int main(int argc, char *argv[])
 
     zmq::context_t context(1);
     zmq::socket_t socket(context, ZMQ_REQ);
-    try{
+    try
+    {
         socket.connect("tcp://127.0.0.1:50862");
-    } catch (zmq::error_t &e){
+    }
+    catch (zmq::error_t &e)
+    {
         cerr << "couldn't connect to socket: " << e.what() << endl;
         return e.num();
     }
 
     send_msg(socket, "#begin");
-    while (true) {
+    while (true)
+    {
         std::string msg = recv_msg(socket);
+#if 0x0
+        if(msg == "")
+        {
+            cout << "empty found" << endl;
+            socket.close();
+            return 0;
+        }
+#endif
         if(msg == "#end")
         {
             cout << "#end found" << endl;

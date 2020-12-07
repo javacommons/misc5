@@ -1,7 +1,7 @@
 #include <QtCore>
 #include <iostream>
 #include <zmq.hpp>
-#include <zmq_addon.hpp>
+//#include <zmq_addon.hpp>
 
 #include "strconv.h"
 
@@ -26,7 +26,7 @@ std::string recv_msg(zmq::socket_t &socket)
     if (!result) {
         return "";
     }
-    size_t size = result.value(); // 有効値を取り出す
+    size_t size = result.value();
     std::string msg((char *)request.data(), size);
     return msg;
 }
@@ -40,13 +40,16 @@ int main(int argc, char *argv[])
     char port[1024]; //make this sufficiently large.
                      //otherwise an error will be thrown because of invalid argument.
     size_t size = sizeof(port);
-    try{
+    try
+    {
 #if 0x0
         socket.bind("tcp://127.0.0.1:*");
 #else
         socket.bind("tcp://127.0.0.1:50862");
 #endif
-    } catch (zmq::error_t &e){
+    }
+    catch (zmq::error_t &e)
+    {
         cerr << "couldn't bind to socket: " << e.what() << endl;
         return e.num();
     }
