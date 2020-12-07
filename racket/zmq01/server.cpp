@@ -1,5 +1,6 @@
 #include "zmqipc.hpp"
 #include <QtCore>
+#include <cstdlib>
 #include <iostream>
 
 //#include "strconv.h"
@@ -78,11 +79,18 @@ void worker()
     }
 }
 
+void on_exit()
+{
+  std::cout << "on exit" << std::endl;
+  ::MessageBoxW(NULL, L"on_exit()...", L"server.exe", MB_OK);
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
     std::thread th(worker);
+    std::atexit(on_exit);
 
     std::string endpoint;
     if(!find_endpont_from_args(endpoint)) return 1;
