@@ -3,7 +3,7 @@
 #include <iostream>
 
 //#include "strconv.h"
-//#include "strutil.h"
+#include "strutil.h"
 
 using namespace std;
 
@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
             cout << "#end found" << endl;
             return 0;
         }
-        ipc.send_msg("[" + msg + "]");
+        //ipc.send_msg("[" + msg + "]");
+        ipc.send_msg(format("<%s>", msg.c_str()));
     }
     return 0;
 }
