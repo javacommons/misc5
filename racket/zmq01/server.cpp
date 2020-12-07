@@ -13,25 +13,20 @@ int main(int argc, char *argv[])
 
     std::string endpoint;
     if(!find_endpont_from_args(endpoint)) return 1;
-
     ZmqIPC ipc;
-    //bool b = ipc.open_server("tcp://127.0.0.1:50862");
-    bool b = ipc.open_server(endpoint);
-    if(!b) return 1;
-    //ipc.send_msg("#begin");
+    if(!ipc.open_server(endpoint)) return 1;
     ipc.send_json("#begin");
-    while (true)
+    while(true)
     {
-        json msg = ipc.recv_json();
-        cout << "msg=" << utf8_to_ansi(msg.dump()) << endl;
-        if(msg == "#end")
+        json req = ipc.recv_json();
+        cout << "request=" << utf8_to_ansi(req.dump()) << endl;
+        if(req == "#end")
         {
             cout << "#end found" << endl;
             return 0;
         }
-        //ipc.send_msg("[" + msg + "]");
-        msg["return"] = 567.89;
-        ipc.send_json(msg);
+        req["return"] = 567.89;
+        ipc.send_json(req);
     }
     return 0;
 }

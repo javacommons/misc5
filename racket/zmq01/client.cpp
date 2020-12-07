@@ -29,9 +29,8 @@ int main(int argc, char *argv[])
         j["xyz"] = 123;
         ipc.send_json(j);
         json j2 = ipc.recv_json();
-        cout << utf8_to_ansi(j2.dump()) << endl;
+        cout << "return=" << utf8_to_ansi(j2.dump()) << endl;
     }
-    //ipc.send_msg("#end");
     ipc.send_json("#end");
     return 0;
 }
