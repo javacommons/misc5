@@ -6,7 +6,7 @@
 #include <map>
 #include <regex>
 #include <string>
-#include "strconv.h"
+#include "strconvQt.h"
 #include "vardecl.h"
 
 #include <archive.h>
