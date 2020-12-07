@@ -2,7 +2,12 @@
 #define ZMQIPC_HPP
 
 #include <zmq.hpp>
+#include <iostream>
+#include <string>
 #include <vector>
+#include <windows.h>
+
+#include "strconv.h"
 
 class ZmqContext {
     zmq::context_t *context = nullptr;
@@ -33,7 +38,7 @@ public:
         size_t size = port.size();
         try
         {
-    #if 0x0
+    #if 0x1
             this->socket->bind("tcp://127.0.0.1:*");
     #else
             this->socket->bind("tcp://127.0.0.1:50862");
@@ -87,6 +92,57 @@ public:
         size_t size = result.value();
         std::string msg((char *)request.data(), size);
         return msg;
+    }
+};
+
+class ZmqIPC
+{
+    ZmqContext context;
+public:
+    explicit ZmqIPC()
+    {
+    }
+    virtual ~ZmqIPC()
+    {
+    }
+    bool open_client(const std::string &server, int debug)
+    {
+        std::string endpoint;
+        if(!this->context.open_client(endpoint)) return false;
+        std::wstring cmdline = utf8_to_wide(server);
+        cmdline += L" ";
+        cmdline += utf8_to_wide(endpoint);
+        std::cout << wide_to_utf8(cmdline) << std::endl;
+        PROCESS_INFORMATION ps = {0};
+        STARTUPINFOW si = {0};
+        WINBOOL b = CreateProcessW(
+            NULL,
+            (LPWSTR)cmdline.c_str(),
+            NULL,
+            NULL,
+            FALSE,
+            debug ? 0 : CREATE_NO_WINDOW,
+            NULL,
+            NULL,
+            &si,
+            &ps);
+        if (!b)
+        {
+          std::cout << "Could not start client." << std::endl;
+          return false;
+        }
+    }
+    bool open_server(const std::string &endpoint)
+    {
+        return this->context.open_server(endpoint);
+    }
+    void send_msg(const std::string &msg)
+    {
+        this->context.send_msg(msg);
+    }
+    std::string recv_msg()
+    {
+        return this->context.recv_msg();
     }
 };
 
