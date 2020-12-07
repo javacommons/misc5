@@ -12,8 +12,13 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     ZmqIPC ipc;
+#if 0x0
+    bool debug = false;
+#else
+    bool debug = true;
+#endif
     bool b = ipc.open_client(u8R"(C:\Users\javac\misc5\racket\build-server-Desktop_Qt_MinGW_w64_32bit_MSYS2-Debug\debug\server.exe)",
-                             true);
+                             debug);
     if(!b) return 1;
     json bgn = ipc.recv_json();
     if(bgn != "#begin")

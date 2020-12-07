@@ -3,6 +3,7 @@
 #include <thread>
 #include <chrono>
 #include "strutil.h"
+#include "vardecl.h"
 #include <windows.h>
 #include <tlhelp32.h>
 
@@ -148,6 +149,8 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
     std::wstring cmdline = utf8_to_wide(server);
     cmdline += L" ";
     cmdline += utf8_to_wide(endpoint);
+    cmdline += L" ";
+    cmdline += format(L"%i", (int)debug);
     std::cout << wide_to_utf8(cmdline) << std::endl;
     this->server_process = new ZmqProcess(cmdline, debug);
     //std::cout << "(a)" << std::endl;
@@ -164,6 +167,7 @@ bool ZmqIPC::open_server(const std::string &endpoint)
 {
     bool b = this->context.open_server(endpoint);
     std::thread *th = new std::thread(worker);
+    UNUSED_VARIABLE(th);
     return b;
 }
 
@@ -198,9 +202,10 @@ json ZmqIPC::recv_json()
 }
 
 extern "C" void __wgetmainargs(int*, wchar_t***, wchar_t***, int, int*);
-bool find_endpont_from_args(std::string &endpoint)
+bool find_endpont_from_args(std::string &endpoint, bool *debug)
 {
     endpoint = "";
+    if(debug) *debug = false;
     int argc, si = 0;
     wchar_t **argv, **env;
     __wgetmainargs(&argc, &argv, &env, 0, &si);
@@ -208,6 +213,10 @@ bool find_endpont_from_args(std::string &endpoint)
     std::wstring arg1 = argv[1];
     if(!starts_with(arg1, L"tcp://")) return false;
     endpoint = wide_to_utf8(arg1);
+    if(argc >= 3){
+        std::wstring arg2 = argv[2];
+        *debug = !!atoi(wide_to_utf8(arg2).c_str());
+    }
     return true;
 }
 

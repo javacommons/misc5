@@ -50,6 +50,6 @@ public:
     bool started();
 };
 
-bool find_endpont_from_args(std::string &endpoint);
+bool find_endpont_from_args(std::string &endpoint, bool *debug = nullptr);
 
 #endif //ZMQIPC_HPP
