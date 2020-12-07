@@ -7,6 +7,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += ..
 
 SOURCES += \
-        main.cpp
+        server.cpp
 
 QMAKE_LIBS += -lzmq
