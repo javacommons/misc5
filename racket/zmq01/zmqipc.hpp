@@ -57,7 +57,8 @@ public:
         json_api func = this->retrieve_json_api(api);
         if(!func)
         {
-            this->send_json(false);
+            req["output"] = false;
+            this->send_json(req);
             return false;
         }
         req["output"] = func(input);
