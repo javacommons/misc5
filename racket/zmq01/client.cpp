@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
             {"abc", format("testテスト%d", i+1)}
         };
         j["xyz"] = 123;
-        json j2 = ipc.call_api_with_json("dummy_api", j);
+        json j2 = ipc.call_json_api("dummy_api", j);
         cout << "return=" << utf8_to_ansi(j2.dump()) << endl;
     }
     return 0;

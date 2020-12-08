@@ -5,6 +5,14 @@
 
 using namespace std;
 
+json dummy_api(const json &input)
+{
+    json output = input;
+    output["out"] = 123.45;
+    return output;
+}
+
+
 void on_exit()
 {
     std::cout << "on exit" << std::endl;
@@ -31,8 +39,12 @@ int main(int argc, char *argv[])
 
     cout << "server(4)" << endl;
 
+    REGISTER_JSON_API(ipc, dummy_api);
+
     while(true)
     {
+        ipc.handle_json_api();
+#if 0x0
         json req = ipc.recv_json();
         cout << "request=" << utf8_to_ansi(req.dump()) << endl;
         json input = req["input"];
@@ -41,6 +53,7 @@ int main(int argc, char *argv[])
         json res = req;
         req["output"] = input;
         ipc.send_json(req);
+#endif
     }
     return 0;
 }

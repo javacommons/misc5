@@ -207,7 +207,7 @@ json ZmqIPC::recv_json()
     }
 }
 
-json ZmqIPC::call_api_with_json(const std::string &api, const json &input)
+json ZmqIPC::call_json_api(const std::string &api, const json &input)
 {
     json req = json::object();
     req["api"] = api;
