@@ -40,33 +40,11 @@ public:
     void send_json(const json &j);
     json recv_json();
     json call_json_api(const std::string &api, const json &input);
-    void register_json_api(const std::string &name, json_api func)
-    {
-        json_api_map[name] = func;
-    }
-    json_api retrieve_json_api(const std::string &name)
-    {
-        if(json_api_map.count(name)==0) return nullptr;
-        return json_api_map[name];
-    }
-    bool handle_json_api()
-    {
-        json req = this->recv_json();
-        std::string api = req["api"];
-        json input = req["input"];
-        json_api func = this->retrieve_json_api(api);
-        if(!func)
-        {
-            req["output"] = false;
-            this->send_json(req);
-            return false;
-        }
-        req["output"] = func(input);
-        this->send_json(req);
-        return true;
-    }
+    void register_json_api(const std::string &name, json_api func);
+    json_api retrieve_json_api(const std::string &name);
+    bool handle_json_api();
 };
-#define REGISTER_JSON_API(IPC, X) (IPC.register_json_api(#X, X))
+#define REGISTER_JSON_API(IPC, X) ((IPC).register_json_api(#X, X))
 
 class ZmqProcess
 {

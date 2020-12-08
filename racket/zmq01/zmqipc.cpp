@@ -217,6 +217,34 @@ json ZmqIPC::call_json_api(const std::string &api, const json &input)
     return res["output"];
 }
 
+void ZmqIPC::register_json_api(const std::string &name, ZmqIPC::json_api func)
+{
+    json_api_map[name] = func;
+}
+
+ZmqIPC::json_api ZmqIPC::retrieve_json_api(const std::string &name)
+{
+    if(json_api_map.count(name)==0) return nullptr;
+    return json_api_map[name];
+}
+
+bool ZmqIPC::handle_json_api()
+{
+    json req = this->recv_json();
+    std::string api = req["api"];
+    json input = req["input"];
+    json_api func = this->retrieve_json_api(api);
+    if(!func)
+    {
+        req["output"] = false;
+        this->send_json(req);
+        return false;
+    }
+    req["output"] = func(input);
+    this->send_json(req);
+    return true;
+}
+
 extern "C" void __wgetmainargs(int*, wchar_t***, wchar_t***, int, int*);
 bool find_endpont_from_args(std::string &endpoint, bool *debug)
 {

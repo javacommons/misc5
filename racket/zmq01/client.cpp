@@ -20,17 +20,17 @@ int main(int argc, char *argv[])
     bool b = ipc.open_client(u8R"("C:\Users\javac\misc5\racket\build-server-Desktop_Qt_MinGW_w64_32bit_MSYS2-Debug\debug\server.exe")",
                              debug);
     if(!b) return 1;
-    //for(int i=0; i<3; i++) {
-    std::vector<std::string> vec;
+
     json j = {
         {"abc", format("testテスト%d", 123)}
     };
     j["xyz"] = 123;
     json j2 = ipc.call_json_api("dummy_api", j);
     cout << "return=" << utf8_to_ansi(j2.dump()) << endl;
+
     json j3 = true;
     json j4 = ipc.call_json_api("no_api", j3);
     cout << "return2=" << utf8_to_ansi(j4.dump()) << endl;
-    //}
+
     return 0;
 }
