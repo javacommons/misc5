@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 
     cout << "server(4)" << endl;
 
-    ipc.send_json("#begin");
     while(true)
     {
         json req = ipc.recv_json();

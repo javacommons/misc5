@@ -160,12 +160,18 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
         this->server_process = nullptr;
         return false;
     }
+    std::string bgn = this->recv_msg();
+    if(bgn != "#begin")
+    {
+        return false;
+    }
     return true;
 }
 
 bool ZmqIPC::open_server(const std::string &endpoint)
 {
     bool b = this->context.open_server(endpoint);
+    if(b) this->send_msg("#begin");
     std::thread *th = new std::thread(worker);
     UNUSED_VARIABLE(th);
     return b;
