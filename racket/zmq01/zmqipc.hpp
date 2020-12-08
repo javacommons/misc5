@@ -37,6 +37,7 @@ public:
     std::string recv_msg();
     void send_json(const json &j);
     json recv_json();
+    json call_api_with_json(const std::string &api, const json &input);
 };
 
 class ZmqProcess

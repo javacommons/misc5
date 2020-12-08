@@ -35,12 +35,11 @@ int main(int argc, char *argv[])
     {
         json req = ipc.recv_json();
         cout << "request=" << utf8_to_ansi(req.dump()) << endl;
-        if(req == "#end")
-        {
-            cout << "#end found" << endl;
-            return 0;
-        }
-        req["return"] = 567.89;
+        json input = req["input"];
+        json output = input;
+        input["return"] = 567.89;
+        json res = req;
+        req["output"] = input;
         ipc.send_json(req);
     }
     return 0;
