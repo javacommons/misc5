@@ -3,11 +3,14 @@
 *.a
 *.bak
 *.cbproj.local
+*.class
 *.dll
 *.egg-info
 *.exe
 *.filters
 *.make
+*.o
+*.obj
 *.spec
 *.swp
 *.tgz
