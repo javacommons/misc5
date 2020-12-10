@@ -4,3 +4,5 @@
 ./inst-gcc.sh
 ./inst-qt.sh
 ./inst-libs.sh
+./inst-rust.sh
+
