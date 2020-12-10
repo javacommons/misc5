@@ -16,6 +16,6 @@ extern"C" void my_printer(const char *msg){
 // fn my_string() -> *const c_char;
 extern"C" const char *my_string(){
     TLS_VARIABLE_DECL std::string msg;
-    msg = "<hello>";
+    msg = "<helloハロー>";
     return msg.c_str();
 }
