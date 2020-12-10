@@ -41,6 +41,7 @@ gradlew.bat
 Makefile*
 obj
 release
+target
 tmp
 ui_*.h
 venv
