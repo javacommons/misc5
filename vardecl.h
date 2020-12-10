@@ -1,8 +1,6 @@
 ﻿#ifndef _TLSDECL_H_
 #define _TLSDECL_H_
 
-#include <windows.h>
-
 #if __cplusplus >= 201103L
 #define TLS_VARIABLE_DECL thread_local
 #else
