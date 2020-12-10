@@ -10,3 +10,4 @@ pacman -S --needed --noconfirm \
 	$PACKAGE_PREFIX-zeromq
 rm -rf $MINGW_PREFIX/include/nlohmann
 cp -rp nlohmann $MINGW_PREFIX/include/
+cp -p strconv.h  strconvQt.h  strutil.h  vardecl.h $MINGW_PREFIX/include/
