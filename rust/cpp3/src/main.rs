@@ -1,3 +1,6 @@
+extern crate rand;
+use rand::Rng;
+
 // https://doc.rust-lang.org/std/ffi/struct.CStr.html
 // https://moshg.github.io/rust-std-ja/std/ffi/struct.CString.html
 use std::ffi::CStr;
@@ -35,4 +38,6 @@ fn main() {
         );
     }
     println!("string: {}", my_string_safe());
+    let secret_number = rand::thread_rng().gen_range(1, 101);
+    println!("The secret number is: {}", secret_number);
 }
