@@ -12,4 +12,5 @@
 
 (callTwice add1)
 (setFunc add1)
+(collect-garbage 'major)
 (callTriple)
