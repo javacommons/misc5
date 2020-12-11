@@ -123,6 +123,10 @@ int main(void)
   //httplib::Client cli2("https://www.google.com");
   //httplib::SSLClient cli2("https://repo.msys2.org");
   httplib::SSLClient cli2("repo.msys2.org", 443);
+  cli2.set_default_headers({{"Accept-Encoding", "gzip, deflate"}});
+  cli2.set_keep_alive(true);
+  cli2.set_follow_location(true);
+  cli2.set_compress(true);
   res = cli2.Get("/");
   if (res)
   {
