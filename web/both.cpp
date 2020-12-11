@@ -1,4 +1,5 @@
-#define CPPHTTPLIB_ZLIB_SUPPORT
+//#define CPPHTTPLIB_ZLIB_SUPPORT
+//#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"
 #include <iostream>
 #include <thread>
@@ -73,7 +74,7 @@ int main(void)
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
 #endif
 
-  httplib::Client cli("127.0.0.1", 1234);
+  Client cli("127.0.0.1", 1234);
   cli.set_default_headers({{"Accept-Encoding", "gzip, deflate"}});
   cli.set_keep_alive(true);
   cli.set_follow_location(true);
@@ -108,13 +109,25 @@ int main(void)
   }
 
   Params params;
-  params.emplace("name", "john");
+  params.emplace("name", "john&tom");
   params.emplace("note", "coder");
   res = cli.Post("/content_receiver", params);
   if (res)
   {
     cout << res->status << endl;
-    //cout << res->get_header_value("Content-Type") << endl;
+    cout << res->get_header_value("Content-Type") << endl;
+    cout << res->body << endl;
+  }
+
+  cout << "cli2" << endl;
+  //httplib::Client cli2("https://www.google.com");
+  //httplib::SSLClient cli2("https://repo.msys2.org");
+  httplib::SSLClient cli2("repo.msys2.org", 443);
+  res = cli2.Get("/");
+  if (res)
+  {
+    cout << res->status << endl;
+    cout << res->get_header_value("Content-Type") << endl;
     cout << res->body << endl;
   }
 
