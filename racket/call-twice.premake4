@@ -1,0 +1,35 @@
+solution "Hello Premake"
+
+  configurations { "Release", "Debug" }
+  platforms { "native", "x64", "x32" }
+
+  project "call-twice"
+    -- https://github.com/premake/premake-core/wiki/kind
+    kind "SharedLib"
+    language "C++"
+    files {
+      "call-twice.cpp"
+    }
+    buildoptions { "-std=c++17" }
+    includedirs {
+      -- ".."
+    }
+    libdirs {
+      -- ".."
+    }
+    links {
+      "opengl32", "glu32"
+    }
+    linkoptions { "-static" }
+
+    configuration "Debug"
+      defines { "DEBUG" }
+      flags { "Symbols" }
+    configuration "Release"
+      defines { "NDEBUG" }
+      flags { "Optimize" }
+
+    configuration "x32"
+      targetsuffix "-32bit"
+    configuration "x64"
+      targetsuffix "-64bit"
