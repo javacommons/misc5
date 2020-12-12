@@ -24,6 +24,10 @@ void worker()
     res.set_content(numbers, "text/plain");
   });
 
+  svr.Post("/singlebody", [&](const auto &req, auto &res) {
+    cout << "/singlebody " << req.body << " " << req.get_header_value("Content-Type") << endl;
+  });
+
   svr.Post("/multipart", [&](const auto &req, auto &res) {
     cout << "/multipart" << endl;
     auto size = req.files.size();
@@ -108,6 +112,8 @@ int main(void)
       cout << res->body << endl;
     }
   }
+
+  res = cli.Post("/singlebody", "abc", "text/plain");
 
   httplib::MultipartFormDataItems items = {
       {"text1", "text default", "", ""},
