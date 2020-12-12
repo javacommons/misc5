@@ -24,12 +24,12 @@ void worker()
     res.set_content(numbers, "text/plain");
   });
 
-  svr.Post("/singlebody", [&](const auto &req, auto &res) {
-    cout << "/singlebody " << req.body << " " << req.get_header_value("Content-Type") << endl;
+  svr.Post("/singlebody", [&](const httplib::Request &req, httplib::Response &res) {
+    cout << "/singlebody " << req.is_multipart_form_data() << " " << req.body << " " << req.get_header_value("Content-Type") << endl;
   });
 
-  svr.Post("/multipart", [&](const auto &req, auto &res) {
-    cout << "/multipart" << endl;
+  svr.Post("/multipart", [&](const httplib::Request &req, httplib::Response &res) {
+    cout << "/multipart " << req.is_multipart_form_data() << endl;
     auto size = req.files.size();
     auto ret = req.has_file("name1");
     const auto &file = req.get_file_value("name1");
