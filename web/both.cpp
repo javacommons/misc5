@@ -11,7 +11,7 @@ using namespace std;
 
 void worker()
 {
-  //std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
   httplib::Server svr;
   svr.set_tcp_nodelay(true);
 
