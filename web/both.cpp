@@ -6,20 +6,20 @@
 #include <chrono>
 #include "strutil.h"
 
-using namespace httplib;
+//using namespace httplib;
 using namespace std;
 
 void worker()
 {
   //std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  Server svr;
+  httplib::Server svr;
   svr.set_tcp_nodelay(true);
 
-  svr.Get("/hi", [](const Request &req, Response &res) {
+  svr.Get("/hi", [](const httplib::Request &req, httplib::Response &res) {
     res.set_content("Hello World!2", "text/plain");
   });
 
-  svr.Get(R"(/numbers/(\d+))", [&](const Request &req, Response &res) {
+  svr.Get(R"(/numbers/(\d+))", [&](const httplib::Request &req, httplib::Response &res) {
     auto numbers = req.matches[1];
     res.set_content(numbers, "text/plain");
   });
@@ -35,14 +35,14 @@ void worker()
   });
 
   svr.Post("/content_receiver",
-           [&](const Request &req, Response &res, const ContentReader &content_reader) {
+           [&](const httplib::Request &req, httplib::Response &res, const httplib::ContentReader &content_reader) {
              cout << "handle: /content_receiver" << endl;
              if (req.is_multipart_form_data())
              {
                cout << "if (req.is_multipart_form_data())" << endl;
-               MultipartFormDataItems files;
+               httplib::MultipartFormDataItems files;
                content_reader(
-                   [&](const MultipartFormData &file) {
+                   [&](const httplib::MultipartFormData &file) {
                      files.push_back(file);
                      return true;
                    },
@@ -65,7 +65,7 @@ void worker()
            });
 
   svr.Post("/post",
-           [&](const Request &req, Response &res, const ContentReader &content_reader) {
+           [&](const httplib::Request &req, httplib::Response &res, const httplib::ContentReader &content_reader) {
              cout << "handle: /post" << endl;
              if (req.has_param("name"))
              {
@@ -84,7 +84,7 @@ int main(void)
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
 #endif
 
-  Client cli("127.0.0.1", 1234);
+  httplib::Client cli("127.0.0.1", 1234);
   cli.set_default_headers({{"Accept-Encoding", "gzip, deflate"}});
   cli.set_keep_alive(true);
   cli.set_follow_location(true);
@@ -127,7 +127,7 @@ int main(void)
     cout << res->body << endl;
   }
 
-  Params params;
+  httplib::Params params;
   params.emplace("name", "john&tom");
   params.emplace("note", "coder");
   res = cli.Post("/content_receiver", params);
