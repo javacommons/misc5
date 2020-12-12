@@ -24,6 +24,16 @@ void worker()
     res.set_content(numbers, "text/plain");
   });
 
+  svr.Post("/multipart", [&](const auto &req, auto &res) {
+    cout << "/multipart" << endl;
+    auto size = req.files.size();
+    auto ret = req.has_file("name1");
+    const auto &file = req.get_file_value("name1");
+    cout << file.filename << endl;
+    cout << file.content_type << endl;
+    cout << file.content << endl;
+  });
+
   svr.Post("/content_receiver",
            [&](const Request &req, Response &res, const ContentReader &content_reader) {
              cout << "handle: /content_receiver" << endl;
@@ -98,6 +108,15 @@ int main(void)
       cout << res->body << endl;
     }
   }
+
+  httplib::MultipartFormDataItems items = {
+      {"text1", "text default", "", ""},
+      {"text2", "aωb", "", ""},
+      {"name1", "h\ne\n\nl\nl\no\n", "hello.txt", "text/plain"},
+      {"file2", "{\n  \"world\", true\n}\n", "world.json", "application/json"},
+      {"file3", "", "", "application/octet-stream"},
+  };
+  res = cli.Post("/multipart", items);
 
   cout << "/content_receiver" << endl;
   res = cli.Post("/content_receiver", "abc", "text/plainXXX");
