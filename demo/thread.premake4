@@ -1,0 +1,39 @@
+solution "Hello Premake"
+
+  configurations { "Release", "Debug" }
+  platforms { "native", "x64", "x32" }
+
+  project "thread"
+    -- https://github.com/premake/premake-core/wiki/kind
+    kind "ConsoleApp"
+    language "C++"
+    files {
+      "thread.cpp"
+    }
+    buildoptions { "-std=c++17" }
+    defines {
+      -- "CPPHTTPLIB_ZLIB_SUPPORT",
+      -- "CPPHTTPLIB_OPENSSL_SUPPORT"
+    }
+    includedirs {
+      -- ".."
+    }
+    libdirs {
+      -- ".."
+    }
+    links {
+      "ssl", "crypto", "crypt32", "ws2_32", "z"
+    }
+    linkoptions { "-static" }
+
+    configuration "Debug"
+      defines { "DEBUG" }
+      flags { "Symbols" }
+    configuration "Release"
+      defines { "NDEBUG" }
+      flags { "Optimize" }
+
+    configuration "x32"
+      targetsuffix "-32bit"
+    configuration "x64"
+      targetsuffix "-64bit"
