@@ -29,7 +29,7 @@ void worker()
   });
 
   svr.Post("/multipart", [&](const httplib::Request &req, httplib::Response &res) {
-    cout << "/multipart " << req.is_multipart_form_data() << endl;
+    cout << "/multipart " << req.is_multipart_form_data() << " " << req.get_header_value("Content-Type") << endl;
     auto size = req.files.size();
     auto ret = req.has_file("name1");
     const auto &file = req.get_file_value("name1");
