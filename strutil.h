@@ -57,25 +57,4 @@ static inline std::wstring replace_all(std::wstring &replacedStr, std::wstring f
     return replacedStr;
 }
 
-static inline std::wstring format(const wchar_t *format, ...) // JavaCommons
-{
-    va_list args;
-    va_start(args, format);
-    int len = _vsnwprintf(nullptr, 0, format, args);
-    std::vector<wchar_t> buffer(len + 1);
-    _vsnwprintf(&buffer[0], len + 1, format, args);
-    va_end(args);
-    return &buffer[0];
-}
-static inline std::string format(const char *format, ...) // JavaCommons
-{
-    va_list args;
-    va_start(args, format);
-    int len = _vsnprintf(nullptr, 0, format, args);
-    std::vector<char> buffer(len + 1);
-    _vsnprintf(&buffer[0], len + 1, format, args);
-    va_end(args);
-    return &buffer[0];
-}
-
 #endif //STRUTIL_H
