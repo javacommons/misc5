@@ -4,12 +4,14 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <atomic>
 #include "strutil.h"
 
 //using namespace httplib;
 using namespace std;
 
-int port = 0;
+//int port = 0;
+std::atomic<int> port(0);
 
 void worker()
 {
@@ -80,6 +82,7 @@ void worker()
              }
            });
   //svr.listen("127.0.0.1", 1234);
+  //port.store(svr.bind_to_any_port("127.0.0.1"));
   port = svr.bind_to_any_port("127.0.0.1");
   svr.listen_after_bind();
 }
@@ -92,6 +95,7 @@ int main(void)
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
 #endif
 
+  //while (port.load() == 0)
   while (port == 0)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
