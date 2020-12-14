@@ -9,6 +9,8 @@
 //using namespace httplib;
 using namespace std;
 
+int port = 0;
+
 void worker()
 {
   std::this_thread::sleep_for(std::chrono::milliseconds(2000));
@@ -77,7 +79,9 @@ void worker()
                cout << "handle: /post name=" << val << endl;
              }
            });
-  svr.listen("127.0.0.1", 1234);
+  //svr.listen("127.0.0.1", 1234);
+  port = svr.bind_to_any_port("127.0.0.1");
+  svr.listen_after_bind();
 }
 
 int main(void)
@@ -88,7 +92,14 @@ int main(void)
   std::this_thread::sleep_for(std::chrono::milliseconds(50));
 #endif
 
-  httplib::Client cli("127.0.0.1", 1234);
+  while (port == 0)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+
+  cout << "port=" << port << endl;
+
+  httplib::Client cli("127.0.0.1", port);
   cli.set_default_headers({{"Accept-Encoding", "gzip, deflate"}});
   cli.set_keep_alive(true);
   cli.set_follow_location(true);
