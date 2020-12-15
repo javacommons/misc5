@@ -23,4 +23,4 @@ svn export https://github.com/yhirose/cpp-httplib/trunk/httplib.h
 svn export https://github.com/yhirose/cpp-httplib/trunk/split.py
 python3 split.py
 cp -p httplib.h $MINGW_PREFIX/include/
-cp -p strconv.h strconv2.h strconvQt.h  strutil.h  vardecl.h $MINGW_PREFIX/include/
+cp -p format.h strconv.h strconv2.h strconvQt.h  strutil.h  vardecl.h $MINGW_PREFIX/include/
