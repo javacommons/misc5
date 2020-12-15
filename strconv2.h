@@ -23,7 +23,7 @@
 #include <fmt/printf.h>
 #include <fmt/ranges.h>
 
-namespace strconv2
+namespace strconv
 {
 
 #if __cplusplus >= 201103L
@@ -163,6 +163,47 @@ namespace strconv2
     std::cout << ansi << std::flush;
   }
 
-} // namespace strconv2
+#ifdef __cpp_char8_t
+  static inline std::string utf8(const std::u8string &s)
+  {
+    std::string result(s.begin(), s.end());
+    return result;
+  }
+  static inline std::string utf8t_to_utf8(const std::u8string &s)
+  {
+    std::string result(s.begin(), s.end());
+    return result;
+  }
+  static inline std::u8string utf8_to_utf8t(const std::string &s)
+  {
+    std::u8string result(s.begin(), s.end());
+    return result;
+  }
+  static inline std::wstring utf8t_to_wide(const std::u8string &s)
+  {
+    int in_length = (int)s.length();
+    int out_length = MultiByteToWideChar(CP_UTF8, 0, (const char *)s.c_str(), in_length, 0, 0);
+    std::wstring result(out_length, L'\0');
+    if (out_length)
+      MultiByteToWideChar(CP_UTF8, 0, (const char *)s.c_str(), in_length, &result[0], out_length);
+    return result;
+  }
+  static inline std::u8string wide_to_utf8t(const std::wstring &s)
+  {
+    int in_length = (int)s.length();
+    int out_length = WideCharToMultiByte(CP_UTF8, 0, s.c_str(), in_length, 0, 0, 0, 0);
+    std::u8string result(out_length, '\0');
+    if (out_length)
+      WideCharToMultiByte(CP_UTF8, 0, s.c_str(), in_length, (char *)&result[0], out_length, 0, 0);
+    return result;
+  }
+#else
+  static inline std::string utf8(const std::string &s)
+  {
+    return s;
+  }
+#endif
+
+} // namespace strconv
 
 #endif /* STRCONV2_H */
