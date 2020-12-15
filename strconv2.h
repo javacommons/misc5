@@ -4,6 +4,7 @@
 #define STRCONV2_H
 
 #include <windows.h>
+#include <iostream>
 #include <string>
 #include <vector>
 // https://github.com/fmtlib/fmt
@@ -132,7 +133,6 @@ namespace strconv2
   {
     return fmt::format(format_str, args...);
   }
-
   template <typename... Args>
   static inline std::wstring format(const std::wstring &format_str, Args &&... args)
   {
@@ -144,11 +144,23 @@ namespace strconv2
   {
     return utf8_to_ansi(fmt::format(format_str, args...));
   }
-
   template <typename... Args>
   static inline std::string formatA(const std::wstring &format_str, Args &&... args)
   {
     return wide_to_ansi(fmt::format(format_str, args...));
+  }
+
+  template <typename... Args>
+  static inline void printA(const std::string &format_str, Args &&... args)
+  {
+    std::string ansi = formatA(format_str, args...);
+    std::cout << ansi << std::flush;
+  }
+  template <typename... Args>
+  static inline void printA(const std::wstring &format_str, Args &&... args)
+  {
+    std::string ansi = formatA(format_str, args...);
+    std::cout << ansi << std::flush;
   }
 
 } // namespace strconv2
