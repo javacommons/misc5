@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <iostream>
 #include <variant>
 #include <string>
@@ -6,8 +7,8 @@
 
 using atom = std::variant<int, char, std::string, void *>;
 using list = std::vector<atom>;
-using dict = std::map<std::string, atom>;
-using variable = std::variant<int, char, std::string, void *, list, dict>;
+using dictionary = std::map<std::string, atom>;
+using variable = std::variant<int, char, std::string, void *, list, dictionary>;
 
 struct xyz
 {
@@ -40,6 +41,7 @@ int main()
 
     xyz x;
     //v = (void *)"Goodbye";
+    printf("&x=%p\n", &x);
     v = &x;
     if (std::holds_alternative<void *>(v))
     {
