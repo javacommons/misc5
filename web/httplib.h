@@ -1025,7 +1025,7 @@ protected:
 
 private:
   socket_t create_client_socket(Error &error) const;
-  bool read_response_line(Stream &strm, Response &res);
+  bool read_response_line(Stream &strm, const Request &req, Response &res);
   bool write_request(Stream &strm, const Request &req, bool close_connection,
                      Error &error);
   bool redirect(const Request &req, Response &res, Error &error);
