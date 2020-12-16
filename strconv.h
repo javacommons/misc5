@@ -1,5 +1,5 @@
-/* strconv.h v1.1.1                */
-/* Last Modified: 2020/12/15 07:08 */
+/* strconv.h v1.2.0                */
+/* Last Modified: 2020/12/16 18:33 */
 #ifndef STRCONV_H
 #define STRCONV_H
 
@@ -111,47 +111,60 @@ static inline std::string utf8_to_sjis(const std::string &s)
 
 #pragma warning(push)
 #pragma warning(disable:4996)
-static inline std::wstring format(const wchar_t *format, ...)
+static inline std::wstring format(const std::wstring &format, ...)
 {
   va_list args;
   va_start(args, format);
-  int len = _vsnwprintf(nullptr, 0, format, args);
+  int len = _vsnwprintf(nullptr, 0, format.c_str(), args);
   std::vector<wchar_t> buffer(len + 1);
-  _vsnwprintf(&buffer[0], len + 1, format, args);
+  _vsnwprintf(&buffer[0], len + 1, format.c_str(), args);
   va_end(args);
   return &buffer[0];
 }
-static inline std::string format(const char *format, ...)
+static inline std::string format(const std::string &format, ...)
 {
   va_list args;
   va_start(args, format);
-  int len = _vsnprintf(nullptr, 0, format, args);
+  int len = _vsnprintf(nullptr, 0, format.c_str(), args);
   std::vector<char> buffer(len + 1);
-  _vsnprintf(&buffer[0], len + 1, format, args);
+  _vsnprintf(&buffer[0], len + 1, format.c_str(), args);
   va_end(args);
   return &buffer[0];
 }
 
-static inline std::string formatA(const wchar_t *format, ...)
+static inline std::string formatA(const std::wstring &format, ...)
 {
   va_list args;
   va_start(args, format);
-  int len = _vsnwprintf(nullptr, 0, format, args);
+  int len = _vsnwprintf(nullptr, 0, format.c_str(), args);
   std::vector<wchar_t> buffer(len + 1);
-  _vsnwprintf(&buffer[0], len + 1, format, args);
+  _vsnwprintf(&buffer[0], len + 1, format.c_str(), args);
   va_end(args);
   return wide_to_ansi(&buffer[0]);
 }
-static inline std::string formatA(const char *format, ...)
+static inline std::string formatA(const std::string &format, ...)
 {
   va_list args;
   va_start(args, format);
-  int len = _vsnprintf(nullptr, 0, format, args);
+  int len = _vsnprintf(nullptr, 0, format.c_str(), args);
   std::vector<char> buffer(len + 1);
-  _vsnprintf(&buffer[0], len + 1, format, args);
+  _vsnprintf(&buffer[0], len + 1, format.c_str(), args);
   va_end(args);
   return utf8_to_ansi(&buffer[0]);
 }
 #pragma warning(pop)
+
+#ifdef __cpp_char8_t
+  static inline std::string u8str(const std::u8string &s)
+  {
+    std::string result(s.begin(), s.end());
+    return result;
+  }
+#else
+  static inline std::string u8str(const std::string &s)
+  {
+    return s;
+  }
+#endif
 
 #endif /* STRCONV_H */
