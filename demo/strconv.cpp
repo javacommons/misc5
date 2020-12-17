@@ -2,12 +2,6 @@
 #include <iostream>
 #include <string>
 
-#define U8(X) ((const char *)u8##X)
-#define U8X(X) ((const char *)u8## #X)
-
-#define WIDE(X) L##X
-#define WIDEX(X) L## #X
-
 int main(void)
 {
     std::string nameUtf8 = U8("太郎");
@@ -17,6 +11,6 @@ int main(void)
     std::wstring nameWide = L"花子";
     age = 23;
     std::cout << wide_to_ansi(format(WIDE("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age)) << std::endl;
-    std::cout << formatA(WIDEX("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age) << std::endl;
+    std::cout << formatA(WIDE("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age) << std::endl;
     return 0;
 }
