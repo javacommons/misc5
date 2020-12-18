@@ -1,6 +1,7 @@
 #include "strconvFmt.h"
 #include <iostream>
 #include <string>
+#include<fstream>
 
 using namespace std;
 
@@ -26,6 +27,13 @@ int main(void)
     cout << output(U8("[output] ハロー、私の名前は {}。 年は {} だ!"), nameUtf8, v) << endl;
     outputA(cout, WIDE("[outputA] ハロー、私の名前は {}。 年は {} だ!\n"), nameWide, age);
     outputA(cout, U8("[outputA] ハロー、私の名前は {}。 年は {} だ!\n"), nameUtf8, v);
+
+    ofstream outputfile("test.txt");
+    output(outputfile, U8("[output] ハロー、私の名前は {}。 年は {} だ!\n"), nameUtf8, v);
+    outputA(outputfile, U8("[outputA] ハロー、私の名前は {}。 年は {} だ!\n"), nameUtf8, v);
+    format(outputfile, U8("[format] ハロー、私の名前は %s。 年は %d だ!\n"), nameUtf8.c_str(), age);
+    format(outputfile, WIDE("[format] ハロー、私の名前は %s。 年は %d だ!\n"), nameWide.c_str(), age);
+    outputfile.close();
 
     return 0;
 }
