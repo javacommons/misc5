@@ -1,4 +1,4 @@
-solution "Hello Premake"
+solution "Makefile"
 
   configurations { "Release", "Debug" }
   platforms { "native", "x64", "x32" }
@@ -22,7 +22,7 @@ solution "Hello Premake"
       -- ".."
     }
     links {
-      "ssl", "crypto", "crypt32", "ws2_32", "z"
+      -- "ssl", "crypto", "crypt32", "ws2_32", "z"
     }
     linkoptions { "-static" }
 

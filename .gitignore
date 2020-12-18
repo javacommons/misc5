@@ -1,5 +1,3 @@
-\#*\#
-\.\#*
 *.a
 *.bak
 *.cbproj.local
@@ -8,15 +6,22 @@
 *.egg-info
 *.exe
 *.filters
+*.htm
+*.idb
+*.ilk
 *.make
 *.o
 *.obj
+*.pdb
+*.sln
 *.spec
 *.swp
 *.tgz
 *.tmp
 *.user
 *.user.*
+*.vcproj
+*.vcxproj
 *_plugin_import.cpp
 .classpath
 .gradle
@@ -28,6 +33,8 @@
 .vscode
 __history
 __pycache__
+\#*\#
+\.\#*
 bin
 build
 build-*
