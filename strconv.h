@@ -1,11 +1,12 @@
 /* strconv.h v1.3.0                */
-/* Last Modified: 2020/12/18 11:21 */
+/* Last Modified: 2020/12/18 12:09 */
 #ifndef STRCONV_H
 #define STRCONV_H
 
 #include <windows.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #if __cplusplus >= 201103L
 static inline std::wstring cp_to_wide(const std::string &s, UINT codepage)
@@ -132,6 +133,27 @@ static inline std::string format(const char *format, ...)
   return &buffer[0];
 }
 
+static inline void format(std::wostream& ostrm, const wchar_t *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int len = _vsnwprintf(nullptr, 0, format, args);
+  std::vector<wchar_t> buffer(len + 1);
+  _vsnwprintf(&buffer[0], len + 1, format, args);
+  va_end(args);
+  ostrm << &buffer[0] << std::flush;
+}
+static inline void format(std::ostream& ostrm, const char *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int len = _vsnprintf(nullptr, 0, format, args);
+  std::vector<char> buffer(len + 1);
+  _vsnprintf(&buffer[0], len + 1, format, args);
+  va_end(args);
+  ostrm << &buffer[0] << std::flush;
+}
+
 static inline std::string formatA(const wchar_t *format, ...)
 {
   va_list args;
@@ -152,12 +174,34 @@ static inline std::string formatA(const char *format, ...)
   va_end(args);
   return utf8_to_ansi(&buffer[0]);
 }
+
+static inline void formatA(std::ostream& ostrm, const wchar_t *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int len = _vsnwprintf(nullptr, 0, format, args);
+  std::vector<wchar_t> buffer(len + 1);
+  _vsnwprintf(&buffer[0], len + 1, format, args);
+  va_end(args);
+  ostrm << wide_to_ansi(&buffer[0]) << std::flush;
+}
+static inline void formatA(std::ostream& ostrm, const char *format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  int len = _vsnprintf(nullptr, 0, format, args);
+  std::vector<char> buffer(len + 1);
+  _vsnprintf(&buffer[0], len + 1, format, args);
+  va_end(args);
+  ostrm << utf8_to_ansi(&buffer[0]) << std::flush;
+}
 #pragma warning(pop)
 
 #define U8(X) ((const char *)u8##X)
 #define WIDE(X) L##X
 
 #ifdef STRCONV_FMTLIB
+// https://github.com/fmtlib/fmt (A modern formatting library)
 #include <fmt/args.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
@@ -182,6 +226,17 @@ static inline std::string output(const std::string &format_str, Args &&... args)
 }
 
 template <typename... Args>
+static inline void output(std::ostream& ostrm, const std::wstring &format_str, Args &&... args)
+{
+  ostrm << fmt::format(format_str, args...) << std::flush;
+}
+template <typename... Args>
+static inline void output(std::ostream& ostrm, const std::string &format_str, Args &&... args)
+{
+  ostrm << fmt::format(format_str, args...) << std::flush;
+}
+
+template <typename... Args>
 static inline std::string outputA(const std::wstring &format_str, Args &&... args)
 {
   return wide_to_ansi(fmt::format(format_str, args...));
@@ -190,6 +245,17 @@ template <typename... Args>
 static inline std::string outputA(const std::string &format_str, Args &&... args)
 {
   return utf8_to_ansi(fmt::format(format_str, args...));
+}
+
+template <typename... Args>
+static inline void outputA(std::ostream& ostrm, const std::wstring &format_str, Args &&... args)
+{
+  ostrm << wide_to_ansi(fmt::format(format_str, args...)) << std::flush;
+}
+template <typename... Args>
+static inline void outputA(std::ostream& ostrm, const std::string &format_str, Args &&... args)
+{
+  ostrm << utf8_to_ansi(fmt::format(format_str, args...)) << std::flush;
 }
 #endif /* STRCONV_FMTLIB */
 
