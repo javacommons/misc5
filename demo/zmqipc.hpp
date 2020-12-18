@@ -22,6 +22,7 @@ public:
     bool open_server(const std::string &endpoint);
     void send_msg(const std::string &msg);
     std::string recv_msg();
+    void close();
 };
 
 class ZmqIPC
