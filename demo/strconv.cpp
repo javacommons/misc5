@@ -1,6 +1,10 @@
+#define STRCONV_FMTLIB
+#define FMT_HEADER_ONLY
 #include "strconv.h"
 #include <iostream>
 #include <string>
+
+using namespace std;
 
 int main(void)
 {
@@ -12,5 +16,9 @@ int main(void)
     age = 23;
     std::cout << wide_to_ansi(format(WIDE("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age)) << std::endl;
     std::cout << formatA(WIDE("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age) << std::endl;
+
+    cout << outputA(WIDE("[outputA] ハロー、私の名前は {}。 年は {} だ!"), nameWide, age) << endl;
+    cout << outputA(U8("[outputA] ハロー、私の名前は {}。 年は {} だ!"), nameUtf8, age) << endl;
+
     return 0;
 }

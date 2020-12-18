@@ -16,7 +16,7 @@ solution "Hello Premake"
       -- "CPPHTTPLIB_OPENSSL_SUPPORT"
     }
     includedirs {
-      -- ".."
+      ".."
     }
     libdirs {
       -- ".."

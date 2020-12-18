@@ -1,5 +1,5 @@
-/* strconv.h v1.2.0                */
-/* Last Modified: 2020/12/18 10:00 */
+/* strconv.h v1.3.0                */
+/* Last Modified: 2020/12/18 11:21 */
 #ifndef STRCONV_H
 #define STRCONV_H
 
@@ -110,7 +110,7 @@ static inline std::string utf8_to_sjis(const std::string &s)
 }
 
 #pragma warning(push)
-#pragma warning(disable:4996)
+#pragma warning(disable : 4996)
 static inline std::wstring format(const wchar_t *format, ...)
 {
   va_list args;
@@ -156,5 +156,41 @@ static inline std::string formatA(const char *format, ...)
 
 #define U8(X) ((const char *)u8##X)
 #define WIDE(X) L##X
+
+#ifdef STRCONV_FMTLIB
+#include <fmt/args.h>
+#include <fmt/chrono.h>
+#include <fmt/color.h>
+#include <fmt/compile.h>
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/format-inl.h>
+#include <fmt/locale.h>
+#include <fmt/os.h>
+#include <fmt/ostream.h>
+#include <fmt/printf.h>
+#include <fmt/ranges.h>
+template <typename... Args>
+static inline std::wstring output(const std::wstring &format_str, Args &&... args)
+{
+  return fmt::format(format_str, args...);
+}
+template <typename... Args>
+static inline std::string output(const std::string &format_str, Args &&... args)
+{
+  return fmt::format(format_str, args...);
+}
+
+template <typename... Args>
+static inline std::string outputA(const std::wstring &format_str, Args &&... args)
+{
+  return wide_to_ansi(fmt::format(format_str, args...));
+}
+template <typename... Args>
+static inline std::string outputA(const std::string &format_str, Args &&... args)
+{
+  return utf8_to_ansi(fmt::format(format_str, args...));
+}
+#endif /* STRCONV_FMTLIB */
 
 #endif /* STRCONV_H */
