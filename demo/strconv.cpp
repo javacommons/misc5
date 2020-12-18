@@ -18,7 +18,7 @@ int main(void)
     age = 23;
     std::cout << wide_to_ansi(format(WIDE("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age)) << std::endl;
     std::cout << formatA(WIDE("ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age) << std::endl;
-    format(wcout, WIDE("[wcout] ハロー、私の名前は %s。 年は %d だ!\n"), nameWide.c_str(), age);
+    format(cout, WIDE("[wcout] ハロー、私の名前は %s。 年は %d だ!\n"), nameWide.c_str(), age);
 
     std::vector<int> v = {1, 2, 3};
     cout << outputA(WIDE("[outputA] ハロー、私の名前は {}。 年は {} だ!"), nameWide, age) << endl;
