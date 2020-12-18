@@ -1,24 +1,22 @@
 solution "Makefile"
 
   platforms { "native", "x32", "x64" }
-    configuration "x32"
-      targetsuffix "-32bit"
-    configuration "x64"
-      targetsuffix "-64bit"
-
   configurations { "Release", "Debug" }
-    configuration "Release"
-      defines { "NDEBUG" }
-      flags { "Optimize" }
-    configuration "Debug"
-      defines { "DEBUG" }
-      flags { "Symbols" }
 
+
+  project "server"
+    -- https://github.com/premake/premake-core/wiki/kind
+    kind "ConsoleApp"
+    language "C++"
+    files {
+      "server.cpp", "zmqipc.cpp"
+    }
     buildoptions { "-std=c++20" }
     linkoptions  { "-static" }
     defines {
-      -- "CPPHTTPLIB_ZLIB_SUPPORT",
-      -- "CPPHTTPLIB_OPENSSL_SUPPORT"
+      "ZMQ_STATIC",
+      "CPPHTTPLIB_ZLIB_SUPPORT",
+      "CPPHTTPLIB_OPENSSL_SUPPORT"
     }
     includedirs {
       ".."
@@ -27,21 +25,49 @@ solution "Makefile"
       -- ".."
     }
     links {
-      -- "ssl", "crypto", "crypt32", "ws2_32", "z"
+      "zmq", "ssl", "crypto", "crypt32", "ws2_32", "z", "sodium", "iphlpapi"
     }
-
-  project "server"
-    -- https://github.com/premake/premake-core/wiki/kind
-    kind "ConsoleApp"
-    language "C++"
-    files {
-      "strconv.cpp"
-    }
+    configuration "x32"
+      targetsuffix "-32bit"
+    configuration "x64"
+      targetsuffix "-64bit"
+    configuration "Release"
+      defines { "NDEBUG" }
+      flags { "Optimize" }
+    configuration "Debug"
+      defines { "DEBUG" }
+      flags { "Symbols" }
 
   project "client"
     -- https://github.com/premake/premake-core/wiki/kind
     kind "ConsoleApp"
     language "C++"
     files {
-      "strconv.cpp"
+      "client.cpp", "zmqipc.cpp"
     }
+    buildoptions { "-std=c++20" }
+    linkoptions  { "-static" }
+    defines {
+      "ZMQ_STATIC",
+      "CPPHTTPLIB_ZLIB_SUPPORT",
+      "CPPHTTPLIB_OPENSSL_SUPPORT"
+    }
+    includedirs {
+      ".."
+    }
+    libdirs {
+      -- ".."
+    }
+    links {
+      "zmq", "ssl", "crypto", "crypt32", "ws2_32", "z", "sodium", "iphlpapi"
+    }
+    configuration "x32"
+      targetsuffix "-32bit"
+    configuration "x64"
+      targetsuffix "-64bit"
+    configuration "Release"
+      defines { "NDEBUG" }
+      flags { "Optimize" }
+    configuration "Debug"
+      defines { "DEBUG" }
+      flags { "Symbols" }
