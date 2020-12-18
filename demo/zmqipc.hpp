@@ -6,6 +6,7 @@
 #include <windows.h>
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
+#include "httplib.h"
 
 #include "strconv.h"
 
@@ -26,7 +27,9 @@ public:
 class ZmqIPC
 {
     ZmqContext context;
-    class ZmqProcess *server_process = nullptr;
+    ZmqProcess *server_process = nullptr;
+    httplib::Server *http_server = nullptr;
+    httplib::Client *http_client = nullptr;
     static void worker();
     typedef json (*json_api)(const json &input);
     std::map<std::string, json_api> json_api_map;

@@ -12,7 +12,6 @@ json dummy_api(const json &input)
     return output;
 }
 
-
 void on_exit()
 {
     std::cout << "on exit" << std::endl;
@@ -29,21 +28,25 @@ int main(int argc, char *argv[])
 
     std::string endpoint;
     bool debug;
-    if(!find_endpont_from_args(endpoint, &debug)) return 1;
-    if(debug) std::atexit(on_exit);
+    if (!find_endpont_from_args(endpoint, &debug))
+        return 1;
+    if (debug)
+        std::atexit(on_exit);
 
     cout << "server(3)" << debug << endl;
 
     ZmqIPC ipc;
-    if(!ipc.open_server(endpoint)) return 1;
+    REGISTER_JSON_API(ipc, dummy_api);
+    if (!ipc.open_server(endpoint))
+        return 1;
 
     cout << "server(4)" << endl;
 
-    REGISTER_JSON_API(ipc, dummy_api);
-
-    while(true)
+#if 0x0
+    while (true)
     {
         ipc.handle_json_api();
     }
+#endif
     return 0;
 }
