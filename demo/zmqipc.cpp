@@ -201,8 +201,7 @@ bool ZmqIPC::open_server(const std::string &endpoint)
                 output = func(input);
             }
             formatA(std::cout, "j[output]=%s\n", j["output"].dump().c_str());
-            //this->send_json(req);
-            res.set_content(output.dump(), "text/plain");
+            res.set_content(output.dump(), "application/json; charset=utf-8");
         });
         int port = this->http_server->bind_to_any_port("127.0.0.1");
         formatA(std::cout, "open_server(): port=%d\n", port);
@@ -252,7 +251,7 @@ json ZmqIPC::call_json_api(const std::string &api, const json &input)
     json req = json::object();
     req["api"] = api;
     req["input"] = input.dump();
-    auto res = this->http_client->Post("/test", req.dump(), "text/plain");
+    auto res = this->http_client->Post("/test", req.dump(), "application/json; charset=utf-8");
     formatA(std::cout, "call_json_api(2)\n");
     if (res)
     {
