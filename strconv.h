@@ -1,5 +1,5 @@
-/* strconv.h v1.1.2                */
-/* Last Modified: 2020/12/17 19:24 */
+/* strconv.h v1.2.0                */
+/* Last Modified: 2020/12/18 10:00 */
 #ifndef STRCONV_H
 #define STRCONV_H
 
