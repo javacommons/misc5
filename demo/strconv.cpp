@@ -1,6 +1,4 @@
-#define STRCONV_FMTLIB
-#define FMT_HEADER_ONLY
-#include "strconv.h"
+#include "strconvFmt.h"
 #include <iostream>
 #include <string>
 
