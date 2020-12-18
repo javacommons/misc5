@@ -45,7 +45,7 @@ public:
     json call_json_api(const std::string &api, const json &input);
     void register_json_api(const std::string &name, json_api func);
     json_api retrieve_json_api(const std::string &name);
-    bool handle_json_api();
+    //bool handle_json_api();
 };
 #define REGISTER_JSON_API(IPC, X) ((IPC).register_json_api(#X, X))
 

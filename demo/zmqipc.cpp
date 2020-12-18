@@ -171,20 +171,6 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
     int port = j["port"].get<int>();
     this->http_client = new httplib::Client("127.0.0.1", port);
     formatA(std::cout, "open_client(): port=%d\n", port);
-#if 0x0
-    //httplib::Client cli("127.0.0.1", port);
-    this->http_client->set_default_headers({{"Accept-Encoding", "gzip, deflate"}});
-    this->http_client->set_keep_alive(true);
-    this->http_client->set_follow_location(true);
-    this->http_client->set_compress(true);
-    auto res = this->http_client->Post("/test", "[abc漢字]", "text/plain");
-    if (res)
-    {
-        formatA(std::cout, "res->status=%d\n", res->status);
-        formatA(std::cout, "Content-Type: %s\n", res->get_header_value("Content-Type").c_str());
-        formatA(std::cout, "Body: %s\n", res->body.c_str());
-    }
-#endif
     return true;
 }
 
@@ -202,20 +188,21 @@ bool ZmqIPC::open_server(const std::string &endpoint)
             json j = json::parse(req.body);
             std::string api = j["api"];
             formatA(std::cout, "api=%s\n", api.c_str());
-            json input = j["input"];
+            json input = json::parse(j["input"].get<std::string>());
             json_api func = this->retrieve_json_api(api);
+            json output;
             if (!func)
             {
                 formatA(std::cout, "(!func)\n");
-                j["output"] = false;
+                output = false;
             }
             else
             {
-                j["output"] = func(input);
+                output = func(input);
             }
             formatA(std::cout, "j[output]=%s\n", j["output"].dump().c_str());
             //this->send_json(req);
-            res.set_content(j.dump(), "text/plain");
+            res.set_content(output.dump(), "text/plain");
         });
         int port = this->http_server->bind_to_any_port("127.0.0.1");
         formatA(std::cout, "open_server(): port=%d\n", port);
@@ -237,6 +224,7 @@ std::string ZmqIPC::recv_msg()
     return this->context.recv_msg();
 }
 
+#if 0x1
 void ZmqIPC::send_json(const json &j)
 {
     this->context.send_msg(j.dump());
@@ -256,21 +244,14 @@ json ZmqIPC::recv_json()
         return j;
     }
 }
+#endif
 
 json ZmqIPC::call_json_api(const std::string &api, const json &input)
 {
-#if 0x0
-    json req = json::object();
-    req["api"] = api;
-    req["input"] = input;
-    this->send_json(req);
-    json res = this->recv_json();
-    return res["output"];
-#else
     formatA(std::cout, "call_json_api(1)\n");
     json req = json::object();
     req["api"] = api;
-    req["input"] = input;
+    req["input"] = input.dump();
     auto res = this->http_client->Post("/test", req.dump(), "text/plain");
     formatA(std::cout, "call_json_api(2)\n");
     if (res)
@@ -278,11 +259,10 @@ json ZmqIPC::call_json_api(const std::string &api, const json &input)
         formatA(std::cout, "res->status=%d\n", res->status);
         formatA(std::cout, "Content-Type: %s\n", res->get_header_value("Content-Type").c_str());
         formatA(std::cout, "Body: %s\n", res->body.c_str());
-        return json::parse(res->body)["output"];
+        return json::parse(res->body);
     }
     formatA(std::cout, "call_json_api(3)\n");
     return false;
-#endif
 }
 
 void ZmqIPC::register_json_api(const std::string &name, ZmqIPC::json_api func)
@@ -297,6 +277,7 @@ ZmqIPC::json_api ZmqIPC::retrieve_json_api(const std::string &name)
     return json_api_map[name];
 }
 
+#if 0x0
 bool ZmqIPC::handle_json_api()
 {
     json req = this->recv_json();
@@ -313,6 +294,7 @@ bool ZmqIPC::handle_json_api()
     this->send_json(req);
     return true;
 }
+#endif
 
 extern "C" void __wgetmainargs(int *, wchar_t ***, wchar_t ***, int, int *);
 bool find_endpont_from_args(std::string &endpoint, bool *debug)
