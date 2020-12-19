@@ -26,6 +26,9 @@ ApplicationWindow {
             id: _listLeft
             width: _root.width / 2
             height: _root.height
+            ScrollBar.vertical: ScrollBar {
+                active: true
+            }
             // ハイライト設定
             highlight: ItemHightlight{
                 _listObject: _listLeft
@@ -55,6 +58,9 @@ ApplicationWindow {
             id: _listRight
             width: _root.width / 2
             height: _root.height
+            ScrollBar.vertical: ScrollBar {
+                active: true
+            }
             // ハイライト設定
             highlight: ItemHightlight{
                 _listObject: _listRight
