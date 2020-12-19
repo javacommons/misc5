@@ -1,0 +1,39 @@
+solution "Makefile"
+
+  platforms { "native", "x32", "x64" }
+  configurations { "Release", "Debug" }
+
+
+  project "json-ipc"
+    -- https://github.com/premake/premake-core/wiki/kind
+    kind "ConsoleApp"
+    language "C++"
+    files {
+      "json-ipc.cpp", "zmqipc.cpp", "httplib.cc"
+    }
+    buildoptions { "-std=c++20" }
+    linkoptions  { "-static" }
+    defines {
+      "ZMQ_STATIC",
+      "CPPHTTPLIB_ZLIB_SUPPORT",
+      "CPPHTTPLIB_OPENSSL_SUPPORT"
+    }
+    includedirs {
+      ".."
+    }
+    libdirs {
+      -- ".."
+    }
+    links {
+      "zmq", "ssl", "crypto", "crypt32", "ws2_32", "z", "sodium", "iphlpapi"
+    }
+    configuration "x32"
+      targetsuffix "-32bit"
+    configuration "x64"
+      targetsuffix "-64bit"
+    configuration "Release"
+      defines { "NDEBUG" }
+      flags { "Optimize" }
+    configuration "Debug"
+      defines { "DEBUG" }
+      flags { "Symbols" }

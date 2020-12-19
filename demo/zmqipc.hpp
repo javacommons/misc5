@@ -43,6 +43,7 @@ public:
     std::string recv_msg();
     void send_json(const json &j);
     json recv_json();
+    std::string call_api(const std::string &api, const std::string &input);
     json call_json_api(const std::string &api, const json &input);
     void register_json_api(const std::string &name, json_api func);
     json_api retrieve_json_api(const std::string &name);

@@ -251,10 +251,33 @@ json ZmqIPC::recv_json()
         return j;
     }
 }
+
+std::string ZmqIPC::call_api(const std::string &api, const std::string &input)
+{
+    formatA(std::cout, "call_api(1)\n");
+    json req = json::object();
+    req["api"] = api;
+    req["input"] = input;
+    auto res = this->http_client->Post("/test", req.dump(), "application/json; charset=utf-8");
+    formatA(std::cout, "call_api(2)\n");
+    if (res)
+    {
+        json info = {
+            {"status", res->status},
+            {"content-type", res->get_header_value("Content-Type")},
+            {"body", res->body}
+        };
+        formatA(std::cout, "returning: %s\n", info.dump(4).c_str());
+        return res->body;
+    }
+    formatA(std::cout, "call_api(3)\n");
+    return "false";
+}
 #endif
 
 json ZmqIPC::call_json_api(const std::string &api, const json &input)
 {
+#if 0x0
     formatA(std::cout, "call_json_api(1)\n");
     json req = json::object();
     req["api"] = api;
@@ -278,6 +301,9 @@ json ZmqIPC::call_json_api(const std::string &api, const json &input)
     }
     formatA(std::cout, "call_json_api(3)\n");
     return false;
+#else
+    return json::parse(this->call_api(api, input.dump()));
+#endif
 }
 
 void ZmqIPC::register_json_api(const std::string &name, ZmqIPC::json_api func)

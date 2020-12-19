@@ -6,9 +6,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 INCLUDEPATH += ..
 
-HEADERS += zmqipc.hpp httplib.h
+HEADERS += json-ipc.h zmqipc.hpp httplib.h
 
 SOURCES += \
+        json-ipc.cpp \
         server.cpp \
         client.cpp \
         httplib.cc \
