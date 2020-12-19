@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>Items1.qml</file>
+        <file>Items2.qml</file>
+        <file>ItemHightlight.qml</file>
+        <file>ItemLayout.qml</file>
+    </qresource>
+</RCC>
