@@ -275,36 +275,12 @@ std::string ZmqIPC::call_api(const std::string &api, const std::string &input)
 }
 #endif
 
+#if 0x0
 json ZmqIPC::call_json_api(const std::string &api, const json &input)
 {
-#if 0x0
-    formatA(std::cout, "call_json_api(1)\n");
-    json req = json::object();
-    req["api"] = api;
-    req["input"] = input.dump();
-    auto res = this->http_client->Post("/test", req.dump(), "application/json; charset=utf-8");
-    formatA(std::cout, "call_json_api(2)\n");
-    if (res)
-    {
-        #if 0x0
-        formatA(std::cout, "res->status=%d\n", res->status);
-        formatA(std::cout, "Content-Type: %s\n", res->get_header_value("Content-Type").c_str());
-        formatA(std::cout, "Body: %s\n", res->body.c_str());
-        #endif
-        json info = {
-            {"status", res->status},
-            {"content-type", res->get_header_value("Content-Type")},
-            {"body", res->body}
-        };
-        formatA(std::cout, "returning: %s\n", info.dump(4).c_str());
-        return json::parse(res->body);
-    }
-    formatA(std::cout, "call_json_api(3)\n");
-    return false;
-#else
     return json::parse(this->call_api(api, input.dump()));
-#endif
 }
+#endif
 
 void ZmqIPC::register_json_api(const std::string &name, ZmqIPC::json_api func)
 {

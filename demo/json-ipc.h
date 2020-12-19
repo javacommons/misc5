@@ -11,6 +11,8 @@ struct json_ipc;
 int add2(int x, int y);
 
 json_ipc *ipc_open_client(const char *server, int debug);
+const char *ipc_call_api(json_ipc *ipc, const char *api, const char *input);
+
 
 #ifdef __cplusplus
 } // extern "C" {
@@ -19,6 +21,13 @@ json_ipc *ipc_open_client(const char *server, int debug);
 #ifdef __cplusplus
 
 #include <string>
+#include "nlohmann/json.hpp"
+using json = nlohmann::json;
+
+json ipc_call_json_api(json_ipc *ipc, const std::string &api, const json &input)
+{
+    return json::parse(ipc_call_api(ipc, api.c_str(), input.dump().c_str()));
+}
 
 static inline std::string unsigned_to_string(unsigned long long n)
 {
