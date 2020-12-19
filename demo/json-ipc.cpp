@@ -3,9 +3,16 @@
 #include "strconv.h"
 #include "vardecl.h"
 
-extern "C" __declspec(dllexport) int add2(int x, int y)
+extern "C" __declspec(dllexport)
+const char *ipc_find_endpont_from_args(int *debug)
 {
-    return x + y;
+    *debug = 0;
+    TLS_VARIABLE std::string endpoint;
+    bool d;
+    bool b = find_endpont_from_args(endpoint, &d);
+    if(!b) return nullptr;
+    *debug = d;
+    return endpoint.c_str();
 }
 
 extern "C" __declspec(dllexport)
@@ -18,7 +25,6 @@ json_ipc *ipc_open_client(const char *server, int debug)
         return nullptr;
     }
     return (json_ipc *)zipc;
-    return 0;
 }
 
 extern "C" __declspec(dllexport)
@@ -28,4 +34,16 @@ const char *ipc_call_api(json_ipc *ipc, const char *api, const char *input)
     TLS_VARIABLE std::string result;
     result = zipc->call_api(api, input);
     return result.c_str();
+}
+
+extern "C" __declspec(dllexport)
+json_ipc *ipc_open_server(const char *endpoint, ipc_handler handler)
+{
+    ZmqIPC *zipc = new ZmqIPC();
+    if(!zipc->open_server(endpoint, handler))
+    {
+        delete zipc;
+        return nullptr;
+    }
+    return (json_ipc *)zipc;
 }

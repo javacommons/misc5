@@ -182,8 +182,9 @@ bool ZmqIPC::open_client(const std::string &server, bool debug)
     return true;
 }
 
-bool ZmqIPC::open_server(const std::string &endpoint)
+bool ZmqIPC::open_server(const std::string &endpoint, zmq_ipc_handler handler)
 {
+    this->api_handler = handler;
     std::thread *th = new std::thread(worker);
     UNUSED_VARIABLE(th);
     bool b = this->context.open_server(endpoint);
@@ -196,9 +197,11 @@ bool ZmqIPC::open_server(const std::string &endpoint)
             json j = json::parse(req.body);
             std::string api = j["api"];
             formatA(std::cout, "api=%s\n", api.c_str());
-            json input = json::parse(j["input"].get<std::string>());
-            json_api func = this->retrieve_json_api(api);
-            json output;
+            //json input = json::parse(j["input"].get<std::string>());
+            //json_api func = this->retrieve_json_api(api);
+            std::string input = j["input"].get<std::string>();
+            std::string output;
+#if 0x0
             if (!func)
             {
                 formatA(std::cout, "(!func)\n");
@@ -208,8 +211,15 @@ bool ZmqIPC::open_server(const std::string &endpoint)
             {
                 output = func(input);
             }
-            formatA(std::cout, "output=%s\n", output.dump().c_str());
-            res.set_content(output.dump(), "application/json; charset=utf-8");
+#else
+            formatA(std::cout, "before this->api_handler=%p\n", this->api_handler);
+            const char *ret = this->api_handler(api.c_str(), input.c_str());
+            formatA(std::cout, "ret=%s\n", ret);
+            if(!ret) ret = "false";
+            output = ret;
+#endif
+            formatA(std::cout, "output=%s\n", output.c_str());
+            res.set_content(output, "application/json; charset=utf-8");
         });
         int port = this->http_server->bind_to_any_port("127.0.0.1");
         formatA(std::cout, "open_server(): port=%d\n", port);

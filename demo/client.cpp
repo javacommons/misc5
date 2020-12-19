@@ -1,15 +1,14 @@
-#include "zmqipc.hpp"
+#include "json-ipc.h"
+//#include "zmqipc.hpp"
 #include "strconv.h"
 #include "vardecl.h"
-
-#include "json-ipc.h"
 
 int main(int argc, char *argv[])
 {
     UNUSED_VARIABLE(argc);
     UNUSED_VARIABLE(argv);
 
-#if 0x1
+#if 0x0
     bool debug = false;
 #else
     bool debug = true;

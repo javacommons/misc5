@@ -8,11 +8,11 @@ extern "C"
 
 struct json_ipc;
 
-int add2(int x, int y);
-
+const char *ipc_find_endpont_from_args(int *debug);
 json_ipc *ipc_open_client(const char *server, int debug);
 const char *ipc_call_api(json_ipc *ipc, const char *api, const char *input);
-
+typedef const char *(*ipc_handler)(const char *api, const char *input);
+json_ipc *ipc_open_server(const char *endpoint, ipc_handler handler);
 
 #ifdef __cplusplus
 } // extern "C" {

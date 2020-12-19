@@ -10,6 +10,8 @@ using json = nlohmann::json;
 
 #include "strconv.h"
 
+typedef const char *(*zmq_ipc_handler)(const char *api, const char *input);
+
 class ZmqProcess;
 
 class ZmqContext {
@@ -34,11 +36,12 @@ class ZmqIPC
     static void worker();
     typedef json (*json_api)(const json &input);
     std::map<std::string, json_api> json_api_map;
+    zmq_ipc_handler api_handler = nullptr;
 public:
     explicit ZmqIPC();
     virtual ~ZmqIPC();
     bool open_client(const std::string &server, bool debug);
-    bool open_server(const std::string &endpoint);
+    bool open_server(const std::string &endpoint, zmq_ipc_handler handler);
     void send_msg(const std::string &msg);
     std::string recv_msg();
     void send_json(const json &j);
