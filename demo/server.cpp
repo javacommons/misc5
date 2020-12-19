@@ -1,7 +1,8 @@
 #include "zmqipc.hpp"
-//#include <QtCore>
 #include <cstdlib>
 #include <iostream>
+#include "strconv.h"
+#include "vardecl.h"
 
 using namespace std;
 
@@ -14,17 +15,16 @@ json dummy_api(const json &input)
 
 void on_exit()
 {
-    std::cout << "on exit" << std::endl;
+    formatA(std::cout, "on_exit\n");
     ::MessageBoxW(NULL, L"on_exit()", L"server.exe", MB_OK);
 }
 
 int main(int argc, char *argv[])
 {
-    //QCoreApplication a(argc, argv);
+    UNUSED_VARIABLE(argc);
+    UNUSED_VARIABLE(argv);
 
-    cout << "server(1)" << endl;
-
-    cout << "server(2)" << endl;
+    formatA(std::cout, "server(1)\n");
 
     std::string endpoint;
     bool debug;
@@ -33,20 +33,14 @@ int main(int argc, char *argv[])
     if (debug)
         std::atexit(on_exit);
 
-    cout << "server(3)" << debug << endl;
+    formatA(std::cout, "server(2)\n");
 
     ZmqIPC ipc;
     REGISTER_JSON_API(ipc, dummy_api);
     if (!ipc.open_server(endpoint))
         return 1;
 
-    cout << "server(4)" << endl;
+    formatA(std::cout, "server(3)\n");
 
-#if 0x0
-    while (true)
-    {
-        ipc.handle_json_api();
-    }
-#endif
     return 0;
 }
