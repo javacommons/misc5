@@ -7,3 +7,4 @@ https://www.eclipse.org/windowbuilder/download.php
 svn - How can I delete all unversioned/ignored files/folders in my working copy? - Stack Overflow
 https://stackoverflow.com/questions/2803823/how-can-i-delete-all-unversioned-ignored-files-folders-in-my-working-copy
 
+【Git】Windows環境でGitHubにSSH接続してコミットするまでの手順 - Qiita https://qiita.com/hollyhock0518/items/a3fee20951cd92c87ed9
