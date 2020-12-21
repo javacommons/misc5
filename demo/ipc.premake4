@@ -42,7 +42,7 @@ solution "Makefile"
     kind "ConsoleApp"
     language "C++"
     files {
-      "server.cpp" -- , "zmqipc.cpp", "httplib.cc"
+      "server.cpp", "libarchive.cpp"
     }
     buildoptions { "-std=c++20" }
     linkoptions  { "-static" }
@@ -58,8 +58,14 @@ solution "Makefile"
       -- ".."
     }
     links {
-      "zmq", "ssl", "crypto", "crypt32", "ws2_32", "z", "sodium", "iphlpapi", "json-ipc"
+      "zmq", "ssl", "crypto", "crypt32", "ws2_32", 
+      -- "z",
+      "sodium", "iphlpapi", "json-ipc",
+      "archive", "z", "bz2", "lzma", "iconv", "bcrypt", "expat", "lz4", "zstd"
     }
+    --links {
+    --  "archive", "z", "bz2", "lzma", "iconv", "bcrypt", "expat", "lz4", "zstd"
+    --}
     configuration "x32"
       targetsuffix "-32bit"
     configuration "x64"

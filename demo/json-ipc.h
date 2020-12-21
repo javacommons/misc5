@@ -24,7 +24,7 @@ json_ipc *ipc_open_server(const char *endpoint, ipc_handler handler);
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
-json ipc_call_json_api(json_ipc *ipc, const std::string &api, const json &input)
+static inline json ipc_call_json_api(json_ipc *ipc, const std::string &api, const json &input)
 {
     return json::parse(ipc_call_api(ipc, api.c_str(), input.dump().c_str()));
 }

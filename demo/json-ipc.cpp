@@ -31,7 +31,7 @@ extern "C" __declspec(dllexport)
 const char *ipc_call_api(json_ipc *ipc, const char *api, const char *input)
 {
     ZmqIPC *zipc = (ZmqIPC *)ipc;
-    TLS_VARIABLE std::string result;
+    TLS_VARIABLE static std::string result;
     result = zipc->call_api(api, input);
     return result.c_str();
 }

@@ -1,3 +1,4 @@
+#include "libarchive.h"
 #include "json-ipc.h"
 #include <cstdlib>
 #include "strconv.h"
@@ -34,13 +35,15 @@ json_api retrieve_json_api(const std::string &name)
 
 static const char *handler(const char *api, const char *input)
 {
+    //ormatA(std::cout, "api=%s input=%s\n", api, input);
     std::string api_ = api;
     std::string input_ = input;
     json_api func = retrieve_json_api(api);
     if(!func) return nullptr;
     json output = func(json::parse(input));
-    formatA(std::cout, "handler: output=%s\n", output.dump().c_str());
-    TLS_VARIABLE std::string ret = output.dump();
+    //ormatA(std::cout, "handler: api=%s output=%s\n", api, output.dump().c_str());
+    TLS_VARIABLE static std::string ret;
+    ret = output.dump();
     return ret.c_str();
 }
 
@@ -49,7 +52,7 @@ int main(int argc, char *argv[])
     UNUSED_VARIABLE(argc);
     UNUSED_VARIABLE(argv);
 
-    formatA(std::cout, "server(1)\n");
+    //ormatA(std::cout, "server(1)\n");
 
     int debug;
     const char *endpoint = ipc_find_endpont_from_args(&debug);
@@ -58,12 +61,17 @@ int main(int argc, char *argv[])
     if (debug)
         std::atexit(on_exit);
 
-    formatA(std::cout, "server(2)\n");
+    //ormatA(std::cout, "server(2)\n");
 
     REGISTER_JSON_API(dummy_api);
+    REGISTER_JSON_API(api_open_archive);
+    REGISTER_JSON_API(api_close_archive);
+    REGISTER_JSON_API(api_archive_get_params);
+    REGISTER_JSON_API(api_archive_next_entry);
+    REGISTER_JSON_API(api_archive_entry_write);
     json_ipc *ipc = ipc_open_server(endpoint, handler);
 
-    formatA(std::cout, "server(3)\n");
+    //ormatA(std::cout, "server(3)\n");
 
     return 0;
 }
