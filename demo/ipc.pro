@@ -14,7 +14,6 @@ SOURCES += \
         client.cpp \
         httplib.cc \
         zmqipc.cpp \
-        libarchive.cpp \
-        main.cpp
+        libarchive.cpp
 
 QMAKE_LIBS += -lzmq
