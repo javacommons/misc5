@@ -8,7 +8,6 @@ private:
 
 public:
     ostreamWrapper(std::ostream &ostrm) : m_ostrm(ostrm) {}
-
     template <typename T>
     ostreamWrapper &operator<<(const T &x)
     {
@@ -25,15 +24,13 @@ public:
         m_ostrm << "<char*>" << x << "</char*>";
         return *this;
     }
-    ostreamWrapper &operator<<(std::ostream &(*pf)(std::ostream &))
+    ostreamWrapper &operator<<(std::ostream &(*pf)(std::ostream &)) // For manipulators...
     {
-        // For manipulators...
         m_ostrm << pf;
         return *this;
     }
-    ostreamWrapper &operator<<(std::basic_ios<char> &(*pf)(std::basic_ios<char> &))
+    ostreamWrapper &operator<<(std::basic_ios<char> &(*pf)(std::basic_ios<char> &)) // For manipulators...
     {
-        // For manipulators...
         m_ostrm << pf;
         return *this;
     }
