@@ -5,8 +5,31 @@
 #include <string>
 #include <fstream>
 
+static inline bool check_cp(const std::string &s, UINT codepage)
+{
+    std::wstring wide = cp_to_wide(s, codepage);
+    return s == wide_to_cp(wide, codepage);
+}
+
+static inline bool check_cp_ansi(const std::string &s)
+{
+    return check_cp(s, CP_ACP);
+}
+
+static inline bool check_cp_utf8(const std::string &s)
+{
+    return check_cp(s, CP_UTF8);
+}
+
+static inline bool check_cp_sjis(const std::string &s)
+{
+    return check_cp(s, 932);
+}
+
 int main(void)
 {
+    formatA(std::cout, "check_utf8=%d\n", check_cp_utf8(U8("太郎")));
+    formatA(std::cout, "check_sjis=%d\n", check_cp_sjis(U8("太郎")));
 #if 0x1
     std::string nameUtf8 = U8("太郎");
     int age = 15;
