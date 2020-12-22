@@ -5,43 +5,25 @@
 int main()
 {
     using namespace std;
-    ansi_ostream osw(std::cout);
-    cout << 1 << U8(" texto漢字 ") << std::string(U8(" otro texto漢字 ")) << 1.2345 << std::endl;
-    osw << 1 << U8(" texto漢字 ") << std::string(U8(" otro texto漢字 ")) << 1.2345 << std::endl;
-    osw << 1 << WIDE(" texto漢字 ") << std::wstring(WIDE(" otro texto漢字 ")) << 1.2345 << std::endl;
-#ifdef __cpp_char8_t
-    //cout << 1 << u8" texto漢字 " << std::u8string(u8" otro texto漢字 ") << 1.2345 << std::endl;
-    osw << 1 << u8" char8_t漢字 " << std::u8string(u8" u8string漢字 ") << 1.2345 << std::endl;
-#endif
-    int x = 123;
-    osw << setw(5) << setiosflags(ios::left) << x << "abc" << endl;
+    ansi_ostream aout(cout);
+ 
+    aout << 1 << u8" char*漢字 " << std::string(u8" string漢字 ") << 1.2345 << std::endl;
+    aout << 1 << L" wchar_t*漢字 " << std::wstring(L" wstring漢字 ") << 1.2345 << std::endl;
+
     double A = 100;
     double B = 2001.5251;
-    double C = 201455.2646;
 
-    // We can use setbase(16) here instead of hex
+    // 書式指定(A) hex の代わりに setbase(16) を使うこともできます
+    aout << hex << left << showbase << nouppercase;
+    // 実際の印字処理(A)
+    aout << (long long)A << endl;
 
-    // formatting
-    osw << hex << left << showbase << nouppercase;
+    // 書式指定(B) setbase(10) の代わりに dec を使うこともできます
+    aout << setbase(10) << right << setw(15)
+         << setfill('_') << showpos
+         << fixed << setprecision(2);
+    // 実際の印字処理(B)
+    aout << B << endl;
 
-    // actual printed part
-    osw << (long long)A << endl;
-
-    // We can use dec here instead of setbase(10)
-
-    // formatting
-    osw << setbase(10) << right << setw(15)
-        << setfill('_') << showpos
-        << fixed << setprecision(2);
-
-    // actual printed part
-    osw << B << endl;
-
-    // formatting
-    osw << scientific << uppercase
-        << noshowpos << setprecision(9);
-
-    // actual printed part
-    osw << C << endl;
     return 0;
 }
