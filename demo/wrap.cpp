@@ -15,6 +15,10 @@ int main()
     aout << 1 << u8" char8_t*漢字© " << std::u8string(u8" u8string漢字© ") << 1.2345 << std::endl;
 #endif
 
+    formatA(cout, u8"formatA-u8 漢字©=%s\n", u8"文字列");
+
+    aout << format(u8"format-u8 漢字©=%s\n", u8"文字列");
+
     std::wstring wide = char8_to_wide(u8"char8_to_wide(漢字©)");
     aout << wide << endl;
     std::u8string char8 = wide_to_char8(wide);
@@ -28,6 +32,11 @@ int main()
     std::string sjis = char8_to_sjis(char8);
     cout << sjis << endl;
     char8 = sjis_to_char8(sjis);
+    aout << char8 << endl;
+
+    std::string utf8 = char8_to_utf8(char8);
+    aout << utf8 << endl;
+    char8 = utf8_to_char8(utf8);
     aout << char8 << endl;
  
     //aout << 1 << u8" char*漢字 " << std::string(u8" string漢字 ") << 1.2345 << std::endl;
