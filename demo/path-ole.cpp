@@ -144,6 +144,9 @@ int main()
         VariantClear(&parm);
     }
 
+    pEnv->Release();
+    pShell->Release();
+
     // Uninitialize COM for this thread...
     CoUninitialize();
 }
