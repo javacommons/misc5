@@ -142,6 +142,7 @@ int main()
         hr = AutoWrap(DISPATCH_PROPERTYPUT, NULL, pEnv, L"Item", 2, parm, parm2);
         formatA(std::cout, "hr=%x\n", hr);
         VariantClear(&parm);
+        VariantClear(&parm2);
     }
 
     pEnv->Release();
