@@ -5,10 +5,16 @@
 int main()
 {
     using namespace std;
-    ansi_ostream aout(cout);
+    //unicode_ostream aout(cout);
+    unicode_ostream aout(cout, GetConsoleCP());
+
+#ifdef __cpp_char8_t
+    aout << 1 << u8" char8_t*漢字© " << std::u8string(u8" u8string漢字© ") << 1.2345 << std::endl;
+#endif
  
-    aout << 1 << u8" char*漢字 " << std::string(u8" string漢字 ") << 1.2345 << std::endl;
-    aout << 1 << L" wchar_t*漢字 " << std::wstring(L" wstring漢字 ") << 1.2345 << std::endl;
+    //aout << 1 << u8" char*漢字 " << std::string(u8" string漢字 ") << 1.2345 << std::endl;
+    aout << 1 << U8(" char*漢字© ") << std::string(U8(" string漢字© ")) << 1.2345 << std::endl;
+    aout << 1 << L" wchar_t*漢字© " << std::wstring(L" wstring漢字© ") << 1.2345 << std::endl;
 
     double A = 100;
     double B = 2001.5251;
