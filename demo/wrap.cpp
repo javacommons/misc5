@@ -2,6 +2,9 @@
 #include <iostream>
 #include <iomanip>
 
+void sub();
+void sub2(unicode_ostream &aout);
+
 int main()
 {
     using namespace std;
@@ -11,6 +14,21 @@ int main()
 #ifdef __cpp_char8_t
     aout << 1 << u8" char8_t*漢字© " << std::u8string(u8" u8string漢字© ") << 1.2345 << std::endl;
 #endif
+
+    std::wstring wide = char8_to_wide(u8"char8_to_wide(漢字©)");
+    aout << wide << endl;
+    std::u8string char8 = wide_to_char8(wide);
+    aout << char8 << endl;
+
+    std::string ansi = char8_to_ansi(char8);
+    cout << ansi << endl;
+    char8 = ansi_to_char8(ansi);
+    aout << char8 << endl;
+ 
+    std::string sjis = char8_to_sjis(char8);
+    cout << sjis << endl;
+    char8 = sjis_to_char8(sjis);
+    aout << char8 << endl;
  
     //aout << 1 << u8" char*漢字 " << std::string(u8" string漢字 ") << 1.2345 << std::endl;
     aout << 1 << U8(" char*漢字© ") << std::string(U8(" string漢字© ")) << 1.2345 << std::endl;
@@ -30,6 +48,9 @@ int main()
          << fixed << setprecision(2);
     // 実際の印字処理(B)
     aout << B << endl;
+
+    //sub();
+    //sub2(aout);
 
     return 0;
 }
