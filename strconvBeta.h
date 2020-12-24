@@ -1,5 +1,26 @@
 #include "strconv.h"
 
+static inline bool check_cp(const std::string &s, UINT codepage)
+{
+    std::wstring wide = cp_to_wide(s, codepage);
+    return s == wide_to_cp(wide, codepage);
+}
+
+static inline bool check_cp_ansi(const std::string &s)
+{
+    return check_cp(s, CP_ACP);
+}
+
+static inline bool check_cp_utf8(const std::string &s)
+{
+    return check_cp(s, CP_UTF8);
+}
+
+static inline bool check_cp_sjis(const std::string &s)
+{
+    return check_cp(s, 932);
+}
+
 static inline void conout(std::ostream &ostrm, const wchar_t *format, ...)
 {
   va_list args;

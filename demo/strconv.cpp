@@ -1,56 +1,54 @@
-﻿//#include "strconvFmt.h"
-#include "strconv.h"
-#include "strconvBeta.h"
+﻿#include "strconv.h"
 #include <iostream>
-#include <string>
-#include <fstream>
+#include <iomanip>
+#include <cmath>
 
-static inline bool check_cp(const std::string &s, UINT codepage)
-{
-    std::wstring wide = cp_to_wide(s, codepage);
-    return s == wide_to_cp(wide, codepage);
-}
+using namespace std;
 
-static inline bool check_cp_ansi(const std::string &s)
+class CMyClass
 {
-    return check_cp(s, CP_ACP);
-}
+    friend std::ostream &operator<<(std::ostream &stream, const CMyClass &value);
+};
 
-static inline bool check_cp_utf8(const std::string &s)
-{
-    return check_cp(s, CP_UTF8);
-}
+// 扱う値は第二引数に指定します。また、連続してストリーム出力できるように、戻り値では第一引数で受け取ったストリームを返します。
 
-static inline bool check_cp_sjis(const std::string &s)
+std::ostream &
+operator<<(std::ostream &stream, const CMyClass &value)
 {
-    return check_cp(s, 932);
-}
+    stream << u8"テスト";
+    return stream;
+};
 
-int main(void)
+int main()
 {
-    formatA(std::cout, "check_utf8=%d\n", check_cp_utf8(U8("太郎")));
-    formatA(std::cout, "check_sjis=%d\n", check_cp_sjis(U8("太郎")));
-#if 0x1
-    std::string nameUtf8 = U8("太郎");
-    int age = 15;
-    conout(std::cout, U8("conout(utf-8) ©ハロー、私の名前は %s。 年は %d だ!\n"), nameUtf8.c_str(), age);
-    conout(std::cout, WIDE("conout(wide) ©ハロー、私の名前は %s。 年は %d だ!\n"), utf8_to_wide(nameUtf8).c_str(), age);
-    std::cout << utf8_to_ansi(format(U8("©ハロー、私の名前は %s。 年は %d だ!"), nameUtf8.c_str(), age)) << std::endl;
-    std::cout << formatA(U8("©ハロー、私の名前は %s。 年は %d だ!"), nameUtf8.c_str(), age) << std::endl;
-    formatA(std::cout, U8("©ハロー、私の名前は %s。 年は %d だ!\n"), nameUtf8.c_str(), age);
+#ifdef ANSI_ONLY
+    unicode_ostream aout(cout);
+#else
+    unicode_ostream aout(cout, GetConsoleCP()); // chcp 65001 とすると, © が c に化けずに表示される
 #endif
-    std::wstring nameWide = L"花子";
-    //int
-    age = 23;
-    std::cout << wide_to_ansi(format(WIDE("©ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age)) << std::endl;
-    std::cout << formatA(WIDE("©ハロー、私の名前は %s。 年は %d だ!"), nameWide.c_str(), age) << std::endl;
-    formatA(std::cout, WIDE("©ハロー、私の名前は %s。 年は %d だ!\n"), nameWide.c_str(), age);
+    CMyClass mc;
+    aout << mc << endl;
+    double pi = 4 * atan(1.0);
+    aout << "π(1)=" << pi << endl;
+    aout << "π(2)=" << format("%.2f", pi) << endl;
 
-#if 0x0
-    writef(L"writef: 漢字©\n");
-    std::wstring s = readline(L"入力してください🦕:");
-    writeline(s);
-#endif
+    aout << 1 << u8" char*漢字© " << std::string(u8" string漢字© ") << 1.2345 << std::endl;
+    aout << 2 << L" wchar_t*漢字© " << std::wstring(L" wstring漢字© ") << 1.2345 << std::endl;
+
+    double A = 100;
+    double B = 2001.5251;
+
+    // 書式指定(A) hex の代わりに setbase(16) を使うこともできます
+    aout << hex << left << showbase << nouppercase;
+    // 実際の印字処理(A)
+    aout << (long long)A << endl;
+
+    // 書式指定(B) setbase(10) の代わりに dec を使うこともできます
+    aout << setbase(10) << right << setw(15)
+         << setfill('_') << showpos
+         << fixed << setprecision(2);
+    // 実際の印字処理(B)
+    aout << B << endl;
 
     return 0;
 }
