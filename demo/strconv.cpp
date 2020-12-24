@@ -7,15 +7,27 @@ using namespace std;
 
 class CMyClass
 {
-    friend std::ostream &operator<<(std::ostream &stream, const CMyClass &value);
+    time_t t;
+    int count;
+
+public:
+    CMyClass()
+    {
+        this->t = std::time(nullptr);
+        this->count = 0;
+    }
+    int CountUp()
+    {
+        return this->count++;
+    }
+    friend unicode_ostream &operator<<(unicode_ostream &stream, const CMyClass &value);
 };
 
-// 扱う値は第二引数に指定します。また、連続してストリーム出力できるように、戻り値では第一引数で受け取ったストリームを返します。
-
-std::ostream &
-operator<<(std::ostream &stream, const CMyClass &value)
+unicode_ostream &operator<<(unicode_ostream &stream, const CMyClass &value)
 {
-    stream << u8"テスト";
+    struct tm *ptm = std::localtime(&value.t);
+    stream << "[" << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
+    stream << ": count=" << value.count << "]";
     return stream;
 };
 
@@ -27,10 +39,12 @@ int main()
     unicode_ostream aout(cout, GetConsoleCP()); // chcp 65001 とすると, © が c に化けずに表示される
 #endif
     CMyClass mc;
+    mc.CountUp();
+    mc.CountUp();
     aout << mc << endl;
     double pi = 4 * atan(1.0);
-    aout << "π(1)=" << pi << endl;
-    aout << "π(2)=" << format("%.2f", pi) << endl;
+    aout << u8"π(1)=" << pi << endl;
+    aout << u8"π(2)=" << format("%.2f", pi) << endl;
 
     aout << 1 << u8" char*漢字© " << std::string(u8" string漢字© ") << 1.2345 << std::endl;
     aout << 2 << L" wchar_t*漢字© " << std::wstring(L" wstring漢字© ") << 1.2345 << std::endl;
