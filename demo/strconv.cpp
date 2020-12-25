@@ -36,7 +36,7 @@ int main()
 #ifdef ANSI_ONLY
     unicode_ostream aout(cout);
 #else
-    unicode_ostream aout(cout, GetConsoleCP()); // chcp 65001 とすると, © が c に化けずに表示される
+    unicode_ostream aout(cout, GetConsoleCP()); // chcp 65001 とすると「한자」が「??」に化けずに表示される
 #endif
     CMyClass mc;
     mc.CountUp();
@@ -46,8 +46,8 @@ int main()
     aout << u8"π(1)=" << pi << endl;
     aout << u8"π(2)=" << format("%.2f", pi) << endl;
 
-    aout << 1 << u8" char*漢字© " << std::string(u8" string漢字© ") << 1.2345 << std::endl;
-    aout << 2 << L" wchar_t*漢字© " << std::wstring(L" wstring漢字© ") << 1.2345 << std::endl;
+    aout << 1 << u8" char*漢字=한자 " << std::string(u8" string漢字=한자 ") << 1.2345 << std::endl;
+    aout << 2 << L" wchar_t*漢字=한자 " << std::wstring(L" wstring漢字=한자 ") << 1.2345 << std::endl;
 
     double A = 100;
     double B = 2001.5251;
