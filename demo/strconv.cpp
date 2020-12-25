@@ -26,8 +26,8 @@ public:
 unicode_ostream &operator<<(unicode_ostream &stream, const CMyClass &value)
 {
     struct tm *ptm = std::localtime(&value.t);
-    stream << "[" << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
-    stream << ": count=" << value.count << "]";
+    stream << u8"[作成日時=" << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
+    stream << u8"、カウント=" << value.count << "]";
     return stream;
 };
 
