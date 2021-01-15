@@ -1,5 +1,5 @@
-/* strconv.h v1.7.0                */
-/* Last Modified: 2020/12/23 19:02 */
+/* strconv.h v1.7.1                */
+/* Last Modified: 2021/01/15 10:15 */
 #ifndef STRCONV_H
 #define STRCONV_H
 
@@ -122,26 +122,33 @@ static inline std::u8string wide_to_char8(const std::wstring &s)
   return std::u8string(s2.begin(), s2.end());
 }
 
+static inline std::u8string cp_to_char8(const std::string &s, UINT codepage)
+{
+  std::string s2 = cp_to_utf8(s, codepage);
+  return std::u8string(s2.begin(), s2.end());
+}
+static inline std::string char8_to_cp(const std::u8string &s, UINT codepage)
+{
+  std::string s2(s.begin(), s.end());
+  return utf8_to_cp(s2, codepage);
+}
+
 static inline std::u8string ansi_to_char8(const std::string &s)
 {
-  std::string s2 = cp_to_utf8(s, CP_ACP);
-  return std::u8string(s2.begin(), s2.end());
+  return cp_to_char8(s, CP_ACP);
 }
 static inline std::string char8_to_ansi(const std::u8string &s)
 {
-  std::string s2(s.begin(), s.end());
-  return utf8_to_cp(s2, CP_ACP);
+  return char8_to_cp(s, CP_ACP);
 }
 
 static inline std::u8string sjis_to_char8(const std::string &s)
 {
-  std::string s2 = cp_to_utf8(s, 932);
-  return std::u8string(s2.begin(), s2.end());
+  return cp_to_char8(s, 932);
 }
 static inline std::string char8_to_sjis(const std::u8string &s)
 {
-  std::string s2(s.begin(), s.end());
-  return utf8_to_cp(s2, 932);
+  return char8_to_cp(s, 932);
 }
 
 static inline std::u8string utf8_to_char8(const std::string &s)
@@ -344,13 +351,12 @@ public:
 #ifdef __cpp_char8_t
   unicode_ostream &operator<<(const std::u8string &x)
   {
-    std::string s(x.begin(), x.end());
-    m_ostrm << utf8_to_cp(s, m_target_cp);
+    m_ostrm << char8_to_cp(x, m_target_cp);
     return *this;
   }
   unicode_ostream &operator<<(const char8_t *x)
   {
-    m_ostrm << utf8_to_cp((const char *)x, m_target_cp);
+    m_ostrm << char8_to_cp(x, m_target_cp);
     return *this;
   }
 #endif
