@@ -4,6 +4,8 @@ pacman -S --needed --noconfirm \
     make
 
 rm -rf waxeye.tmp
-cp -rp /c/Users/javac/.software/waxeye-0.8.0/src/c waxeye.tmp
+cp -rp /c/Users/javac/waxeye/src/c waxeye.tmp
 cd waxeye.tmp
 make
+cp -rp include/* $MINGW_PREFIX/include/
+cp -rp libwaxeye.a $MINGW_PREFIX/lib/

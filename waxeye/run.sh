@@ -5,5 +5,5 @@ pacman -S --needed --noconfirm \
 	$MINGW_PACKAGE_PREFIX-openssl
 
 waxeye -g c . num.waxeye
-gcc -I waxeye.tmp/include num-example.c parser.c -L waxeye.tmp -lwaxeye -o num-example
+gcc num-example.c parser.c -lwaxeye -o num-example
 ./num-example.exe 
