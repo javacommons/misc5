@@ -1,6 +1,6 @@
 QT -= gui
 
-CONFIG += c++11 console
+CONFIG += c++17 console
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
