@@ -16,6 +16,15 @@ int main()
     // Print our ast
     display_ast(ast, json_type_strings);
 
+    printf("type=%d\n", ast->type);
+
+    if(ast->type == AST_TREE)
+    {
+        printf("AST_TREE\n");
+        struct ast_tree_t *tree = ast->data.tree;
+        tree->children->size;
+    }
+
     ast_recursive_delete(ast);
     input_delete(input);
     parser_delete(parser);
