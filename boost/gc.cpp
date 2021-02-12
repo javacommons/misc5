@@ -1,6 +1,6 @@
 // https://qiita.com/Gajumaru/items/195adf964d3932e6dc57
-#include <iostream>
-#include <gc_cpp.h>
+#include <gc/gc_cpp.h>
+#include <gc/javaxfc.h>
 
 #include "strconv.h"
 
@@ -24,7 +24,7 @@ int main()
     for (int i = 0; i < 100000; i++) {
         Hoge *h = new Hoge();
     }
-
+    GC_finalize_all();
     uout<<"コンストラクタが呼ばれた数："<<ccnt<<std::endl;
     uout<<"デストラクタが呼ばれた数："<<dcnt<<std::endl;
     return 0;

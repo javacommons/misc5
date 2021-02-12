@@ -5,4 +5,4 @@ pacman -S --needed --noconfirm \
     $MINGW_PACKAGE_PREFIX-gc \
     make
 
-g++ -o variant variant.cpp && ./variant.exe
+g++ -o gc gc.cpp -lgc -lgccpp && ./gc.exe
