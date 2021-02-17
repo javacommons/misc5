@@ -10,10 +10,10 @@
 template <typename T>
 struct tree
 {
-  size_t type;
   std::string name;
   std::vector<T> children;
-  explicit tree(const std::string &name, size_t type): name(name), type(type) {}
+  explicit tree(const std::string &name, const std::string &text = "") : name(name), text(text) {}
+  std::string text;
   friend std::ostream &operator<<(std::ostream &stream, const tree<T> &value)
   {
     stream << "[tree]";
@@ -21,27 +21,12 @@ struct tree
   }
 };
 
-struct token
-{
-  std::string name;
-  std::string text;
-  explicit token(const std::string &name, const std::string &text): name(name), text(text) {}
-  friend std::ostream &operator<<(std::ostream &stream, const token &value)
-  {
-    stream << "[token]";
-    return stream;
-  }
-};
-
-
 using property_type = boost::make_recursive_variant<bool, float, double, long double,
- tree<boost::recursive_variant_>, token,
- std::vector<boost::recursive_variant_>,
- std::unordered_map<std::string, boost::recursive_variant_>
- >::type;
+                                                    tree<boost::recursive_variant_>,
+                                                    std::vector<boost::recursive_variant_>,
+                                                    std::unordered_map<std::string, boost::recursive_variant_>>::type;
 
 using tree_type = tree<property_type>;
-using token_type = token;
 using array_type = std::vector<property_type>;
 using map_type = std::unordered_map<std::string, property_type>;
 
@@ -66,25 +51,26 @@ public:
   auto operator()(const tree_type &o) const -> void
   {
     indent();
-    _s << o.name << "[\n";
-    for (auto i = o.children.cbegin(); i != o.children.cend(); ++i)
+    _s << o.name;
+    if (!o.text.empty())
+      _s << '(' << o.text << ')';
+    if (o.children.size() > 0)
     {
-      boost::apply_visitor(printer(_s, _nest_level + 1), *i);
-      if (i + 1 != o.children.cend())
-        _s << ",";
-      _s << "\n";
+      _s << "[\n";
+      for (auto i = o.children.cbegin(); i != o.children.cend(); ++i)
+      {
+        boost::apply_visitor(printer(_s, _nest_level + 1), *i);
+        if (i + 1 != o.children.cend())
+          _s << ",";
+        _s << "\n";
+      }
+      indent();
+      _s << "]";
     }
-    indent();
-    _s << "]";
   }
 
-  auto operator()(const token_type &o) const -> void
-  {
-    indent();
-    _s << o.name << "(" << o.text << ")";
-  }
-
-  auto operator()(const array_type &o) const -> void
+  auto
+  operator()(const array_type &o) const -> void
   {
     indent();
     _s << "[\n";
@@ -130,6 +116,44 @@ public:
   }
 };
 
+property_type conv_ast(ast_t *ast);
+
+property_type conv_tree(ast_t *ast)
+{
+    assert(ast->type == AST_TREE);
+    ast_tree_t *tree = ast->data.tree;
+    tree_type result(json_type_strings[tree->type]);
+    for (size_t i = 0; i < tree->children->size; ++i)
+    {
+      ast_t *child = (ast_t *)vector_get(tree->children, i);
+      if(child->type==AST_CHAR)
+      {
+          result.text.push_back(child->data.c);
+          continue;
+      }
+      result.children.emplace_back(conv_ast(child));
+    }
+    return result;
+}
+
+property_type conv_ast(ast_t *ast)
+{
+  switch (ast->type) {
+  case AST_CHAR:
+      break;
+  case AST_EMPTY:
+      break;
+  case AST_ERROR:
+      break;
+  case AST_TREE:
+      return conv_tree(ast);
+  default:
+      break;
+  }
+  tree_type t("dummy");
+  return t;
+}
+
 int main()
 {
   using namespace std;
@@ -140,8 +164,8 @@ int main()
   p1.emplace_back(1.23e-4l);
   p1.emplace_back(true);
   p1.emplace_back(p1);
-  tree_type t1("TKN", 0);
-  token_type k1("Number", "12.3");
+  tree_type t1("TKN");
+  tree_type k1("Number", "12.3");
   t1.children.emplace_back(k1);
   p1.emplace_back(t1);
   map_type p2;
@@ -151,39 +175,41 @@ int main()
   property_type p = p1;
 
   boost::apply_visitor(printer(std::cout), p);
-  //variant01();
-
-  // int, char, std::stringのいずれかの型の値を保持できる型
-  std::variant<int, char, std::string> v = 3; // int型の値を代入
-
-  // 候補型の0番目の型 (int) を保持しているか
-  if (v.index() == 0)
-  {
-    int &x = std::get<0>(v); // 型のインデックスを指定して、保持している値を取得
-    std::cout << "(1)" << x << std::endl;
-  }
-
-  v = std::string("Hello"); // std::string型オブジェクトを代入
-
-  // std::string型を保持しているか
-  if (std::holds_alternative<std::string>(v))
-  {
-    std::string &x = std::get<std::string>(v); // 型を指定して、保持している値を取得
-    std::cout << "(2)" << x << std::endl;
-  }
 
   // Create our parser
   struct parser_t *parser = json_parser_new();
 
   // Setup our input
-  char data[] = "42";
+  char data[] = R"(
+{
+    "glossary": {
+        "title": "example glossary",
+		"GlossDiv": {
+            "title": "S",
+			"GlossList": {
+                "GlossEntry": {
+                    "ID": "SGML",
+					"SortAs": "SGML",
+					"GlossTerm": "Standard Generalized Markup Language",
+					"Acronym": "SGML",
+					"Abbrev": "ISO 8879:1986",
+					"GlossDef": {
+                        "para": "A meta-markup language, used to create markup languages such as DocBook.",
+						"GlossSeeAlso": ["GML", "XML"]
+                    },
+					"GlossSee": "markup"
+                }
+            }
+        }
+    }
+}  )";
   struct input_t *input = input_new(data, strlen(data));
 
   // Parse our input
   struct ast_t *ast = parse(parser, input);
 
   // Print our ast
-  display_ast(ast, json_type_strings);
+  //display_ast(ast, json_type_strings);
 
   unicode_ostream uout(cout);
 
@@ -203,6 +229,9 @@ int main()
       uout << json_type_strings[child->data.tree->type] << endl;
     }
   }
+
+  property_type t = conv_ast(ast);
+  boost::apply_visitor(printer(std::cout), t);
 
   ast_recursive_delete(ast);
   input_delete(input);
