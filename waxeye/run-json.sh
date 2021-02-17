@@ -8,5 +8,4 @@ pacman -S --needed --noconfirm \
 
 waxeye -g c . -p json json.waxeye
 gcc -c json_parser.c
-g++ -std=c++17 json.cpp json_parser.o -lwaxeye -o json
-./json.exe 
+g++ -std=c++17 json.cpp json_parser.o -lwaxeye -o json && ./json.exe 

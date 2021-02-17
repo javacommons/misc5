@@ -10,9 +10,10 @@
 template <typename T>
 struct tree
 {
-  size_t token_type;
-  std::string token;
+  size_t type;
+  std::string name;
   std::vector<T> children;
+  explicit tree(const std::string &name, size_t type): name(name), type(type) {}
   friend std::ostream &operator<<(std::ostream &stream, const tree<T> &value)
   {
     stream << "[tree]";
@@ -20,14 +21,27 @@ struct tree
   }
 };
 
+struct token
+{
+  std::string name;
+  std::string text;
+  explicit token(const std::string &name, const std::string &text): name(name), text(text) {}
+  friend std::ostream &operator<<(std::ostream &stream, const token &value)
+  {
+    stream << "[token]";
+    return stream;
+  }
+};
+
 
 using property_type = boost::make_recursive_variant<bool, float, double, long double,
- tree<boost::recursive_variant_>,
+ tree<boost::recursive_variant_>, token,
  std::vector<boost::recursive_variant_>,
  std::unordered_map<std::string, boost::recursive_variant_>
  >::type;
 
 using tree_type = tree<property_type>;
+using token_type = token;
 using array_type = std::vector<property_type>;
 using map_type = std::unordered_map<std::string, property_type>;
 
@@ -52,7 +66,7 @@ public:
   auto operator()(const tree_type &o) const -> void
   {
     indent();
-    _s << o.token << "[\n";
+    _s << o.name << "[\n";
     for (auto i = o.children.cbegin(); i != o.children.cend(); ++i)
     {
       boost::apply_visitor(printer(_s, _nest_level + 1), *i);
@@ -62,6 +76,12 @@ public:
     }
     indent();
     _s << "]";
+  }
+
+  auto operator()(const token_type &o) const -> void
+  {
+    indent();
+    _s << o.name << "(" << o.text << ")";
   }
 
   auto operator()(const array_type &o) const -> void
@@ -110,40 +130,6 @@ public:
   }
 };
 
-void variant01()
-{
-  // 継承関係にないクラス群
-  struct A
-  {
-    void f() {}
-  };
-  struct B
-  {
-    void f() {}
-  };
-  struct C
-  {
-    void f() {}
-  };
-
-  // A, B, Cのいずれかの型を代入できる型
-  std::variant<A, B, C> v = A{}; // A型のオブジェクトを代入
-  v = B{};                       // B型のオブジェクトに切り替え
-
-  // B型オブジェクトを保持しているか
-  if (std::holds_alternative<B>(v))
-  {
-    // 保持しているB型オブジェクトを取得
-    B &b = std::get<B>(v);
-  }
-
-  // どの型が代入されていたとしても、共通のインタフェースを呼び出す
-  std::visit([](auto &x) {
-    x.f();
-  },
-             v);
-}
-
 int main()
 {
   using namespace std;
@@ -154,9 +140,9 @@ int main()
   p1.emplace_back(1.23e-4l);
   p1.emplace_back(true);
   p1.emplace_back(p1);
-  tree_type t1;
-  t1.token = "TKN";
-  t1.children.emplace_back(12.3);
+  tree_type t1("TKN", 0);
+  token_type k1("Number", "12.3");
+  t1.children.emplace_back(k1);
   p1.emplace_back(t1);
   map_type p2;
   p2.emplace("fuga", p1);
@@ -165,7 +151,7 @@ int main()
   property_type p = p1;
 
   boost::apply_visitor(printer(std::cout), p);
-  variant01();
+  //variant01();
 
   // int, char, std::stringのいずれかの型の値を保持できる型
   std::variant<int, char, std::string> v = 3; // int型の値を代入
