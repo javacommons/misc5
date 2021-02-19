@@ -52,3 +52,14 @@ target
 tmp
 ui_*.h
 venv
+*.interp
+*.tokens
+*Lexer.cpp
+*Lexer.h
+*Lexer.java
+*Listener.cpp
+*Listener.h
+*Listener.java
+*Parser.cpp
+*Parser.h
+*Parser.java

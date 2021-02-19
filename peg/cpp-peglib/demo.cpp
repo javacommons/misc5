@@ -8,6 +8,7 @@ using namespace std;
 
 int main(void) {
   // (2) Make a parser
+#if 0x0
   parser parser(R"(
     # Grammar for Calculator...
     Additive    <- Multitive '+' Additive / Multitive
@@ -16,6 +17,16 @@ int main(void) {
     Number      <- < [0-9]+ >
     %whitespace <- [ \t]*
   )");
+#else
+  parser parser(R"(
+    # Grammar for Calculator...
+    Additive    <- Multitive '+' Additive / Multitive
+    Multitive   <- Primary '*' Multitive / Primary
+    Primary     <- '(' Additive ')' / Number
+    Number      <- < [0-9]+ >
+    %whitespace <- [ \t]*
+  )");
+#endif
 
   assert(static_cast<bool>(parser) == true);
 
