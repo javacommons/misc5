@@ -20,6 +20,6 @@ if [ ! -e antlr4-4.9.1 ]; then
     cmake -G "MSYS Makefiles" -D CMAKE_INSTALL_PREFIX=$MINGW_PREFIX ..
     make
     make install
-fi
-
     cp -p $MINGW_PREFIX/lib/libantlr4-runtime.dll $MINGW_PREFIX/bin/
+    cp -rp $MINGW_PREFIX/include/antlr4-runtime/* $MINGW_PREFIX/include/
+fi
