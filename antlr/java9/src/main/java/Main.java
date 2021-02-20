@@ -46,7 +46,7 @@ class Antlr4Trees {
 			result.add(t.getText());
 			return result;
 		}
-		StringBuilder builder = new StringBuilder();
+		//StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < t.getChildCount(); i++) {
 			result.addAll(getList(t.getChild(i)));
 		}

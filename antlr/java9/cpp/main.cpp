@@ -1,7 +1,7 @@
 ﻿#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-#include "antlr4-util.h"
+#include "jcommons.antlr4.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -9,6 +9,7 @@ using json = nlohmann::json;
 #include <string>
 #include <sstream>
 #include <regex>
+#include <stack>
 
 #include "antlr4-runtime.h"
 #include "Java8Lexer.h"
@@ -18,24 +19,46 @@ using json = nlohmann::json;
 #include "strconv.h"
 
 using namespace antlrcpptest;
-using namespace antlr4;
 
 class MyVisitor : public Java8ParserBaseVisitor
 {
+    antlr4::Parser *parser;
+    jcommons::TreeUtils *tu;
+    std::stack<json *> result_stack;
 
     // Java8ParserVisitor interface
 public:
+    MyVisitor(antlr4::Parser *parser): parser(parser)
+    {
+        this->tu = new jcommons::TreeUtils(parser);
+    }
+    MyVisitor(antlr4::Parser &parser): parser(&parser) {}
     virtual antlrcpp::Any visitCompilationUnit(Java8Parser::CompilationUnitContext *context)
     {
+        json result = json::array();
+        result_stack.push(&result);
         visitChildren(context);
-        json j;
-        j.push_back(1.23);
-        j.push_back("abcはろー");
-        return j;
+        result_stack.pop();
+        return result;
     }
+
+    // Java8ParserVisitor interface
+public:
+    virtual antlrcpp::Any visitImportDeclaration(Java8Parser::ImportDeclarationContext *context)
+    {
+        json result;
+        result["rule"] = "importDeclaration";
+        result_stack.push(&result);
+        visitChildren(context);
+        result_stack.pop();
+        result["text"] = tu->getList(context);
+        result_stack.top()->push_back(result);
+        return nullptr;
+    }
+
 };
 
-int main(int argc, const char *argv[])
+int main()
 {
     //SetConsoleOutputCP(CP_UTF8);
     //SetConsoleCP(CP_UTF8);
@@ -43,23 +66,25 @@ int main(int argc, const char *argv[])
 
     std::ifstream ifs("../Test.java");
 
-    ANTLRInputStream input(ifs);
+    antlr4::ANTLRInputStream input(ifs);
     Java8Lexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
+    antlr4::CommonTokenStream tokens(&lexer);
 
     Java8Parser parser(&tokens);
-    tree::ParseTree *tree = parser.compilationUnit();
+    antlr4::tree::ParseTree *tree = parser.compilationUnit();
 
-    std::wstring s = antlrcpp::s2ws(tree->toStringTree(&parser)) + L"\n";
+    if(false)
+    {
+        std::wstring s = antlrcpp::s2ws(tree->toStringTree(&parser)) + L"\n";
+        uout << "Parse Tree: " << s << std::endl;
+    }
 
-    uout << "Parse Tree: " << s << std::endl;
-    TreeUtils tu;
-    std::string pretty = tu.toPrettyTree(tree, &parser);
+    jcommons::TreeUtils tu(parser);
+    std::string pretty = tu.toPrettyTree(tree);
     uout << "Pretty: " << pretty << std::endl;
-    MyVisitor v;
-    //v.visit (parser.compilationUnit());
+    MyVisitor v(parser);
     antlrcpp::Any result = v.visit(tree);
-    uout << GetConsoleCP() << result.as<json>().dump() << std::endl;
+    uout << GetConsoleCP() << result.as<json>().dump(2) << std::endl;
 
     return 0;
 }
