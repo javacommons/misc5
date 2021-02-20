@@ -85,17 +85,16 @@ class EvalVisitor extends Java9BaseVisitor<Object> {
 		result.put("rule", Trees.getNodeText(ctx, this.parser));
 		result.put("tokens", trees.getList(ctx));
 		((List)deque.peek().get("imports")).add(result);
-		return result;
+		return null;
 	}
 
 	@Override public Object visitTypeDeclaration(Java9Parser.TypeDeclarationContext ctx) {
 		Map<String, Object> result = new LinkedHashMap<>();
-		String child = Trees.getNodeText(ctx.children.get(0), this.parser);
 		((List)deque.peek().get("types")).add(result);
 		deque.push(result);
 		visitChildren(ctx);
 		deque.pop();
-		return result;
+		return null;
 	}
 
 	@Override public Object visitNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext ctx) {
@@ -103,17 +102,65 @@ class EvalVisitor extends Java9BaseVisitor<Object> {
 		for(int i=0; i<ctx.children.size(); i++)
 		{
 			String child = Trees.getNodeText(ctx.children.get(i), this.parser);
-			System.out.printf("child: %s\n",  child);
+			//System.out.printf("child: %s\n",  child);
 			if(child.equals("identifier"))
 			{
 				System.out.println(ctx.children.get(i).getText());
-				deque.peek().put("className", ctx.children.get(i).getText());
+				deque.peek().put("idintifier", ctx.children.get(i).getText());
 			}
 		}
 		deque.peek().put("methods", new ArrayList());
 		visitChildren(ctx);
 		return null;
 	}
+
+	@Override public Object visitMethodDeclaration(Java9Parser.MethodDeclarationContext ctx) {
+		Map<String, Object> result = new LinkedHashMap<>();
+		result.put("rule", Trees.getNodeText(ctx, this.parser));
+		result.put("modifiers", new ArrayList());
+		//result.put("tokens", trees.getList(ctx));
+		((List)deque.peek().get("methods")).add(result);
+		deque.push(result);
+		visitChildren(ctx);
+		deque.pop();
+		return null;
+	}
+
+	@Override public Object visitMethodDeclarator(Java9Parser.MethodDeclaratorContext ctx) {
+		deque.peek().put("rule", Trees.getNodeText(ctx, this.parser));
+		for(int i=0; i<ctx.children.size(); i++)
+		{
+			String child = Trees.getNodeText(ctx.children.get(i), this.parser);
+			//System.out.printf("child: %s\n",  child);
+			if(child.equals("identifier"))
+			{
+				System.out.println(ctx.children.get(i).getText());
+				deque.peek().put("idintifier", ctx.children.get(i).getText());
+			}
+		}
+		visitChildren(ctx);
+		return null;
+	}
+
+	@Override public Object visitMethodModifier(Java9Parser.MethodModifierContext ctx) {
+		for(int i=0; i<ctx.children.size(); i++)
+		{
+			//String child = Trees.getNodeText(ctx.children.get(i), this.parser);
+			//System.out.printf("child: %s\n",  child);
+			//System.out.println(ctx.children.get(i).getText());
+			((List)deque.peek().get("modifiers")).add(ctx.children.get(i).getText());
+		}
+		visitChildren(ctx);
+		return null;
+	}
+
+	@Override public Object visitMethodHeader(Java9Parser.MethodHeaderContext ctx) {
+		deque.peek().put("header", trees.getList(ctx));
+		visitChildren(ctx);
+		return null;
+	}
+
+
 }
 
 public class Main {

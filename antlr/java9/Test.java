@@ -1,11 +1,8 @@
+import java.util.*;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-
-import antlrtest.Java9Lexer;
-import antlrtest.Java9Parser;
-import antlrtest.Java9Parser.CompilationUnitContext;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
