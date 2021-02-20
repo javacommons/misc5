@@ -19,14 +19,14 @@ public:
     TreeUtils(::antlr4::Parser *parser): parser(parser) {}
     TreeUtils(::antlr4::Parser &parser): parser(&parser) {}
 
-    std::vector<std::string> getList(::antlr4::tree::ParseTree *t) {
+    std::vector<std::string> getTextList(::antlr4::tree::ParseTree *t) {
         std::vector<std::string> result;
         if (t->children.size() == 0) {
             result.push_back(t->getText());
             return result;
         }
         for (size_t i = 0; i < t->children.size(); i++) {
-            std::vector<std::string> result2 = getList(t->children[i]);
+            std::vector<std::string> result2 = getTextList(t->children[i]);
             for(auto s: result2)
                 result.push_back(s);
         }

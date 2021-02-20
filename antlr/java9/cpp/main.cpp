@@ -51,7 +51,7 @@ public:
         result_stack.push(&result);
         visitChildren(context);
         result_stack.pop();
-        result["text"] = tu->getList(context);
+        result["text"] = tu->getTextList(context);
         result_stack.top()->push_back(result);
         return nullptr;
     }
