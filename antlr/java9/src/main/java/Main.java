@@ -40,8 +40,23 @@ class EvalVisitor extends Java9BaseVisitor<Void> {
 		this.parser = parser;
 	}
 
+	/*
 	@Override
 	public Void visitImportDeclaration(Java9Parser.ImportDeclarationContext ctx) {
+		String label = Trees.getNodeText(ctx, this.parser);
+		System.out.printf("visit: %s\n", label);
+		Antlr4Trees trees = new Antlr4Trees(this.parser);
+		System.out.printf("visit: %s\n", trees.getText(ctx));
+		ctx.getText();
+		for (int i = 0; i < ctx.children.size(); ++i) {
+			ParseTree c = ctx.children.get(i);
+			System.out.printf("c: %s\n", c.getText());
+		}
+		visitChildren(ctx);
+		return (Void) null;
+	}*/
+
+	@Override public Void visitSingleTypeImportDeclaration(Java9Parser.SingleTypeImportDeclarationContext ctx) {
 		String label = Trees.getNodeText(ctx, this.parser);
 		System.out.printf("visit: %s\n", label);
 		Antlr4Trees trees = new Antlr4Trees(this.parser);
@@ -55,6 +70,7 @@ class EvalVisitor extends Java9BaseVisitor<Void> {
 		return (Void) null;
 	}
 
+
 }
 
 public class Main {
@@ -66,10 +82,12 @@ public class Main {
 		Java9Parser parser = new Java9Parser(tokens);
 		ParserRuleContext root = parser.compilationUnit();
 		AntlrCutter cutter = new AntlrCutter(parser, root);
+		/*
 		cutter.cut(Arrays.asList(
 				"singleTypeImportDeclaration",
 				"packageOrTypeName",
 				"typeDeclaration"));
+				*/
 		System.out.println("tree: " + root.toStringTree(parser));
 		List<String> ruleNamesList = Arrays.asList(parser.getRuleNames());
 		String prettyTree = TreeUtils.toPrettyTree(root, ruleNamesList);
