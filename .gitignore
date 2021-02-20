@@ -63,3 +63,6 @@ venv
 *Parser.cpp
 *Parser.h
 *Parser.java
+*Visitor.cpp
+*Visitor.h
+*Visitor.java
