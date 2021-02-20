@@ -1,4 +1,6 @@
-﻿#include <cstdlib>
+﻿#include "antlr4-util.h"
+
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -7,59 +9,29 @@
 
 #include "antlr4-runtime.h"
 #include "Java8Lexer.h"
-#include "Java8Parser.h"
+//#include "Java8Parser.h"
+//#include "Java8ParserVisitor.h"
+#include "Java8ParserBaseVisitor.h"
 
 #include "strconv.h"
 
 using namespace antlrcpptest;
 using namespace antlr4;
 
-class TreeUtils {
+class MyVisitor : public Java8ParserBaseVisitor
+{
 
-    std::string Indents;
-    int level;
-
+    // Java8ParserVisitor interface
 public:
-    TreeUtils() {}
-
-    std::string toPrettyTree(tree::ParseTree *t, antlr4::Parser *parser) {
-        level = 0;
-        Indents = "  ";
-        std::string result = process(t, parser);
-        std::regex e1("\\n\\s*\\n");
-        result = std::regex_replace(result, e1, "\n");
-        return result;
-    }
-
-protected:
-    std::string process(tree::ParseTree *t, antlr4::Parser *parser) {
-        if(t->children.size() == 0) return tree::Trees::getNodeText(t, parser);
-        std::stringstream ss;
-        ss << lead(level);
-        level++;
-        std::string s = tree::Trees::getNodeText(t, parser);
-        ss << s << ' ';
-        for(int i=0; i< t->children.size(); i++) {
-          ss << process(t->children[i], parser);
-        }
-        level--;
-        ss << lead(level);
-        return ss.str();
-    }
-
-    std::string lead(int level) {
-        std::stringstream ss;
-        if (level > 0) {
-            ss << '\n';
-            for (int cnt = 0; cnt < level; cnt++) {
-                ss << Indents;
-            }
-        }
-        return ss.str();
+    virtual antlrcpp::Any visitCompilationUnit(Java8Parser::CompilationUnitContext *context)
+    {
+        visitChildren(context);
+        return 7890;
     }
 };
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char *argv[])
+{
 
   std::ifstream ifs("../Test.java");
 
@@ -79,6 +51,10 @@ int main(int argc, const char * argv[]) {
   TreeUtils tu;
   std::string pretty = tu.toPrettyTree(tree, &parser);
   uout << "Pretty: " << pretty << std::endl;
+  MyVisitor v;
+  //v.visit (parser.compilationUnit());
+  antlrcpp::Any result = v.visit(tree);
+  std::cout << result.as<int>() << std::endl;
 
   return 0;
 }
