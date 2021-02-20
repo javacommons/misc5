@@ -23,14 +23,14 @@ using namespace antlrcpptest;
 class MyVisitor : public Java8ParserBaseVisitor
 {
     antlr4::Parser *parser;
-    jcommons::TreeUtils *tu;
+    jcommons::antlr4::TreeUtils *tu;
     std::stack<json *> result_stack;
 
     // Java8ParserVisitor interface
 public:
     MyVisitor(antlr4::Parser *parser): parser(parser)
     {
-        this->tu = new jcommons::TreeUtils(parser);
+        this->tu = new jcommons::antlr4::TreeUtils(parser);
     }
     MyVisitor(antlr4::Parser &parser): parser(&parser) {}
     virtual antlrcpp::Any visitCompilationUnit(Java8Parser::CompilationUnitContext *context)
@@ -79,7 +79,7 @@ int main()
         uout << "Parse Tree: " << s << std::endl;
     }
 
-    jcommons::TreeUtils tu(parser);
+    jcommons::antlr4::TreeUtils tu(parser);
     std::string pretty = tu.toPrettyTree(tree);
     uout << "Pretty: " << pretty << std::endl;
     MyVisitor v(parser);

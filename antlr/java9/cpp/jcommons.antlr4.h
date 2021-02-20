@@ -6,19 +6,20 @@
 #include <string>
 
 namespace jcommons {
+namespace antlr4 {
 
 class TreeUtils
 {
 
-    antlr4::Parser *parser;
+    ::antlr4::Parser *parser;
     std::string Indents;
     int level;
 
 public:
-    TreeUtils(antlr4::Parser *parser): parser(parser) {}
-    TreeUtils(antlr4::Parser &parser): parser(&parser) {}
+    TreeUtils(::antlr4::Parser *parser): parser(parser) {}
+    TreeUtils(::antlr4::Parser &parser): parser(&parser) {}
 
-    std::vector<std::string> getList(antlr4::tree::ParseTree *t) {
+    std::vector<std::string> getList(::antlr4::tree::ParseTree *t) {
         std::vector<std::string> result;
         if (t->children.size() == 0) {
             result.push_back(t->getText());
@@ -32,7 +33,7 @@ public:
         return result;
     }
 
-    std::string toPrettyTree(antlr4::tree::ParseTree *t)
+    std::string toPrettyTree(::antlr4::tree::ParseTree *t)
     {
         level = 0;
         Indents = "  ";
@@ -43,14 +44,14 @@ public:
     }
 
 protected:
-    std::string process(antlr4::tree::ParseTree *t)
+    std::string process(::antlr4::tree::ParseTree *t)
     {
         if (t->children.size() == 0)
-            return antlr4::tree::Trees::getNodeText(t, this->parser);
+            return ::antlr4::tree::Trees::getNodeText(t, this->parser);
         std::stringstream ss;
         ss << lead(level);
         level++;
-        std::string s = antlr4::tree::Trees::getNodeText(t, this->parser);
+        std::string s = ::antlr4::tree::Trees::getNodeText(t, this->parser);
         ss << s << ' ';
         for (size_t i = 0; i < t->children.size(); i++)
         {
@@ -77,4 +78,5 @@ protected:
 
 };
 
+}
 }
