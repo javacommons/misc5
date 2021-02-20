@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,52 +68,52 @@ class EvalVisitor extends Java9BaseVisitor<Object> {
 	}
 
 	@Override public Object visitCompilationUnit(Java9Parser.CompilationUnitContext ctx) {
-		List result = new ArrayList();
-		for (int i=0; i<ctx.children.size(); i++) {
-			ParseTree c = ctx.children.get(i);
-			Object childResult = c.accept(this);
-			result.add(childResult);
-		}
-		if(result.size()==1) return result.get(0);
-		return result;
-	}
-
-	@Override public Object visitOrdinaryCompilation(Java9Parser.OrdinaryCompilationContext ctx) {
-		List result = new ArrayList();
-		for (int i=0; i<ctx.children.size(); i++) {
-			ParseTree c = ctx.children.get(i);
-			Object childResult = c.accept(this);
-			result.add(childResult);
-		}
+		Map<String, Object> result = new LinkedHashMap<>();
+		String me = Trees.getNodeText(ctx, this.parser);
+		result.put("rule", Trees.getNodeText(ctx, this.parser));
+		result.put("imports", new ArrayList());
+		result.put("types", new ArrayList());
+		deque.push(result);
+		visitChildren(ctx);
+		deque.pop();
 		return result;
 	}
 
 	@Override
 	public Object visitImportDeclaration(Java9Parser.ImportDeclarationContext ctx) {
-		Map<String, Object> result = new HashMap<>();
-		String me = Trees.getNodeText(ctx, this.parser);
-		result.put("rule", me);
+		Map<String, Object> result = new LinkedHashMap<>();
+		result.put("rule", Trees.getNodeText(ctx, this.parser));
 		result.put("tokens", trees.getList(ctx));
+		((List)deque.peek().get("imports")).add(result);
 		return result;
 	}
 
 	@Override public Object visitTypeDeclaration(Java9Parser.TypeDeclarationContext ctx) {
-		Map<String, Object> result = new HashMap<>();
-		String me = Trees.getNodeText(ctx, this.parser);
-		result.put("rule", me);
-		//result.put("tokens", trees.getList(ctx));
+		Map<String, Object> result = new LinkedHashMap<>();
 		String child = Trees.getNodeText(ctx.children.get(0), this.parser);
-		result.put("child", child);
+		((List)deque.peek().get("types")).add(result);
 		deque.push(result);
 		visitChildren(ctx);
+		deque.pop();
 		return result;
 	}
 
-	@Override public Object visitClassDeclaration(Java9Parser.ClassDeclarationContext ctx) {
-		deque.peek().put("test", "xyz");
+	@Override public Object visitNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext ctx) {
+		deque.peek().put("rule", Trees.getNodeText(ctx, this.parser));
+		for(int i=0; i<ctx.children.size(); i++)
+		{
+			String child = Trees.getNodeText(ctx.children.get(i), this.parser);
+			System.out.printf("child: %s\n",  child);
+			if(child.equals("identifier"))
+			{
+				System.out.println(ctx.children.get(i).getText());
+				deque.peek().put("className", ctx.children.get(i).getText());
+			}
+		}
+		deque.peek().put("methods", new ArrayList());
+		visitChildren(ctx);
 		return null;
 	}
-
 }
 
 public class Main {
