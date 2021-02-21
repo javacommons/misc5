@@ -4,6 +4,7 @@ CONFIG += c++17 console
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+    MyVisitor.cpp \
     generated/Java8Lexer.cpp \
     generated/Java8Parser.cpp \
     generated/Java8ParserBaseListener.cpp \
