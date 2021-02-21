@@ -3,18 +3,10 @@ using json = nlohmann::json;
 
 #include "jcommons.antlr4.h"
 
-#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
-#include <sstream>
-#include <regex>
-//#include <stack>
-#include <deque>
+#include <stack>
 
-#include "antlr4-runtime.h"
-#include "Java8Lexer.h"
-//#include "Java8Parser.h"
 #include "Java8ParserBaseListener.h"
 
 #include "strconv.h"
@@ -60,46 +52,10 @@ public:
     }
 };
 
-extern json runMyVisitor(Java8Parser &parser, antlr4::tree::ParseTree *tree);
-extern json runMyListener(Java8Parser &parser, antlr4::tree::ParseTree *tree);
 
-int main()
+json runMyListener(Java8Parser &parser, antlr4::tree::ParseTree *tree)
 {
-    //SetConsoleOutputCP(CP_UTF8);
-    //SetConsoleCP(CP_UTF8);
-    unicode_ostream uout(std::cout, GetConsoleCP());
-
-    std::ifstream ifs("../Test.java");
-
-    antlr4::ANTLRInputStream input(ifs);
-    Java8Lexer lexer(&input);
-    antlr4::CommonTokenStream tokens(&lexer);
-
-    Java8Parser parser(&tokens);
-    antlr4::tree::ParseTree *tree = parser.compilationUnit();
-
-    if(false)
-    {
-        std::wstring s = antlrcpp::s2ws(tree->toStringTree(&parser)) + L"\n";
-        uout << "Parse Tree: " << s << std::endl;
-    }
-
-    jcommons::antlr4::TreeUtils tu(parser);
-    std::string pretty = tu.toPrettyTree(tree);
-    uout << "Pretty: " << pretty << std::endl;
-
-    json visitorResult = runMyVisitor(parser, tree);
-    uout << visitorResult.dump(2) << std::endl;
-
-#if 0x0
     MyListener listener(parser);
     antlr4::tree::ParseTreeWalker::DEFAULT.walk(&listener, tree);
-    json l_result = listener.getJsonResult();
-    uout << l_result.dump(2) << std::endl;
-#endif
-
-    json listenerResult = runMyListener(parser, tree);
-    uout << listenerResult.dump(2) << std::endl;
-
-    return 0;
+    return listener.getJsonResult();
 }

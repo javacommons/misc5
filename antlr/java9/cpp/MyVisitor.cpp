@@ -3,17 +3,10 @@ using json = nlohmann::json;
 
 #include "jcommons.antlr4.h"
 
-#include <cstdlib>
-#include <fstream>
 #include <iostream>
 #include <string>
-#include <sstream>
-#include <regex>
-//#include <stack>
 #include <deque>
 
-#include "antlr4-runtime.h"
-//#include "Java8Parser.h"
 #include "Java8ParserBaseVisitor.h"
 
 #include "strconv.h"
