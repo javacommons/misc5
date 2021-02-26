@@ -5,8 +5,8 @@ pacman -S --needed --noconfirm \
     unzip \
     wget
 
-#wget -nc https://github.com/javacommons/antlr-bin/releases/download/v4.9.1/antlr-4.9.1.exe
-#cp -p antlr-4.9.1.exe $MINGW_PREFIX/bin/antlr.exe
+wget -nc https://github.com/javacommons/antlr-bin/releases/download/v4.9.1/antlr-4.9.1.exe
+cp -p antlr-4.9.1.exe $MINGW_PREFIX/bin/
 #wget -nc https://github.com/javacommons/antlr-bin/releases/download/v4.9.1/antlr-gui-4.9.1.exe
 
 wget -nc https://www.antlr.org/download/antlr4-cpp-runtime-4.8-source.zip
