@@ -1,6 +1,14 @@
-import std.stdio;
+private string toSjis(string s)
+{
+	import std.conv : to;
+	import std.windows.charset : toMBSz;
+
+	return (to!string(toMBSz(s)));
+}
 
 void main()
 {
-	writeln("Edit source/app.d to start your project.");
+	import std.stdio: writeln;
+
+	writeln("Ｄ言語の世界へようこそ".toSjis);
 }
