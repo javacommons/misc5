@@ -5,5 +5,5 @@
 	"copyright": "Copyright © 2021, javac",
 	"description": "A minimal D application.",
 	"license": "proprietary",
-	"name": "dlang"
+	"name": "reflection"
 }
