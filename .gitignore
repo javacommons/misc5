@@ -23,7 +23,9 @@
 *.vcproj
 *.vcxproj
 *_plugin_import.cpp
+.antlr
 .classpath
+.dub
 .gradle
 .idea
 .project
@@ -52,4 +54,3 @@ target
 tmp
 ui_*.h
 venv
-.antlr
