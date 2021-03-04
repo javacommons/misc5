@@ -1,4 +1,5 @@
 module test;
+import std.stdio;
 
 class Test1
 {
@@ -7,19 +8,23 @@ class Test1
     string field3 = "something";
     private int field4 = 123;
 
-    void func1() {
-
+    void func1()
+    {
+        writeln("func1 called!");
     }
 
-    final float func2(int arg1, bool arg2) {
+    final float func2(int arg1, bool arg2)
+    {
         return field2;
     }
 
-    @property private int prop1() {
+    @property private int prop1()
+    {
         return field1;
     }
 
-    @property private void prop1(int i) {
+    @property private void prop1(int i)
+    {
         field1 = i;
     }
 }
@@ -27,12 +32,14 @@ class Test1
 class Test2 : Test1
 {
     char character = 'c';
-    
-    void func4() {
-        
+
+    void func4()
+    {
+
     }
 
-    override void func1() {
+    override void func1()
+    {
 
     }
 }

@@ -471,11 +471,13 @@ abstract class Accessor : Reflection
     Box getValue(Target)(auto ref Target target) const
     {
         static if(is(Target == Box)) {
-            return _getValue(target);
+            ////return _getValue(target);
+            return getValue(target);
         }
         else static if(is(Target == struct)) {
             Box tar = &target;
-            return _getValue(tar);
+            ////return _getValue(tar);
+            return getValue(tar);
         }
         else static if(is(Target == typeof(null)) ||
                        is(Target == class) ||
@@ -483,7 +485,8 @@ abstract class Accessor : Reflection
                                (isPointer!Target && is(PointerTarget!Target == struct)))
         {
             Box tar = target;
-            return _getValue(tar);
+            ////return _getValue(tar);
+            return getValue(tar);
         }
         else
         {
@@ -498,11 +501,13 @@ abstract class Accessor : Reflection
         Box val = value;
 
         static if(is(Target == Box)) {
-            _setValue(target, val);
+            ////_setValue(target, val);
+            setValue(target, val);
         }
         else static if(is(Target == struct)) {
             Box tar = &target;
-            _setValue(tar, val);
+            ////_setValue(tar, val);
+            setValue(tar, val);
         }
         else static if(is(Target == typeof(null)) ||
                        is(Target == class) ||
@@ -510,7 +515,8 @@ abstract class Accessor : Reflection
                                (isPointer!Target && is(PointerTarget!Target == struct)))
         {
             Box tar = target;
-            _setValue(tar, val);
+            ////_setValue(tar, val);
+            setValue(tar, val);
         }
         else
         {
