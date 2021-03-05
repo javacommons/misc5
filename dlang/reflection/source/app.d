@@ -60,9 +60,16 @@ class C
         _y = v;
     }
 
-    void z()
+    int _z = 0;
+    int   getZ()
     {
         writeln("hello reflection");
+        return this._z;
+    }
+
+    void setZ(int value)
+    {
+        this._z = value;
     }
 }
 
@@ -89,6 +96,11 @@ private void sub()
     C c = new C;
     auto C_refl = reflect!C;
     writeln(C_refl.getProperty("y"));
+    const(Method) C_setZ = C_refl.getMethod("setZ");
+    C_setZ.invoke(c, 888);
+    writefln("c._z=%d", c._z);
+    const(Method) C_getZ = C_refl.getMethod("getZ");
+    writeln(cast(int)C_getZ.invoke(c));
     const(Property) y = C_refl.getProperty("y");
     writeln(y.canGetValue());
     writeln(y.canSetValue());
@@ -99,6 +111,10 @@ private void sub()
     writeln(x);
     //x.setValue(c, 1234);
 
+    foreach (const(Method) method; C_refl.methods)
+    {
+        writeln(method);
+    }
     //C c;
     //reflect!C.getMethod("z").invoke(c);
 

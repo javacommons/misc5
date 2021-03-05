@@ -749,12 +749,16 @@ final class Method : Reflection
 
         static if(Args.length > 0)
         {
-            import core.stdc.stdlib : alloca;
+            import core.stdc.stdlib : alloca, malloc;
 
             auto argSz = Args.length * TypeInfo.sizeof;
             auto ptrSz = Args.length * (void*).sizeof;
+            /*
             params.argTypes = cast(TypeInfo[])alloca(argSz)[0..argSz];
             params.args = cast(void*[])alloca(ptrSz)[0..ptrSz];
+            */
+            params.argTypes = cast(TypeInfo[])malloc(argSz)[0..argSz];
+            params.args = cast(void*[])malloc(ptrSz)[0..ptrSz];
 
             foreach(i, ArgType; Args) {
                 static if(is(ArgType == Box)) {
