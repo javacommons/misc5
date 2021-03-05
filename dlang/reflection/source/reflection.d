@@ -695,7 +695,8 @@ final class Method : Reflection
         foreach(i, tname; _paramTypeNames)
         {
             if(i > 0) ret ~= ", ";
-            ret ~= tname ~ " " ~ _paramNames[i];
+            ////ret ~= tname ~ " " ~ _paramNames[i];
+            ret ~= tname;
         }
 
         ret ~= ")";

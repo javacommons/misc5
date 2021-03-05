@@ -60,6 +60,11 @@ class C
         _y = v;
     }
 
+    @property void y(string v)
+    {
+        _y = to!int(v);
+    }
+
     int _z = 0;
     int   getZ()
     {
@@ -104,6 +109,12 @@ private void sub()
     const(Property) y = C_refl.getProperty("y");
     writeln(y.canGetValue());
     writeln(y.canSetValue());
+    auto C_y_setters = y.setters();
+    foreach(setter; C_y_setters) {
+        writefln("setter=%s", setter);
+    }
+    C_y_setters[0].invoke(c, 7777);
+    C_y_setters[1].invoke(c, 8888);
     //y.setValue(c, 123);
     writeln(c.y);
     //writeln(y.getValue(c));
