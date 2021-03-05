@@ -3,6 +3,9 @@
 		"javac"
 	],
 	"copyright": "Copyright © 2021, javac",
+    "dependencies": {
+        "pegged": "~>0.4.5-beta.2"
+    },
 	"description": "A minimal D application.",
 	"license": "proprietary",
 	"name": "traits"
