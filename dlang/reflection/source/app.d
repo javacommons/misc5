@@ -44,6 +44,10 @@ int main(string[] args)
 struct S
 {
     float x;
+    void dump()
+    {
+        writeln("S::dump()");
+    }
 }
 
 class C
@@ -114,8 +118,10 @@ private void sub()
         writefln("setter=%s", setter);
     }
     C_y_setters[0].invoke(c, 7777);
+    writeln(c.y);
+    /*
     C_y_setters[1].invoke(c, 8888);
-    //y.setValue(c, 123);
+    */
     writeln(c.y);
     //writeln(y.getValue(c));
     const(Field) x = C_refl.getField("x");
