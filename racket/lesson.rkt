@@ -1,4 +1,3 @@
-#! racket32
 #lang racket
 
 ; https://learnxinyminutes.com/docs/racket/
