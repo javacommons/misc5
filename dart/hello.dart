@@ -1,3 +1,3 @@
 void main() {
-  print('Hello, World!');
+  print('hello漢字=한자');
 }
