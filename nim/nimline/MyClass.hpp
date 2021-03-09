@@ -1,13 +1,14 @@
 #pragma once
 
 #include <stdio.h>
+#include <string>
+#include <iostream>
 
-class MyClass 
+class MyClass
 {
 public:
   MyClass()
   {
-
   }
 
   MyClass(int n)
@@ -19,14 +20,24 @@ public:
 
   ~MyClass()
   {
-    printf("~MyClass\n");
+    printf("~MyClass()\n");
   }
 
-  double test(int x) 
-  { 
-    return (double)x; 
+  void say(const std::string &msg)
+  {
+    std::cout << "Say: " << msg << std::endl;
   }
-  
+
+  std::string greeting(const std::string &name)
+  {
+    return std::string("Hello ") + name;
+  }
+
+  double test(int x)
+  {
+    return (double)x;
+  }
+
   void test3()
   {
     printf("Hello mondo\n");
@@ -36,12 +47,12 @@ public:
   {
     printf("Hello mondo %d %d\n", x, y);
   }
-  
-  int test2(int x) 
-  { 
-    return x; 
+
+  int test2(int x)
+  {
+    return x;
   }
-  
+
   int num = 77;
   int nums[2];
 };
@@ -51,7 +62,6 @@ class MyClass2
 public:
   MyClass2()
   {
-
   }
 
   MyClass2(int n)
@@ -60,12 +70,12 @@ public:
 
   ~MyClass2()
   {
-    printf("~MyClass2\n");
+    printf("~MyClass2()\n");
   }
 
-  int test20(int x) 
-  { 
-    return x; 
+  int test20(int x)
+  {
+    return x;
   }
 
   virtual int testVir()
@@ -91,7 +101,7 @@ public:
   int num = 78;
   double myDouble = 7.7;
   MyClass class1;
-  const char* myCstring;
+  const char *myCstring;
 };
 
 extern int globalNumber;

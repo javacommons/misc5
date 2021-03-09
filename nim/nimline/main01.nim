@@ -18,3 +18,7 @@ echo x
 #echo myx2.num.to(cint)
 #let n = myx2.num().to(cint)
 echo global.globalNumber.to(cint)
+let msg: StdString = "HelloWorld"
+discard myx.say(msg)
+let gr = myx.greeting(msg).to(StdString)
+echo gr.c_str().to(cstring)
