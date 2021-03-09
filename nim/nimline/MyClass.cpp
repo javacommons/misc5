@@ -1,0 +1,1 @@
+int globalNumber = 101;

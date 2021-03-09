@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <iostream>
 
 #define TEST_INT 512
 #define TEST_FLOAT 5.12
@@ -14,6 +15,10 @@ extern "C" {
 
 class Foo1{
   int bar1;
+  void hello()
+  {
+    std::cout << "hello " << this->bar1 << std::endl;
+  }
 };
 
 template<typename T>
