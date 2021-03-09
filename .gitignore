@@ -22,6 +22,7 @@
 *.user.*
 *.vcproj
 *.vcxproj
+*.zip
 *_plugin_import.cpp
 .antlr
 .classpath
