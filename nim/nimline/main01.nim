@@ -3,14 +3,10 @@ import nimline
 defineCppType(MyClass, "MyClass", "MyClass.hpp")
 defineCppType(MyClass2, "MyClass2", "MyClass.hpp")
 cppfiles("MyClass.cpp")
-#var obj = cppinit(MyClass, 1)
-#obj.someField = 42
-#let res = obj.someMethod(1, 2.0).to(cint)
 
-# or for an internal pointer, which is more flexible due to lack of constructors in nim
 var
-  myx = MyClass.new()
   myx2 = MyClass2.new()
+  myx = MyClass.new(555)
 myx.test3().to(void)
 myx.num = 99
 var x = myx2.test20(1234).to(cint)
@@ -19,6 +15,11 @@ echo x
 #let n = myx2.num().to(cint)
 echo global.globalNumber.to(cint)
 let msg: StdString = "HelloWorld"
-discard myx.say(msg)
+myx.say(msg).to(void)
 let gr = myx.greeting(msg).to(StdString)
 echo gr.c_str().to(cstring)
+echo myx.z().to(cint)
+myx.z(222).to(void)
+echo myx.z().to(cint)
+#echo myx2.class1.z().to(cint)
+

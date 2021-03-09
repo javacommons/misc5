@@ -6,13 +6,16 @@
 
 class MyClass
 {
+  int _z = 777;
 public:
   MyClass()
   {
+    printf("MyClass(1)\n");
   }
 
   MyClass(int n)
   {
+    printf("MyClass(2)\n");
     num = 7;
     nums[0] = 4;
     nums[1] = 5;
@@ -20,7 +23,17 @@ public:
 
   ~MyClass()
   {
-    printf("~MyClass()\n");
+    printf("~MyClass(): _z=%d\n", this->_z);
+  }
+
+  void z(int value)
+  {
+    this->_z = value;
+  }
+
+  int z()
+  {
+    return this->_z;
   }
 
   void say(const std::string &msg)
@@ -62,10 +75,12 @@ class MyClass2
 public:
   MyClass2()
   {
+    printf("MyClass2(1)\n");
   }
 
   MyClass2(int n)
   {
+    printf("MyClass2(2)\n");
   }
 
   ~MyClass2()
