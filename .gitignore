@@ -1,5 +1,6 @@
 *.a
 *.bak
+*bxproj-journal
 *.cbproj.local
 *.class
 *.dll
