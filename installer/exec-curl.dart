@@ -18,7 +18,7 @@ int call_process(String exe, List<String> args) {
 }
 
 int call_curl() {
-  var curl32 = get_exe_path("curl64.exe");
+  var curl32 = get_exe_path("curl.exe");
   return call_process(curl32, [
     "--etag-compare",
     "test.etag",
