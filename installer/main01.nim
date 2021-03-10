@@ -1,4 +1,6 @@
 import nimline
+import osproc
+import strutils,pegs,unicode
 
 defineCppType(MyClass, "MyClass", "MyClass.hpp")
 defineCppType(MyClass2, "MyClass2", "MyClass.hpp")
@@ -23,3 +25,9 @@ myx.z(222).to(void)
 echo myx.z().to(cint)
 #echo myx2.class1.z().to(cint)
 
+#execCmd("")
+
+block:
+  echo "$1 eats $2." % ["The cat", "fish"]
+  echo "$# eats $#." % ["The cat", "fish"]
+  echo "$animal eats $food." % ["animal", "The cat", "food", "fish"]
