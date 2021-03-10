@@ -17,4 +17,11 @@
 #user    0m1.328s
 #sys     0m1.374s
 
-time tar -xf msys2-x86_64-latest.tar.xz --strip-components 1
+#time tar -xf msys2-x86_64-latest.tar.xz --strip-components 1
+
+#xz -dc C:\Users\javac\my-bin\msys2-x86_64-latest.tar.xz | tar -xf -
+
+#xz -dc C:/Users/javac/my-bin/msys2-x86_64-latest.tar.xz | tar -xf -
+
+#mkdir -p C:\Users\javac\tmp\my-msys2
+#xz.exe -dc C:/Users/javac/my-bin/msys2-x86_64-latest.tar.xz | tar.exe -xf - -C C:/Users/javac/tmp/my-msys2 --strip-components 1
