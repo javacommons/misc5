@@ -1,6 +1,13 @@
 import nimline
+import os
 import osproc
 import strutils,pegs,unicode
+
+proc call_with_busybox(cmd: string): int =
+  let busybox = "$#\\busybox32.exe" % [os.getAppDir()]
+  let cmdline = "\"$#\" $#" % [busybox, cmd]
+  echo cmdline
+  return execCmd(cmdline)
 
 defineCppType(MyClass, "MyClass", "MyClass.hpp")
 defineCppType(MyClass2, "MyClass2", "MyClass.hpp")
@@ -25,9 +32,25 @@ myx.z(222).to(void)
 echo myx.z().to(cint)
 #echo myx2.class1.z().to(cint)
 
-#execCmd("")
 
 block:
   echo "$1 eats $2." % ["The cat", "fish"]
   echo "$# eats $#." % ["The cat", "fish"]
   echo "$animal eats $food." % ["animal", "The cat", "food", "fish"]
+
+echo os.getAppDir()
+var busybox = "$#\\busybox32.exe" % [os.getAppDir()]
+echo busybox
+var curl = "$#\\curl32.exe" % [os.getAppDir()]
+var cmd1 = "\"$#\" ls -l" % [busybox]
+echo cmd1
+var xc1 = execCmd(cmd1)
+echo xc1
+
+var cmd01 = 
+  "\"$#\" --etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz" % [curl]
+echo execCmd(cmd01)
+echo call_with_busybox("rm -rf my-msys2.tmp")
+echo call_with_busybox("mkdir -p my-msys2.tmp")
+echo call_with_busybox("tar -xvf msys2-x86_64-latest.tar.xz -C my-msys2.tmp --strip-components 1")
+
