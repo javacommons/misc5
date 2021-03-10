@@ -41,6 +41,8 @@ __pycache__
 bin
 build
 build-*
+CMakeCache.txt
+CMakeFiles
 compiled
 debug
 desktop.ini
