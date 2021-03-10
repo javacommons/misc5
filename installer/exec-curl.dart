@@ -18,7 +18,7 @@ int call_process(String exe, List<String> args) {
 }
 
 int call_curl() {
-  var curl32 = get_exe_path("curl32.exe");
+  var curl32 = get_exe_path("curl64.exe");
   return call_process(curl32, [
     "--etag-compare",
     "test.etag",
@@ -36,7 +36,7 @@ void main() async {
   print(dirname(Platform.script.toFilePath()));
 
   call_curl();
-  var busybox = get_exe_path("busybox.exe");
+  var busybox = get_exe_path("busybox64.exe");
   final myDir = Directory('my-msys2.tmp');
   var isThere = await myDir.exists();
   print(isThere ? 'exists' : 'non-existent');
