@@ -4,6 +4,7 @@
 *.class
 *.dll
 *.egg-info
+*.etag
 *.exe
 *.filters
 *.htm
@@ -22,6 +23,7 @@
 *.user.*
 *.vcproj
 *.vcxproj
+*.xz
 *.zip
 *_plugin_import.cpp
 .antlr
