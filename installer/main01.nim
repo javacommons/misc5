@@ -7,7 +7,8 @@ proc call_with_busybox(cmd: string): int =
   let busybox = "$#\\busybox32.exe" % [os.getAppDir()]
   let cmdline = "\"$#\" $#" % [busybox, cmd]
   echo cmdline
-  return execCmd(cmdline)
+  #return execCmd(cmdline)
+  return execShellCmd(cmdline)
 
 defineCppType(MyClass, "MyClass", "MyClass.hpp")
 defineCppType(MyClass2, "MyClass2", "MyClass.hpp")
