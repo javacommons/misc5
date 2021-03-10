@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
-include(FindPkgConfig)
-pkg_check_modules(CURLPP REQUIRED curlpp)
 
 set(CMAKE_CXX_STANDARD 11) # C++11...
 set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
-
 
 file(GLOB ExamplesFileList "*.cpp")
 
@@ -20,7 +17,7 @@ foreach(Example ${ExamplesFileList})
   # Define example executable
   add_executable(${ExampleName} ${Example})
   # Link example against curlpp
-  target_link_libraries(${ExampleName} ${CURLPP_LDFLAGS})
+  target_link_libraries(${ExampleName} curlpp curl ws2_32)
   # make the meta target depend on this example.
   add_dependencies(build_all_examples ${ExampleName})
 endforeach(Example ${ExamplesFileList})
