@@ -25,3 +25,5 @@
 
 #mkdir -p C:\Users\javac\tmp\my-msys2
 #xz.exe -dc C:/Users/javac/my-bin/msys2-x86_64-latest.tar.xz | tar.exe -xf - -C C:/Users/javac/tmp/my-msys2 --strip-components 1
+
+#C:\Users\javac\tmp>C:\Users\javac\.software\busybox.exe xz -dc msys2-x86_64-latest.tar.xz | C:\Users\javac\.software\busybox.exe tar -xf - -C C:/Users/javac/tmp/my-msys2 --strip-components 1
