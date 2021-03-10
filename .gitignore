@@ -28,9 +28,11 @@
 *_plugin_import.cpp
 .antlr
 .classpath
+.dart_tool
 .dub
 .gradle
 .idea
+.packages
 .project
 .qmake.stash
 .settings
@@ -56,6 +58,7 @@ gradlew.bat
 Makefile*
 nimcache
 obj
+pubspec.lock
 release
 target
 tmp
