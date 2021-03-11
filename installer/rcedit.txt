@@ -1,0 +1,7 @@
+https://github.com/electron/rcedit/releases/tag/v1.1.1
+
+[for 32bit racket]
+rcedit-x86.exe gui-01.exe --set-version-string FileDescription "My GUI Program"
+
+[for 64bit racket]
+rcedit-x64.exe gui-01.exe --set-version-string FileDescription "My GUI Program"
