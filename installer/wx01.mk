@@ -7,24 +7,23 @@ else
 endif
 CXX = `$(WX_CONFIG) --cxx`
 INCFLAGS = -I./src
-CXXFLAGS = `$(WX_CONFIG) --cxxflags` -DwxOVERRIDE=override
+CXXFLAGS = -std=c++17 `$(WX_CONFIG) --cxxflags` $(INCFLAGS) -DwxOVERRIDE=override
 ifdef final
 	LDLIBS   = `$(WX_CONFIG) --libs` -static
 else
 	LDLIBS   = `$(WX_CONFIG) --libs`
 endif
-REZFLAGS = `$(WX_CONFIG) --rez-flags`
+RESCOMP = `$(WX_CONFIG) --rescomp`
 
 ifdef final
-    EXTRAFLAGS = -MD -g
-    #EXTRAFLAGS = -MD -O2 -fno-rtti -fno-exceptions -fomit-frame-pointer
+    EXTRAFLAGS = -MD
 else
     EXTRAFLAGS = -MD -g
 endif
 
 PROGRAM = wx01
 
-OBJECTS = $(PROGRAM).o
+OBJECTS = $(PROGRAM).o $(PROGRAM)_resources.o
 
 .SUFFIXES: .o .cpp
 
@@ -39,8 +38,8 @@ ifdef final
 	strip $(PROGRAM).exe
 endif
 
-Test_resources.o: Test.rc
-	windres -i Test.rc -o Test_resources.o $(REZFLAGS)
+$(PROGRAM)_resources.o: $(PROGRAM).rc
+	$(RESCOMP) -i $(PROGRAM).rc -o $(PROGRAM)_resources.o
 
 clean:
 	rm -rf $(PROGRAM).exe $(OBJECTS) Test_resources.o
