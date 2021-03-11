@@ -1,0 +1,10 @@
+{
+	"authors": [
+		"javac"
+	],
+	"copyright": "Copyright © 2021, javac",
+	"dependencies": {"sdlite": "~>1.1.1"},
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "sdlite01"
+}
