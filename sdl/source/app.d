@@ -13,15 +13,33 @@ int main(string[] args)
     parseSDLDocument!((n) { result ~= n; })(content, "test-input");
     writeln(result.to!string);
     writeln(result.length);
-    string name = result[1].name();
+    string name = result[2].name();
     writeln(name);
-    string qname = result[1].qualifiedName();
-    writeln(qname);
-    SDLValue val = result[1].getAttribute(qname);
+    SDLValue val = result[2].getAttribute("email");
     writeln(val.to!string);
-    writeln(result[1].values[0].to!string);
-    writeln(result[1].values[0].isText);
-    writeln(result[1].values[0].textValue);
+    writeln(result[2].values[0].to!string);
+    writeln(result[2].values[0].isText);
+    writeln(result[2].values[0].textValue);
+    string qname = result[6].qualifiedName();
+    writeln(qname);
+    writeln(result[6].name());
+    /*final*/ switch (result[2].values[0].kind)
+    {
+    case SDLValue.Kind.null_:
+        writeln("case SDLValue.Kind.null_:");
+        break;
+
+    case SDLValue.Kind.text:
+        writeln("case SDLValue.Kind.text:");
+        break;
+
+    case SDLValue.Kind.binary:
+        writeln("case SDLValue.Kind.binary:");
+        break;
+    default:
+        writeln("default:");
+        break;
+    }
     return 0;
 }
 

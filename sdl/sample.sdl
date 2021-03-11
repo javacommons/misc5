@@ -1,6 +1,36 @@
-name "sdlite"
-description "Small and fast range based SDLang parser/generator"
-copyright "Copyright © 2019, Sönke Ludwig"
-license "MIT"
+// This is a node with a single string value
+title "Hello, World"
 
-dependency "taggedalgebraic" version="~>0.11.4"
+// Multiple values are supported, too
+bookmarks 12 15 188 1234
+
+// Nodes can have attributes
+author "Peter Parker" email="peter@example.org" active=true
+
+// Nodes can be arbitrarily nested
+contents {
+	section "First section" {
+		paragraph "This is the first paragraph"
+		paragraph "This is the second paragraph"
+	}
+}
+
+// Anonymous nodes are supported
+"This text is the value of an anonymous node!"
+
+// This makes things like matrix definitions very convenient
+matrix {
+	1 0 0
+	0 1 0
+	0 0 1
+}
+
+# a tag with values, attributes, namespaces, and children
+my_namespace:person "Akiko" "Johnson" dimensions:height=68 {
+    son "Nouhiro" "Johnson"
+    daughter "Sabrina" "Johnson" location="Italy" {
+        hobbies "swimming" "surfing"
+        languages "English" "Italian"
+        smoker false
+    }
+}   
