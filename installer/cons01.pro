@@ -8,4 +8,4 @@ CONFIG += c++11 console
 SOURCES += \
     cons01.cpp
 
-LIBS += -L$$PWD -ldll01.dll
+LIBS += -L$$PWD -ldll01

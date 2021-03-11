@@ -38,6 +38,8 @@ int run_curl(const std::string &cmd)
 
 int main(int argc, char *argv[])
 {
+    (void)argc;
+    (void)argv;
     //QCoreApplication a(argc, argv);
     int dummy = 0;
     QCoreApplication a(dummy, nullptr);
@@ -47,7 +49,7 @@ int main(int argc, char *argv[])
     //QString app_dir = a.applicationDirPath();
     QString app_dir = qApp->applicationDirPath();
 
-#if 0x0
+#if 0x1
     std::string ad = get_app_dir();
     unicode_ostream uout(std::cout);
     uout << ad << std::endl;
@@ -67,7 +69,7 @@ int main(int argc, char *argv[])
     qDebug() << reply->rawHeaderList();
     qDebug() << reply->rawHeader("Etag");
 
-#if 0x1
+#if 0x0
     qDebug() << run_busybox("ls -l");
     //qDebug() << run_busybox("curl32 --etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz");
     qDebug() << run_curl("-D headers.txt --etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz");
