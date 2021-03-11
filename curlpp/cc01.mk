@@ -1,19 +1,18 @@
 #! make -f
-# Define default flags (include your source tree for example
 ifdef final
 	WX_CONFIG=wx-config-static
 else
 	WX_CONFIG=wx-config
 endif
-CXX = `$(WX_CONFIG) --cxx`
+CXX = g++
 INCFLAGS = -I./src
-CXXFLAGS = -std=c++17 `$(WX_CONFIG) --cxxflags` $(INCFLAGS) -DwxOVERRIDE=override
+CXXFLAGS = -std=c++17 $(INCFLAGS) `curlpp-config --cflags`
 ifdef final
-	LDLIBS   = `$(WX_CONFIG) --libs` -static
+	LDLIBS   = `curlpp-config --static-libs` -static
 else
-	LDLIBS   = `$(WX_CONFIG) --libs`
+	LDLIBS   = `curlpp-config --libs`
 endif
-RESCOMP = `$(WX_CONFIG) --rescomp`
+RESCOMP =
 
 ifdef final
     EXTRAFLAGS = -MD
@@ -21,9 +20,10 @@ else
     EXTRAFLAGS = -MD -g
 endif
 
-PROGRAM = wx01
+PROGRAM = cc01
 
-OBJECTS = $(PROGRAM).o $(PROGRAM)_resources.o
+#OBJECTS = $(PROGRAM).o $(PROGRAM)_resources.o
+OBJECTS = $(PROGRAM).o
 
 .SUFFIXES: .o .cpp
 
