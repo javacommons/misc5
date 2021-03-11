@@ -19,12 +19,13 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWidgets headers)
 #ifndef WX_PRECOMP
-    #include "wx/wx.h"
+#include "wx/wx.h"
 #endif
+
+#include <wx/process.h>
 
 // ----------------------------------------------------------------------------
 // resources
@@ -33,7 +34,7 @@
 // the application icon (under Windows it is in resources and even
 // though we could still include the XPM here it would be unused)
 #ifndef wxHAS_IMAGES_IN_RESOURCES
-    #include "./sample.xpm"
+#include "./sample.xpm"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -58,11 +59,11 @@ class MyFrame : public wxFrame
 {
 public:
     // ctor(s)
-    MyFrame(const wxString& title);
+    MyFrame(const wxString &title);
 
     // event handlers (these functions should _not_ be virtual)
-    void OnQuit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
+    void OnQuit(wxCommandEvent &event);
+    void OnAbout(wxCommandEvent &event);
 
 private:
     // any class wishing to process wxWidgets events must use this macro
@@ -93,16 +94,16 @@ enum
 // handlers) which process them. It can be also done at run-time, but for the
 // simple menu events like this the static method is much simpler.
 wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
-    EVT_MENU(Minimal_Quit,  MyFrame::OnQuit)
-    EVT_MENU(Minimal_About, MyFrame::OnAbout)
-wxEND_EVENT_TABLE()
+    EVT_MENU(Minimal_Quit, MyFrame::OnQuit)
+        EVT_MENU(Minimal_About, MyFrame::OnAbout)
+            wxEND_EVENT_TABLE()
 
-// Create a new application object: this macro will allow wxWidgets to create
-// the application object during program execution (it's better than using a
-// static object for many reasons) and also implements the accessor function
-// wxGetApp() which will return the reference of the right type (i.e. MyApp and
-// not wxApp)
-wxIMPLEMENT_APP(MyApp);
+    // Create a new application object: this macro will allow wxWidgets to create
+    // the application object during program execution (it's better than using a
+    // static object for many reasons) and also implements the accessor function
+    // wxGetApp() which will return the reference of the right type (i.e. MyApp and
+    // not wxApp)
+    wxIMPLEMENT_APP(MyApp);
 
 // ============================================================================
 // implementation
@@ -117,7 +118,7 @@ bool MyApp::OnInit()
 {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
-    if ( !wxApp::OnInit() )
+    if (!wxApp::OnInit())
         return false;
 
     // create the main application window
@@ -138,8 +139,8 @@ bool MyApp::OnInit()
 // ----------------------------------------------------------------------------
 
 // frame constructor
-MyFrame::MyFrame(const wxString& title)
-       : wxFrame(NULL, wxID_ANY, title)
+MyFrame::MyFrame(const wxString &title)
+    : wxFrame(NULL, wxID_ANY, title)
 {
     // set the frame icon
     ////SetIcon(wxICON(sample));
@@ -162,10 +163,10 @@ MyFrame::MyFrame(const wxString& title)
 
     // ... and attach this menu bar to the frame
     SetMenuBar(menuBar);
-#else // !wxUSE_MENUBAR
+#else  // !wxUSE_MENUBAR
     // If menus are not available add a button to access the about box
-    wxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
-    wxButton* aboutBtn = new wxButton(this, wxID_ANY, "About...");
+    wxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
+    wxButton *aboutBtn = new wxButton(this, wxID_ANY, "About...");
     aboutBtn->Bind(wxEVT_BUTTON, &MyFrame::OnAbout, this);
     sizer->Add(aboutBtn, wxSizerFlags().Center());
     SetSizer(sizer);
@@ -178,27 +179,40 @@ MyFrame::MyFrame(const wxString& title)
 #endif // wxUSE_STATUSBAR
 }
 
-
 // event handlers
 
-void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnQuit(wxCommandEvent &WXUNUSED(event))
 {
     // true is to force the frame to close
     Close(true);
 }
 
-void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnAbout(wxCommandEvent &WXUNUSED(event))
 {
-    wxMessageBox(wxString::Format
-                 (
-                    "Welcome to %s!\n"
-                    "\n"
-                    "This is the minimal wxWidgets sample\n"
-                    "running under %s.",
-                    wxVERSION_STRING,
-                    wxGetOsDescription()
-                 ),
+    wxMessageBox(wxString::Format(
+                     "Welcome to %s!\n"
+                     "\n"
+                     "This is the minimal wxWidgets sample\n"
+                     "running under %s.",
+                     wxVERSION_STRING,
+                     wxGetOsDescription()),
                  "About wxWidgets minimal sample",
                  wxOK | wxICON_INFORMATION,
                  this);
+    std::wstring comando = L"inst01.exe";
+
+    //wxProcess *process = new wxProcess(wxPROCESS_REDIRECT);                                   // Make a new Process, the sort with built-in redirection
+    wxProcess *process = new wxProcess(wxPROCESS_DEFAULT);                                   // Make a new Process, the sort with built-in redirection
+    int pid = wxExecute(wxString(comando.c_str()), wxEXEC_ASYNC, process); // Try & run the command.  pid of 0 means failed
+
+    if (pid < 0)
+    {
+        SetStatusText("PROBLEMAS CARPETAS");
+        delete process;
+        return;
+    }
+    
+    //wxOutputStream*ostream = process->GetOutputStream();
+    //delete process;
+    Close(true);
 }
