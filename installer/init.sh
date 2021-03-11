@@ -6,6 +6,7 @@ pacman -S --needed --noconfirm \
 	$MINGW_PACKAGE_PREFIX-nimble \
 	$MINGW_PACKAGE_PREFIX-boost \
 	$MINGW_PACKAGE_PREFIX-wxWidgets \
+	$MINGW_PACKAGE_PREFIX-jbigkit \
     make \
     unzip \
 	subversion \
