@@ -1,15 +1,25 @@
-import nimline
 import os
 import osproc
 import strutils,pegs,unicode
+import osproc,streams,times
 
-proc call_with_busybox(cmd: string): int =
+#proc `$`(t:TimeInfo) : string = format(t, "yyyy/MM/dd HH:mm:ss ")
+
+proc call_with_busybox(args: openArray[string] = []): int =
   let busybox = "$#\\busybox32.exe" % [os.getAppDir()]
-  let cmdline = "\"$#\" $#" % [busybox, cmd]
-  echo cmdline
+  #let cmdline = "\"$#\" $#" % [busybox, cmd]
+  #echo cmdline
   #return execCmd(cmdline)
-  return execShellCmd(cmdline)
+  #return execShellCmd(cmdline)
+  #return global.run_cmd(cmdline)
+  let p = startProcess(busybox, "", args, nil, {poEchoCmd, poUsePath, poParentStreams})
+  defer:
+    p.close
+  #echo p.processID
+  let exit_status = p.waitForExit()
+  return exit_status
 
+import nimline
 defineCppType(MyClass, "MyClass", "MyClass.hpp")
 defineCppType(MyClass2, "MyClass2", "MyClass.hpp")
 cppfiles("MyClass.cpp")
@@ -51,7 +61,11 @@ echo xc1
 var cmd01 = 
   "\"$#\" --etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz" % [curl]
 echo execCmd(cmd01)
-echo call_with_busybox("rm -rf my-msys2.tmp")
-echo call_with_busybox("mkdir -p my-msys2.tmp")
-echo call_with_busybox("tar -xvf msys2-x86_64-latest.tar.xz -C my-msys2.tmp --strip-components 1")
+#echo call_with_busybox("rm -rf my-msys2.tmp")
+echo call_with_busybox(@["rm", "-rf", "my-msys2.tmp"])
+#echo call_with_busybox("mkdir -p my-msys2.tmp")
+echo call_with_busybox(@["mkdir", "-p", "my-msys2.tmp"])
+#echo call_with_busybox("tar -xvf msys2-x86_64-latest.tar.xz -C my-msys2.tmp --strip-components 1")
+echo call_with_busybox(@[
+  "tar", "-xvf", "msys2-x86_64-latest.tar.xz", "-C", "my-msys2.tmp", "--strip-components", "1"])
 

@@ -120,3 +120,5 @@ public:
 };
 
 extern int globalNumber;
+
+extern int run_cmd(const char *cmd);
