@@ -46,3 +46,27 @@ int run_cmd(const char *cmd)
 
     return exitCode;
 }
+
+extern void launch_cmd(const char *cmd)
+{
+    std::wstring cmdline = utf8_to_wide(cmd);
+    std::cout << wide_to_utf8(cmdline) << std::endl;
+    PROCESS_INFORMATION pi = {0};
+    STARTUPINFOW si = {0};
+    WINBOOL b = CreateProcessW(
+        NULL,
+        (LPWSTR)cmdline.c_str(),
+        NULL,
+        NULL,
+        FALSE,
+        0, //debug ? 0 : CREATE_NO_WINDOW,
+        NULL,
+        NULL,
+        &si,
+        &pi);
+    if (!b)
+    {
+        std::cerr << "Could not start command: " << cmd << std::endl;
+        exit(1);
+    }
+}

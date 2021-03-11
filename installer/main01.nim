@@ -70,5 +70,7 @@ block:
 #  "tar", "-xvf", "msys2-x86_64-latest.tar.xz", "-C", "my-msys2.tmp", "--strip-components", "1"])
 
 let inst01 = "$#\\inst01.exe" % [os.getAppDir()]
-var xc1 = execCmd(inst01)
-echo xc1
+#var xc1 = execCmd(inst01)
+#echo xc1
+#discard startProcess(inst01)
+global.launch_cmd(inst01).to(void)

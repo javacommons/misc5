@@ -20,7 +20,13 @@
     (system/exit-code %cmd2)))
 
 (system/exit-code "cmd.exe /c \"dir\"")
-(run-with-curl "--etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz")
-(run-with-busybox "rm -rf my-msys2.tmp")
-(run-with-busybox "mkdir -p my-msys2.tmp")
-(run-with-busybox "tar -xvf msys2-x86_64-latest.tar.xz -C my-msys2.tmp --strip-components 1")
+(define $curl (build-path (run-file-dir) "curl32.exe"))
+;(run-with-curl "--etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz")
+(run-with-busybox
+ (format
+  "time \"~a\" --etag-compare test.etag --etag-save test.etag -o msys2-x86_64-latest.tar.xz https://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz"
+  $curl
+  ))
+(run-with-busybox "time rm -rf my-msys2.tmp")
+(run-with-busybox "time mkdir -p my-msys2.tmp")
+(run-with-busybox "time tar -xf msys2-x86_64-latest.tar.xz -C my-msys2.tmp --strip-components 1")
