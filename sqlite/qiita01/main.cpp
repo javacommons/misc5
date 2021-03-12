@@ -96,12 +96,10 @@ int main(int argc, char *argv[])
     for (pugi::xpath_node searchResult: searchResults)
     {
         qDebug() << "found!";
-        //auto prev = searchResult.node().previous_sibling();
-        //uout << "★prev=" << dump_node(prev) << endl;
         uout << "★self=" << dump_node(searchResult.node()) << endl;
         auto sub = searchResult.node().select_node("*[@class='searchResult_sub']//text()");
-        //auto sub = searchResult.node().select_node("*/*[@class='searchResult_sub']");
         uout << "★sub=" << dump_node(sub.node()) << endl;
+        uout << "★sub=" << boost::algorithm::trim_copy(std::string(sub.node().value())) << endl;
         auto title = searchResult.node().select_node("*/*[@class='searchResult_itemTitle']/a[1]/text()");
         uout << "★title=" << dump_node(title.node()) << endl;
         uout << "★title=" << title.node().value() << endl;

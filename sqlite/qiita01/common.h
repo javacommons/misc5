@@ -9,6 +9,8 @@
 #include "strconvQt.h"
 #include <sstream>
 
+#include <boost/algorithm/string.hpp>
+
 using std::cout;
 using std::cerr;
 using std::endl;
