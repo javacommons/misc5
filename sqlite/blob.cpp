@@ -7,7 +7,11 @@
 
 #include <stdint.h>
 
+//#define BOOST_STACKTRACE_USE_ADDR2LINE 1
+#include <boost/stacktrace.hpp>
+
 using std::cout;
+using std::cerr;
 using std::endl;
 
 static std::string db_now();
@@ -86,7 +90,22 @@ int main(int, char **)
 
     db->backup_to("bk.sqlite");
 
-    alex.id = db->insert(alex); // fails
+    try
+    {
+        alex.id = db->insert(alex); // UNIQUE constraint failed: users.name: constraint failed
+    }
+    catch (std::exception &e)
+    {
+        cerr << "std::exception: " << e.what() << std::endl;
+        cout << " at " << __FILE__ << ':' << __LINE__ << endl;
+        cout << boost::stacktrace::stacktrace();
+    }
+    catch (...)
+    {
+        cerr << "unknown exeption" << endl;
+        cout << " at " << __FILE__ << ':' << __LINE__ << endl;
+        cout << boost::stacktrace::stacktrace();
+    }
 
     return 0;
 }
