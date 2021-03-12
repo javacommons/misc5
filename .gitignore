@@ -3,6 +3,8 @@
 *bxproj-journal
 *.cbproj.local
 *.class
+*.db
+*.db3
 *.dll
 *.egg-info
 *.etag
@@ -17,6 +19,8 @@
 *.pdb
 *.sln
 *.spec
+*.sqlite
+*.sqlite3
 *.swp
 *.tgz
 *.tmp
