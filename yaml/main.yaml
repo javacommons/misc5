@@ -1,6 +1,7 @@
 username: abc
 password: xyz
 my-data: YWJj
+my-datetime: 2021-03-12 12:23:25
 image_width: 640
 image_height: 480
 camera_name: camera
