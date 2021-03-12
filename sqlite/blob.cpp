@@ -5,6 +5,8 @@
 #include <iostream>
 #include <cassert>
 
+#include <stdint.h>
+
 using std::cout;
 using std::endl;
 
@@ -12,7 +14,7 @@ static std::string db_now();
 
 struct User
 {
-    int id;
+    int64_t id;
     std::string name;
     std::vector<char> hash; // binary format
     std::string timestamp = db_now();
@@ -24,11 +26,11 @@ inline auto init_db(const std::string &path)
     auto db = make_storage("blob.sqlite",
                            make_table("users",
                                       make_column("id", &User::id, primary_key()),
-                                      make_column("name", &User::name),
+                                      make_column("name", &User::name, unique()),
                                       make_column("hash", &User::hash),
-                                      make_column("timestamp", &User::timestamp, default_value(datetime("now", "local")))));
-    db.pragma.auto_vacuum(true);
+                                      make_column("timestamp", &User::timestamp)));
     db.sync_schema();
+    db.pragma.auto_vacuum(true);
     return db;
 }
 
@@ -83,6 +85,8 @@ int main(int, char **)
     }
 
     db->backup_to("bk.sqlite");
+
+    alex.id = db->insert(alex); // fails
 
     return 0;
 }
