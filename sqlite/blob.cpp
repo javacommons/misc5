@@ -8,83 +8,79 @@
 using std::cout;
 using std::endl;
 
+static std::string now();
+
 struct User
 {
     int id;
     std::string name;
     std::vector<char> hash; //  binary format
-    std::unique_ptr<std::string> timestamp;
+    //std::unique_ptr<std::string> timestamp;
+    //std::string timestamp;
+    std::string timestamp = now();
 };
 
-inline auto initStorage(const std::string &path) {
+inline auto initDB(const std::string &path) {
     using namespace sqlite_orm;
-    auto storage = make_storage("blob.sqlite",
+    auto db = make_storage("blob.sqlite",
                                 make_table("users",
                                            make_column("id", &User::id, primary_key()),
                                            make_column("name", &User::name),
                                            make_column("hash", &User::hash),
                                            make_column("timestamp", &User::timestamp, default_value(datetime("now", "local")))));
-    storage.pragma.auto_vacuum(true);
-    storage.sync_schema();
-    return storage;
+    db.pragma.auto_vacuum(true);
+    db.sync_schema();
+    return db;
 }
 
-using Storage = decltype(initStorage(""));
+using DB = decltype(initDB(""));
 
-static std::unique_ptr<Storage> storage;
+static std::unique_ptr<DB> db;
 
 std::string now()
 {
-    return storage->select(sqlite_orm::datetime("now", "localtime")).front();
+    //return db->select(sqlite_orm::datetime("now", "localtime")).front();
+    return db->select(sqlite_orm::strftime("%Y-%m-%d %H:%M:%f", "now")).front();
 }
 
 int main(int, char **)
 {
     using namespace sqlite_orm;
-#if 0x0
-    auto storage = make_storage("blob.sqlite",
-                                make_table("users",
-                                           make_column("id", &User::id, primary_key()),
-                                           make_column("name", &User::name),
-                                           make_column("hash", &User::hash),
-                                           make_column("timestamp", &User::timestamp, default_value(datetime("now", "local")))));
-    storage.pragma.auto_vacuum(true);
-    storage.sync_schema();
-#endif
-    storage = std::make_unique<Storage>(initStorage("blob.sqlite"));
-    storage->remove_all<User>();
+    db = std::make_unique<DB>(initDB("blob.sqlite"));
+    db->remove_all<User>();
 
     User alex = {
         .id = 0,
         .name = "Alex",
         .hash = {0x10, 0x20, 0x30, 0x40},
-        .timestamp = std::make_unique<std::string>(now())};
-    alex.id = storage->insert(alex);
+        //.timestamp = now()
+        };
+    alex.id = db->insert(alex);
     User tom = {
         .id = 0,
         .name = "Tom",
         .hash = {0x11, 0x22, 0x33, 0x44},
-        //.timestamp = storage.select(sqlite_orm::datetime("now", "localtime")).front()
+        //.timestamp = now()
     };
-    tom.id = storage->insert(tom);
+    tom.id = db->insert(tom);
 
-    cout << "users count = " << storage->count<User>() << endl;
+    cout << "users count = " << db->count<User>() << endl;
 
-    cout << "alex = " << storage->dump(storage->get<User>(alex.id)) << endl;
+    cout << "alex = " << db->dump(db->get<User>(alex.id)) << endl;
 
-    auto hash = storage->get<User>(alex.id).hash;
+    auto hash = db->get<User>(alex.id).hash;
     assert(hash.size() == 4);
     assert(hash[0] == 0x10);
     assert(hash[1] == 0x20);
     assert(hash[2] == 0x30);
     assert(hash[3] == 0x40);
 
-    for (auto &user : storage->iterate<User>())
+    for (auto &user : db->iterate<User>())
     {
-        cout << storage->dump(user) << endl;
+        cout << db->dump(user) << endl;
     }
 
-    storage->backup_to("bk.sqlite");
+    db->backup_to("bk.sqlite");
 
     return 0;
 }
