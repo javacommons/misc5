@@ -14,9 +14,7 @@ struct User
 {
     int id;
     std::string name;
-    std::vector<char> hash; //  binary format
-    //std::unique_ptr<std::string> timestamp;
-    //std::string timestamp;
+    std::vector<char> hash; // binary format
     std::string timestamp = now();
 };
 
@@ -56,6 +54,7 @@ int main(int, char **)
         //.timestamp = now()
         };
     alex.id = db->insert(alex);
+
     User tom = {
         .id = 0,
         .name = "Tom",
@@ -67,6 +66,7 @@ int main(int, char **)
     cout << "users count = " << db->count<User>() << endl;
 
     cout << "alex = " << db->dump(db->get<User>(alex.id)) << endl;
+    cout << "tom  = " << db->dump(db->get<User>(tom.id)) << endl;
 
     auto hash = db->get<User>(alex.id).hash;
     assert(hash.size() == 4);
