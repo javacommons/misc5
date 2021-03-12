@@ -8,13 +8,15 @@
 using std::cout;
 using std::endl;
 
-struct User {
+struct User
+{
     int id;
     std::string name;
-    std::vector<char> hash;  //  binary format
+    std::vector<char> hash; //  binary format
 };
 
-int main(int, char **) {
+int main(int, char **)
+{
     using namespace sqlite_orm;
     auto storage = make_storage("blob.sqlite",
                                 make_table("users",
@@ -41,6 +43,11 @@ int main(int, char **) {
     assert(hash[1] == 0x20);
     assert(hash[2] == 0x30);
     assert(hash[3] == 0x40);
+
+    for (auto &user : storage.iterate<User>())
+    {
+        cout << storage.dump(user) << endl;
+    }
 
     return 0;
 }
