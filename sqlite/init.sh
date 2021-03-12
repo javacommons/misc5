@@ -4,6 +4,8 @@ pacman -S --needed --noconfirm \
 	$MINGW_PACKAGE_PREFIX-cmake \
 	$MINGW_PACKAGE_PREFIX-boost \
 	$MINGW_PACKAGE_PREFIX-sqlite3 \
+	$MINGW_PACKAGE_PREFIX-tidy \
+	$MINGW_PACKAGE_PREFIX-pugixml \
     git \
     make \
 	subversion \
