@@ -50,10 +50,10 @@ std::string tidy(const std::string &input)
 }
 
 
-std::string dump_node(const pugi::xpath_node &node)
+std::string dump_node(const pugi::xml_node &node)
 {
     std::ostringstream ss;
-    node.node().print(ss);
+    node.print(ss);
     return ss.str();
 }
 
@@ -81,22 +81,29 @@ int main(int argc, char *argv[])
     //qDebug() << utf8_to_qstr(tidy_result);
 
     unicode_ostream uout(cout);
-    //uout << tidy_result << endl << flush;
+    uout << tidy_result << endl << flush;
 
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_string(tidy_result.c_str());
+    //pugi::xml_parse_result result = doc.load_string(content.c_str());
     if (!result)
+    {
         return -1;
+    }
 
     pugi::xpath_node_set searchResults = doc.select_nodes("//div[@class='searchResult']");
 
     for (pugi::xpath_node searchResult: searchResults)
     {
         qDebug() << "found!";
-        uout << dump_node(searchResult) << endl;
-        auto title = searchResult.node().select_node("//h1[@class='searchResult_itemTitle']/a[1]");
-        uout << "★title=" << dump_node(title) << endl;
-        uout << "★title=" << title.node().text() << endl;
+        //auto prev = searchResult.node().previous_sibling();
+        //uout << "★prev=" << dump_node(prev) << endl;
+        uout << "★self=" << dump_node(searchResult.node()) << endl;
+        auto title = searchResult.node().select_node("*/*[@class='searchResult_itemTitle']/a[1]/text()");
+        uout << "★title=" << dump_node(title.node()) << endl;
+        uout << "★title=" << title.node().value() << endl;
+        auto sub = searchResult.node().select_node("*/*[@class='searchResult_sub']");
+        uout << "★sub=" << dump_node(sub.node()) << endl;
 #if 0x0
         pugi::xml_node tool = node.node();
         std::cout << "Tool " << tool.attribute("Filename").value() <<
