@@ -8,34 +8,35 @@
 using std::cout;
 using std::endl;
 
-static std::string now();
+static std::string db_now();
 
 struct User
 {
     int id;
     std::string name;
     std::vector<char> hash; // binary format
-    std::string timestamp = now();
+    std::string timestamp = db_now();
 };
 
-inline auto initDB(const std::string &path) {
+inline auto init_db(const std::string &path)
+{
     using namespace sqlite_orm;
     auto db = make_storage("blob.sqlite",
-                                make_table("users",
-                                           make_column("id", &User::id, primary_key()),
-                                           make_column("name", &User::name),
-                                           make_column("hash", &User::hash),
-                                           make_column("timestamp", &User::timestamp, default_value(datetime("now", "local")))));
+                           make_table("users",
+                                      make_column("id", &User::id, primary_key()),
+                                      make_column("name", &User::name),
+                                      make_column("hash", &User::hash),
+                                      make_column("timestamp", &User::timestamp, default_value(datetime("now", "local")))));
     db.pragma.auto_vacuum(true);
     db.sync_schema();
     return db;
 }
 
-using DB = decltype(initDB(""));
+using DB = decltype(init_db(""));
 
 static std::unique_ptr<DB> db;
 
-std::string now()
+std::string db_now()
 {
     //return db->select(sqlite_orm::datetime("now", "localtime")).front();
     return db->select(sqlite_orm::strftime("%Y-%m-%d %H:%M:%f", "now")).front();
@@ -44,27 +45,28 @@ std::string now()
 int main(int, char **)
 {
     using namespace sqlite_orm;
-    db = std::make_unique<DB>(initDB("blob.sqlite"));
+
+    db = std::make_unique<DB>(init_db("blob.sqlite"));
+
     db->remove_all<User>();
 
     User alex = {
         .id = 0,
         .name = "Alex",
         .hash = {0x10, 0x20, 0x30, 0x40},
-        //.timestamp = now()
-        };
+        //.timestamp = db_now()
+    };
     alex.id = db->insert(alex);
 
     User tom = {
         .id = 0,
         .name = "Tom",
         .hash = {0x11, 0x22, 0x33, 0x44},
-        //.timestamp = now()
+        //.timestamp = db_now()
     };
     tom.id = db->insert(tom);
 
     cout << "users count = " << db->count<User>() << endl;
-
     cout << "alex = " << db->dump(db->get<User>(alex.id)) << endl;
     cout << "tom  = " << db->dump(db->get<User>(tom.id)) << endl;
 
