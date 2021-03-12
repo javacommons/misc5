@@ -88,15 +88,20 @@ int main(int argc, char *argv[])
     if (!result)
         return -1;
 
-    pugi::xpath_node_set tools_with_timeout = doc.select_nodes("//div[@class='searchResult']");
+    pugi::xpath_node_set searchResults = doc.select_nodes("//div[@class='searchResult']");
 
-    for (pugi::xpath_node node: tools_with_timeout)
+    for (pugi::xpath_node searchResult: searchResults)
     {
         qDebug() << "found!";
-        uout << dump_node(node) << endl;
+        uout << dump_node(searchResult) << endl;
+        auto title = searchResult.node().select_node("//h1[@class='searchResult_itemTitle']/a[1]");
+        uout << "★title=" << dump_node(title) << endl;
+        uout << "★title=" << title.node().text() << endl;
+#if 0x0
         pugi::xml_node tool = node.node();
         std::cout << "Tool " << tool.attribute("Filename").value() <<
             " has timeout " << tool.attribute("Timeout").as_int() << "\n";
+#endif
     }
 
     return a.exec();
