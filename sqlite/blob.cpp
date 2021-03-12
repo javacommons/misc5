@@ -13,6 +13,7 @@ struct User
     int id;
     std::string name;
     std::vector<char> hash; //  binary format
+    std::string timestamp;
 };
 
 int main(int, char **)
@@ -22,14 +23,17 @@ int main(int, char **)
                                 make_table("users",
                                            make_column("id", &User::id, primary_key()),
                                            make_column("name", &User::name),
-                                           make_column("hash", &User::hash)));
+                                           make_column("hash", &User::hash),
+                                           make_column("timestamp", &User::timestamp, default_value(datetime("now", "local")))
+                                           ));
     storage.sync_schema();
     storage.remove_all<User>();
 
-    User alex{
-        0,
-        "Alex",
-        {0x10, 0x20, 0x30, 0x40},
+    User alex = {
+        .id=0,
+        .name="Alex",
+        .hash={0x10, 0x20, 0x30, 0x40},
+        .timestamp=storage.select(sqlite_orm::datetime("now", "localtime")).front()
     };
     alex.id = storage.insert(alex);
 
