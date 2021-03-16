@@ -10,10 +10,15 @@
 *.etag
 *.exe
 *.filters
+*.gcda
+*.gcno
+*.gcov
 *.htm
 *.idb
 *.ilk
+*.lcov
 *.make
+*.msi
 *.o
 *.obj
 *.pdb
