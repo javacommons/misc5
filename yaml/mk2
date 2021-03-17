@@ -1,8 +1,7 @@
 #! bash -uvx
-./init.sh
 rm -rf .qmake* debug release Makefile* *_plugin_import.cpp ui_*.h
 $MSYSTEM_PREFIX/qt5-static/bin/qmake.exe $1.pro
-#mingw32-make.exe -f Makefile.Release || exit 1
+make -f Makefile.Release clean
 make -f Makefile.Release || exit 1
 for i in release/*.a; do
   if [ -f "$i" ]; then cp -p "$i" .; fi
