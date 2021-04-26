@@ -1,35 +1,14 @@
 const puppeteer = require('puppeteer')
 const fs = require('fs')
-//require('dotenv').config()
 const { createObjectCsvWriter } = require('csv-writer')
+const Sequelize = require('Sequelize')
 
-const OUTPUT_PATH = "retty"
+const OUTPUT_PATH = "qiita.tmp"
 let BROWSER
 
 const VIEWPORT = {
   width: 1280,
   height: 1024
-}
-
-const xpath = {
-  searchResult: {
-    restaurantLinks: '//a[contains(@class, "restaurant__block-link")]',
-    nextPageLink: '//li[contains(@class, "pager__item--current")]/following-sibling::li[1]/a',
-    nextPageItem: '//li[contains(@class, "pager__item--current")]/following-sibling::li[1]'
-  },
-  restaurantDetail: {
-    restaurantInformation: '//*[@id="restaurant-info"]/dl[1]',
-  }
-}
-
-const selector = {
-  searchResult: {
-    hitCount: '.search-result__hit-count'
-  },
-  restaurantDetail: {
-    lastPageLink: '#js-search-result > div > section > ul > li:last-child > a',
-    pagerCurrent: 'li.pager__item.pager__item--current'
-  }
 }
 
   ; (async () => {
@@ -84,7 +63,8 @@ const selector = {
       console.log(tagName)
     }
 
-    page.on('response', async (response) => {
+    let page2 = await BROWSER.newPage();
+    page2.on('response', async (response) => {
       if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
       console.log('XHR1 response received:' + response.url())
       const json = await response.text()
@@ -93,17 +73,25 @@ const selector = {
         console.log(JSON.parse(json))
       }
     });
-    await page.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" })
-    page.on('response', async (response) => {
-      if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+    await page2.setCacheEnabled(false);
+    await page2.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" })
+    await page2.close()
+
+    let page3 = await BROWSER.newPage();
+    page3.on('response', async (response) => {
       console.log('XHR2 response received:' + response.url())
+      if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+      //console.log('XHR2 response received:' + response.url())
       const json = await response.text()
       if (json.startsWith("{") || json.startsWith("[")) {
         console.log(json)
         console.log(JSON.parse(json))
       }
     });
-    await page.goto("http://javacommons.html-5.me/01-json.php?", { waitUntil: "domcontentloaded" })
+    await page3.setCacheEnabled(false);
+    await page3.goto("http://javacommons.html-5.me/01-json.php?t=2", { waitUntil: "domcontentloaded" })
+    await page3.close()
+
     BROWSER.close()
 
     const myUrlWithParams = new URL("https://qiita.com/search")
@@ -113,6 +101,35 @@ const selector = {
     const parser = new URL(myUrlWithParams.href)
     if (parser.searchParams.has("q"))
       console.log(parser.searchParams.get("q"))
+
+    const sequelize = new Sequelize('main', '', '', {
+      dialect: 'sqlite',
+      pool: {
+        max: 5,
+        min: 0,
+        idle: 10000
+      },
+      storage: 'database.db3'
+    });
+    var User = sequelize.define('user', {
+      firstName: {
+        type: Sequelize.STRING,
+        field: 'first_name' // Will result in an attribute that is firstName when user facing but first_name in the database
+      },
+      lastName: {
+        type: Sequelize.STRING
+      }
+    }, {
+      freezeTableName: true // Model tableName will be the same as the model name
+    });
+
+    User.sync({ force: false }).then(function () {
+      // Table created
+      return User.create({
+        firstName: 'John',
+        lastName: 'Hancock'
+      });
+    });
   })()
 
 /**
