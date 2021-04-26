@@ -46,7 +46,6 @@ const VIEWPORT = {
   let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/01-json.php");
   console.log("result1=", result1);
 
-  //let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: "https://qiita.com/search?q=created%3A2021-01-01&sort=created" });
   let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/02-json-get.php", data);
   console.log("result2=", result2);
 
@@ -57,12 +56,11 @@ const VIEWPORT = {
 })();
 
 async function parseSearchResult(sr_item) {
-  let sr0 = sr_item;
   let result = {};
-  //text = await (await sr0.getProperty('textContent')).jsonValue();
+  //text = await (await sr_item.getProperty('textContent')).jsonValue();
   //text = text.replace(/[\s　]/g, "");
   //console.log(text);
-  const header = await getTextBySelector(sr0, ".searchResult_header");
+  const header = await getTextBySelector(sr_item, ".searchResult_header");
   //console.log(header);
   let m = header.match(/^.+が(.+)に投稿$/);
   //console.log(m);
@@ -71,10 +69,10 @@ async function parseSearchResult(sr_item) {
     //console.log(m[1]);
     result.post = m[1];
   }
-  const title = await getTextBySelector(sr0, ".searchResult_itemTitle");
+  const title = await getTextBySelector(sr_item, ".searchResult_itemTitle");
   //console.log(title);
   result.title = title;
-  const title_a = await sr0.$("div.searchResult_main > h1 > a");
+  const title_a = await sr_item.$("div.searchResult_main > h1 > a");
   const href = await (await title_a.getProperty('href')).jsonValue();
   //console.log(href);
   result.url = href;
@@ -82,11 +80,11 @@ async function parseSearchResult(sr_item) {
   result.user = href.split('/')[3];
   //console.log(href.split('/')[5]);
   result.uuid = href.split('/')[5];
-  const sr_sub = await sr0.$(".searchResult_sub");
+  const sr_sub = await sr_item.$(".searchResult_sub");
   const lgtm = await getTextByXPath(sr_sub, "*\/li/text()");
   //console.log(lgtm);
   result.lgtm = parseInt(lgtm);
-  const tags = await sr0.$$(".tagList_item");
+  const tags = await sr_item.$$(".tagList_item");
   let tagList = "";
   for (let tag of tags) {
     const tagName = await (await tag.getProperty('textContent')).jsonValue();
