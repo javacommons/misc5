@@ -1,13 +1,13 @@
 const puppeteer = require('puppeteer')
 const fs = require('fs')
 //require('dotenv').config()
-const {createObjectCsvWriter} = require('csv-writer')
+const { createObjectCsvWriter } = require('csv-writer')
 
 const OUTPUT_PATH = "retty"
 let BROWSER
 
 const VIEWPORT = {
-  width : 1280,
+  width: 1280,
   height: 1024
 }
 
@@ -32,55 +32,60 @@ const selector = {
   }
 }
 
-;(async() => {
-  /**** setup ****/
-  const options = process.env.HF
-    ? {
-      headless: false,
-      slowMo: 100
+  ; (async () => {
+    /**** setup ****/
+    const options = process.env.HF
+      ? {
+        headless: false,
+        slowMo: 100
+      }
+      : {}
+    BROWSER = await puppeteer.launch(options)
+    let page = await BROWSER.newPage()
+    let newPage
+    await page.setViewport({
+      width: VIEWPORT.width,
+      height: VIEWPORT.height
+    })
+    /**** setup ****/
+
+    let data = []
+
+    const url = "https://qiita.com/search?q=created%3A2021-01-01&sort=created"
+    await page.goto(url, { waitUntil: "domcontentloaded" })
+    //const lastPageNum = await getTextBySelector(page, (selector.restaurantDetail.lastPageLink))
+    const hitCount = await getTextBySelector(page, "#main > div > div.searchResultContainer_main > div.searchResultContainer_navigation > ul > li.active > a > span")
+    //console.log("総ページ数: " + lastPageNum + ", 総件数: " + hitCount)
+    console.log("総件数: " + hitCount)
+
+    const sr = await page.$$("div.searchResult")
+    //console.log(sr)
+    const sr0 = sr[0]
+    //console.log(sr[0])
+    text = await (await sr0.getProperty('textContent')).jsonValue()
+    text = text.replace(/[\s　]/g, "")
+    console.log(text)
+    const header = await getTextBySelector(sr0, ".searchResult_header")
+    console.log(header)
+    const title = await getTextBySelector(sr0, ".searchResult_itemTitle")
+    console.log(title)
+    const title_a = await sr0.$("div.searchResult_main > h1 > a");
+    const href = await (await title_a.getProperty('href')).jsonValue()
+    console.log(href)
+    //console.log(href.split('/'))
+    console.log(href.split('/')[3])
+    console.log(href.split('/')[5])
+    const sr_sub = await sr0.$(".searchResult_sub")
+    const lgtm = await getTextByXPath(sr_sub, "*/li/text()")
+    console.log(lgtm)
+    const tags = await sr0.$$(".tagList_item")
+    for (let tag of tags) {
+      const tagName = await (await tag.getProperty('textContent')).jsonValue()
+      console.log(tagName)
     }
-    : {}
-  BROWSER = await puppeteer.launch(options)
-  let page = await BROWSER.newPage()
-  let newPage
-  await page.setViewport({
-    width : VIEWPORT.width,
-    height: VIEWPORT.height
-  })
-  /**** setup ****/
 
-  let data = []
-
-  const url = "https://qiita.com/search?q=created%3A2021-01-01&sort=created"
-  await page.goto(url, {waitUntil: "domcontentloaded"})
-  //const lastPageNum = await getTextBySelector(page, (selector.restaurantDetail.lastPageLink))
-  const hitCount = await getTextBySelector(page, "#main > div > div.searchResultContainer_main > div.searchResultContainer_navigation > ul > li.active > a > span")
-  //console.log("総ページ数: " + lastPageNum + ", 総件数: " + hitCount)
-  console.log("総件数: " + hitCount)
-
-  const sr = await page.$$("div.searchResult")
-  //console.log(sr)
-  const sr0 = sr[0]
-  console.log(sr[0])
-  text = await (await sr0.getProperty('textContent')).jsonValue()
-  text = text.replace(/[\s　]/g, "")
-  console.log(text)
-  const header = await getTextBySelector(sr0, ".searchResult_header")
-  console.log(header)
-  const title = await getTextBySelector(sr0, ".searchResult_itemTitle")
-  console.log(title)
-  const title_a = await sr0.$("div.searchResult_main > h1 > a");
-  const href = await (await title_a.getProperty('href')).jsonValue();
-  console.log(href)
-  //console.log(href.split('/'))
-  console.log(href.split('/')[3])
-  console.log(href.split('/')[5])
-  const sr_sub = await sr0.$(".searchResult_sub")
-  const lgtm = await getTextByXPath(sr_sub, "*/li/text()")
-  console.log(lgtm)
-
-  BROWSER.close()
-})()
+    BROWSER.close()
+  })()
 
 /**
  * 新しく開いたページを取得
@@ -92,7 +97,7 @@ async function getNewPage(page) {
   const newTarget = await BROWSER.waitForTarget(target => target.opener() === pageTarget)
   const newPage = await newTarget.page()
   await newPage.setViewport({
-    width : VIEWPORT.width,
+    width: VIEWPORT.width,
     height: VIEWPORT.height
   })
   await newPage.waitForSelector('body')
@@ -109,30 +114,30 @@ async function csvWrite(data, pageNumber) {
     fs.mkdirSync(OUTPUT_PATH)
   }
   var exec = require('child_process').exec
-  exec(`touch ${OUTPUT_PATH}/page${pageNumber}.csv`, function(err, stdout, stderr) {
-    　　if (err) { console.log(err) }
+  exec(`touch ${OUTPUT_PATH}/page${pageNumber}.csv`, function (err, stdout, stderr) {
+    if (err) { console.log(err) }
   })
-  const csvfilepath =  `${OUTPUT_PATH}/page${pageNumber}.csv`
+  const csvfilepath = `${OUTPUT_PATH}/page${pageNumber}.csv`
   const csvWriter = createObjectCsvWriter({
     path: csvfilepath,
     header: [
-      {id: 'id', title: 'No.'},
-      {id: 'name', title: '店舗名'},
-      {id: 'phone', title: '電話番号'},
-      {id: 'address', title: '住所'},
-      {id: 'holiday', title: '定休日'},
-      {id: 'genre', title: 'ジャンル'},
-      {id: 'chairs', title: '座席・設備'},
-      {id: 'hours', title: '営業時間'},
-      {id: 'url', title: 'URL'}
+      { id: 'id', title: 'No.' },
+      { id: 'name', title: '店舗名' },
+      { id: 'phone', title: '電話番号' },
+      { id: 'address', title: '住所' },
+      { id: 'holiday', title: '定休日' },
+      { id: 'genre', title: 'ジャンル' },
+      { id: 'chairs', title: '座席・設備' },
+      { id: 'hours', title: '営業時間' },
+      { id: 'url', title: 'URL' }
     ],
-    encoding:'utf8',
-    append :false,
+    encoding: 'utf8',
+    append: false,
   })
   csvWriter.writeRecords(data)
-  .then(() => {
+    .then(() => {
       console.log('...Done')
-  })
+    })
 }
 
 /**
@@ -142,9 +147,9 @@ async function csvWrite(data, pageNumber) {
  * @returns {string} 改行と空白を取り除いた要素のテキスト。要素を取得できなかった時は空文字が返る。
  */
 async function getTextBySelector(page, paramSelector) {
-  const element = await page.$(paramSelector) 
+  const element = await page.$(paramSelector)
   let text = ""
-  if(element) {
+  if (element) {
     text = await (await element.getProperty('textContent')).jsonValue()
     text = text.replace(/[\s　]/g, "")
   }
@@ -158,9 +163,9 @@ async function getTextBySelector(page, paramSelector) {
  * @returns {string} 改行と空白を取り除いた要素のテキスト。要素を取得できなかった時は空文字が返る。
  */
 async function getTextByXPath(page, xpath) {
-  const elements = await page.$x(xpath) 
+  const elements = await page.$x(xpath)
   let text = ""
-  if(elements[0]) {
+  if (elements[0]) {
     text = await (await elements[0].getProperty('textContent')).jsonValue()
     text = text.replace(/[\s　]/g, "")
   }
