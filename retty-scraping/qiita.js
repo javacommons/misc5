@@ -86,7 +86,18 @@ const selector = {
 
     page.on('response', async (response) => {
       if(!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
-      console.log('XHR response received:' + response.url())
+      console.log('XHR1 response received:' + response.url())
+      const json = await response.text()
+      if (!json.startsWith("<html>"))
+      {
+        console.log(json)
+        console.log(JSON.parse(json))
+      }
+    });
+    await page.goto("http://javacommons.html-5.me/01-json.php?", { waitUntil: "domcontentloaded" })
+    page.on('response', async (response) => {
+      if(!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+      console.log('XHR2 response received:' + response.url())
       const json = await response.text()
       if (!json.startsWith("<html>"))
       {
