@@ -85,28 +85,31 @@ const selector = {
     }
 
     page.on('response', async (response) => {
-      if(!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+      if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
       console.log('XHR1 response received:' + response.url())
       const json = await response.text()
-      if (!json.startsWith("<html>"))
-      {
+      if (!json.startsWith("<html>")) {
         console.log(json)
         console.log(JSON.parse(json))
       }
     });
-    await page.goto("http://javacommons.html-5.me/01-json.php?", { waitUntil: "domcontentloaded" })
+    await page.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" })
     page.on('response', async (response) => {
-      if(!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+      if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
       console.log('XHR2 response received:' + response.url())
       const json = await response.text()
-      if (!json.startsWith("<html>"))
-      {
+      if (json.startsWith("{") || json.startsWith("[")) {
         console.log(json)
         console.log(JSON.parse(json))
       }
     });
     await page.goto("http://javacommons.html-5.me/01-json.php?", { waitUntil: "domcontentloaded" })
     BROWSER.close()
+
+    const myUrlWithParams = new URL("https://qiita.com/search")
+    myUrlWithParams.searchParams.append("q", "created:2021-01-01")
+    myUrlWithParams.searchParams.append("sort", "created")
+    console.log(myUrlWithParams.href)
   })()
 
 /**
