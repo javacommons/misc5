@@ -110,6 +110,9 @@ const selector = {
     myUrlWithParams.searchParams.append("q", "created:2021-01-01")
     myUrlWithParams.searchParams.append("sort", "created")
     console.log(myUrlWithParams.href)
+    const parser = new URL(myUrlWithParams.href)
+    if (parser.searchParams.has("q"))
+      console.log(parser.searchParams.get("q"))
   })()
 
 /**
