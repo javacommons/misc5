@@ -1,107 +1,110 @@
-const puppeteer = require('puppeteer')
-const fs = require('fs')
-const { createObjectCsvWriter } = require('csv-writer')
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const { createObjectCsvWriter } = require('csv-writer');
 
-const OUTPUT_PATH = "qiita.tmp"
-let BROWSER
+const OUTPUT_PATH = "qiita.tmp";
+let BROWSER;
 
 const VIEWPORT = {
   width: 1280,
   height: 1024
-}
+};
 
-  ; (async () => {
-    /**** setup ****/
-    const options = process.env.HF
-      ? {
-        headless: false,
-        slowMo: 100
-      }
-      : {}
-    BROWSER = await puppeteer.launch(options)
-    let page = await BROWSER.newPage()
-    let newPage
-    await page.setViewport({
-      width: VIEWPORT.width,
-      height: VIEWPORT.height
-    })
-    /**** setup ****/
-
-    let data = []
-
-    const url = "https://qiita.com/search?q=created%3A2021-01-01&sort=created"
-    await page.goto(url, { waitUntil: "domcontentloaded" })
-    //const lastPageNum = await getTextBySelector(page, (selector.restaurantDetail.lastPageLink))
-    const hitCount = await getTextBySelector(page, "#main > div > div.searchResultContainer_main > div.searchResultContainer_navigation > ul > li.active > a > span")
-    //console.log("総ページ数: " + lastPageNum + ", 総件数: " + hitCount)
-    console.log("総件数: " + hitCount)
-
-    const sr = await page.$$("div.searchResult")
-    //console.log(sr)
-    const sr0 = sr[0]
-    //console.log(sr[0])
-    text = await (await sr0.getProperty('textContent')).jsonValue()
-    text = text.replace(/[\s　]/g, "")
-    console.log(text)
-    const header = await getTextBySelector(sr0, ".searchResult_header")
-    console.log(header)
-    const title = await getTextBySelector(sr0, ".searchResult_itemTitle")
-    console.log(title)
-    const title_a = await sr0.$("div.searchResult_main > h1 > a");
-    const href = await (await title_a.getProperty('href')).jsonValue()
-    console.log(href)
-    //console.log(href.split('/'))
-    console.log(href.split('/')[3])
-    console.log(href.split('/')[5])
-    const sr_sub = await sr0.$(".searchResult_sub")
-    const lgtm = await getTextByXPath(sr_sub, "*/li/text()")
-    console.log(lgtm)
-    const tags = await sr0.$$(".tagList_item")
-    for (let tag of tags) {
-      const tagName = await (await tag.getProperty('textContent')).jsonValue()
-      console.log(tagName)
+(async () => {
+  /**** setup ****/
+  const options = process.env.HF
+    ? {
+      headless: false,
+      slowMo: 100
     }
+    : {};
+  BROWSER = await puppeteer.launch(options);
+  let page = await BROWSER.newPage();
+  //let newPage
+  await page.setViewport({
+    width: VIEWPORT.width,
+    height: VIEWPORT.height
+  });
+  /**** setup ****/
 
-    let page2 = await BROWSER.newPage();
-    page2.on('response', async (response) => {
-      if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
-      console.log('XHR1 response received:' + response.url())
-      const json = await response.text()
-      if (!json.startsWith("<html>")) {
-        console.log(json)
-        console.log(JSON.parse(json))
-      }
-    });
-    await page2.setCacheEnabled(false);
-    await page2.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" })
-    await page2.close()
+  let data = [];
 
-    let page3 = await BROWSER.newPage();
-    page3.on('response', async (response) => {
-      console.log('XHR2 response received:' + response.url())
-      if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
-      //console.log('XHR2 response received:' + response.url())
-      const json = await response.text()
-      if (json.startsWith("{") || json.startsWith("[")) {
-        console.log(json)
-        console.log(JSON.parse(json))
-      }
-    });
-    await page3.setCacheEnabled(false);
-    await page3.goto("http://javacommons.html-5.me/01-json.php?t=2", { waitUntil: "domcontentloaded" })
-    await page3.close()
+  const url = "https://qiita.com/search?q=created%3A2021-01-01&sort=created"
+  await page.goto(url, { waitUntil: "domcontentloaded" });
+  const hitCount = await getTextBySelector(page, "#main > div > div.searchResultContainer_main > div.searchResultContainer_navigation > ul > li.active > a > span");
+  console.log("総件数: " + hitCount);
 
-    BROWSER.close()
+  const sr = await page.$$("div.searchResult");
+  const sr0 = sr[0];
+  text = await (await sr0.getProperty('textContent')).jsonValue();
+  text = text.replace(/[\s　]/g, "");
+  console.log(text);
+  const header = await getTextBySelector(sr0, ".searchResult_header");
+  console.log(header);
 
-    const myUrlWithParams = new URL("https://qiita.com/search")
-    myUrlWithParams.searchParams.append("q", "created:2021-01-01")
-    myUrlWithParams.searchParams.append("sort", "created")
-    console.log(myUrlWithParams.href)
-    const parser = new URL(myUrlWithParams.href)
-    if (parser.searchParams.has("q"))
-      console.log(parser.searchParams.get("q"))
+  let bar = header.match(/^.+が(.+)に投稿$/);
+  console.log(bar);
+  if (bar) {
+    console.log(bar[1]);
+  }
 
-  })()
+  const title = await getTextBySelector(sr0, ".searchResult_itemTitle");
+  console.log(title);
+  const title_a = await sr0.$("div.searchResult_main > h1 > a");
+  const href = await (await title_a.getProperty('href')).jsonValue();
+  console.log(href);
+  //console.log(href.split('/'));
+  console.log(href.split('/')[3]);
+  console.log(href.split('/')[5]);
+  const sr_sub = await sr0.$(".searchResult_sub");
+  const lgtm = await getTextByXPath(sr_sub, "*/li/text()");
+  console.log(lgtm);
+  const tags = await sr0.$$(".tagList_item");
+  for (let tag of tags) {
+    const tagName = await (await tag.getProperty('textContent')).jsonValue();
+    console.log(tagName);
+  }
+
+  let page2 = await BROWSER.newPage();
+  page2.on('response', async (response) => {
+    if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+    console.log('XHR1 response received:' + response.url());
+    const json = await response.text();
+    if (!json.startsWith("<html>")) {
+      console.log(json);
+      console.log(JSON.parse(json));
+    }
+  });
+  await page2.setCacheEnabled(false);
+  await page2.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" });
+  await page2.close();
+
+  let page3 = await BROWSER.newPage();
+  page3.on('response', async (response) => {
+    //console.log('XHR2 response received:' + response.url());
+    if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+    console.log('XHR2 response received:' + response.url())
+    const json = await response.text();
+    if (json.startsWith("{") || json.startsWith("[")) {
+      console.log(json);
+      console.log(JSON.parse(json));
+    }
+  });
+  await page3.setCacheEnabled(false);
+  await page3.goto("http://javacommons.html-5.me/01-json.php?t=2", { waitUntil: "domcontentloaded" });
+  await page3.close();
+
+  BROWSER.close();
+
+  const myUrlWithParams = new URL("https://qiita.com/search");
+  myUrlWithParams.searchParams.append("q", "created:2021-01-01");
+  myUrlWithParams.searchParams.append("sort", "created");
+  console.log(myUrlWithParams.href);
+  const parser = new URL(myUrlWithParams.href);
+  if (parser.searchParams.has("q"))
+    console.log(parser.searchParams.get("q"));
+
+})();
 
 /**
  * 新しく開いたページを取得
