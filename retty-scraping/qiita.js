@@ -75,6 +75,9 @@ const selector = {
   //console.log(href.split('/'))
   console.log(href.split('/')[3])
   console.log(href.split('/')[5])
+  const sr_sub = await sr0.$(".searchResult_sub")
+  const lgtm = await getTextByXPath(sr_sub, "*/li/text()")
+  console.log(lgtm)
 
   BROWSER.close()
 })()
