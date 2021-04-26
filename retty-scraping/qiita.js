@@ -47,7 +47,7 @@ const VIEWPORT = {
   console.log("result1=", result1);
 
   //let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: "https://qiita.com/search?q=created%3A2021-01-01&sort=created" });
-  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", data);
+  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/02-json-get.php", data);
   console.log("result2=", result2);
 
   BROWSER.close();
