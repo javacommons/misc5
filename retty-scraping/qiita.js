@@ -66,6 +66,7 @@ const VIEWPORT = {
     console.log(tagName);
   }
 
+  /*
   let page2 = await BROWSER.newPage();
   page2.on('response', async (response) => {
     if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
@@ -79,38 +80,21 @@ const VIEWPORT = {
   await page2.setCacheEnabled(false);
   await page2.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" });
   await page2.close();
-
-  await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: href });
-  /*
-  let page3 = await BROWSER.newPage();
-  page3.on('response', async (response) => {
-    //console.log('XHR2 response received:' + response.url());
-    if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
-    console.log('XHR2 response received:' + response.url())
-    const json = await response.text();
-    if (json.startsWith("{") || json.startsWith("[")) {
-      console.log(json);
-      console.log(JSON.parse(json));
-    }
-  });
-  await page3.setCacheEnabled(false);
-  await page3.goto("http://javacommons.html-5.me/01-json.php?t=2", { waitUntil: "domcontentloaded" });
-  await page3.close();
   */
+
+  let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php");
+  console.log("result1=", result1);
+
+  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: href });
+  console.log("result2=", result2);
 
   BROWSER.close();
 
-  const myUrlWithParams = new URL("https://qiita.com/search");
-  myUrlWithParams.searchParams.append("q", "created:2021-01-01");
-  myUrlWithParams.searchParams.append("sort", "created");
-  console.log(myUrlWithParams.href);
-  const parser = new URL(myUrlWithParams.href);
-  if (parser.searchParams.has("q"))
-    console.log(parser.searchParams.get("q"));
+  await urlTest();
 
 })();
 
-async function jsonRequest(browser, url, data) {
+async function jsonRequest(browser, url, data = null) {
   let json = JSON.stringify(data);
   let url2 = new URL(url);
   url2.searchParams.append("json", json);
@@ -118,11 +102,11 @@ async function jsonRequest(browser, url, data) {
   let page = await browser.newPage();
   page.on('response', async (response) => {
     if (!response.url().startsWith(url + "?")) return;
-    console.log('XHR1 response received:' + response.url());
+    console.log('XHR response received:' + response.url());
     const json = await response.text();
     if (!json.startsWith("<html>")) {
-      console.log(json);
-      console.log(JSON.parse(json));
+      //console.log(json);
+      //console.log(JSON.parse(json));
       result = JSON.parse(json);
     }
   });
@@ -130,6 +114,16 @@ async function jsonRequest(browser, url, data) {
   await page.goto(url2, { waitUntil: "domcontentloaded" });
   await page.close();
   return result;
+}
+
+async function urlTest() {
+  const myUrlWithParams = new URL("https://qiita.com/search");
+  myUrlWithParams.searchParams.append("q", "created:2021-01-01");
+  myUrlWithParams.searchParams.append("sort", "created");
+  console.log(myUrlWithParams.href);
+  const parser = new URL(myUrlWithParams.href);
+  if (parser.searchParams.has("q"))
+    console.log(parser.searchParams.get("q"));
 }
 
 /**
