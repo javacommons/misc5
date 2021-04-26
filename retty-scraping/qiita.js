@@ -36,56 +36,16 @@ const VIEWPORT = {
   console.log("総件数: " + hitCount);
 
   const sr = await page.$$("div.searchResult");
-  const sr0 = sr[0];
-  text = await (await sr0.getProperty('textContent')).jsonValue();
-  text = text.replace(/[\s　]/g, "");
-  console.log(text);
-  const header = await getTextBySelector(sr0, ".searchResult_header");
-  console.log(header);
 
-  let bar = header.match(/^.+が(.+)に投稿$/);
-  console.log(bar);
-  if (bar) {
-    console.log(bar[1]);
+  for (let sr_item of sr) {
+    let rec = await parseSearchResult(sr_item);
+    console.log("rec=", rec);
   }
-
-  const title = await getTextBySelector(sr0, ".searchResult_itemTitle");
-  console.log(title);
-  const title_a = await sr0.$("div.searchResult_main > h1 > a");
-  const href = await (await title_a.getProperty('href')).jsonValue();
-  console.log(href);
-  //console.log(href.split('/'));
-  console.log(href.split('/')[3]);
-  console.log(href.split('/')[5]);
-  const sr_sub = await sr0.$(".searchResult_sub");
-  const lgtm = await getTextByXPath(sr_sub, "*/li/text()");
-  console.log(lgtm);
-  const tags = await sr0.$$(".tagList_item");
-  for (let tag of tags) {
-    const tagName = await (await tag.getProperty('textContent')).jsonValue();
-    console.log(tagName);
-  }
-
-  /*
-  let page2 = await BROWSER.newPage();
-  page2.on('response', async (response) => {
-    if (!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
-    console.log('XHR1 response received:' + response.url());
-    const json = await response.text();
-    if (!json.startsWith("<html>")) {
-      console.log(json);
-      console.log(JSON.parse(json));
-    }
-  });
-  await page2.setCacheEnabled(false);
-  await page2.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" });
-  await page2.close();
-  */
 
   let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php");
   console.log("result1=", result1);
 
-  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: href });
+  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: "https://qiita.com/search?q=created%3A2021-01-01&sort=created" });
   console.log("result2=", result2);
 
   BROWSER.close();
@@ -93,6 +53,48 @@ const VIEWPORT = {
   await urlTest();
 
 })();
+
+async function parseSearchResult(sr_item) {
+  let sr0 = sr_item;
+  let result = {};
+  //text = await (await sr0.getProperty('textContent')).jsonValue();
+  //text = text.replace(/[\s　]/g, "");
+  //console.log(text);
+  const header = await getTextBySelector(sr0, ".searchResult_header");
+  //console.log(header);
+  let m = header.match(/^.+が(.+)に投稿$/);
+  //console.log(m);
+  result.post = ''
+  if (m) {
+    //console.log(m[1]);
+    result.post = m[1];
+  }
+  const title = await getTextBySelector(sr0, ".searchResult_itemTitle");
+  //console.log(title);
+  result.title = title;
+  const title_a = await sr0.$("div.searchResult_main > h1 > a");
+  const href = await (await title_a.getProperty('href')).jsonValue();
+  //console.log(href);
+  result.url = href;
+  //console.log(href.split('/')[3]);
+  result.user = href.split('/')[3];
+  //console.log(href.split('/')[5]);
+  result.uuid = href.split('/')[5];
+  const sr_sub = await sr0.$(".searchResult_sub");
+  const lgtm = await getTextByXPath(sr_sub, "*\/li/text()");
+  //console.log(lgtm);
+  result.lgtm = parseInt(lgtm);
+  const tags = await sr0.$$(".tagList_item");
+  let tagList = "";
+  for (let tag of tags) {
+    const tagName = await (await tag.getProperty('textContent')).jsonValue();
+    //console.log(tagName);
+    if (tagList != "") tagList += ",";
+    tagList += tagName;
+  }
+  result.tags = tagList;
+  return result;
+}
 
 async function jsonRequest(browser, url, data = null) {
   let json = JSON.stringify(data);
