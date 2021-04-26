@@ -84,6 +84,17 @@ const selector = {
       console.log(tagName)
     }
 
+    page.on('response', async (response) => {
+      if(!response.url().startsWith("http://javacommons.html-5.me/01-json.php?")) return;
+      console.log('XHR response received:' + response.url())
+      const json = await response.text()
+      if (!json.startsWith("<html>"))
+      {
+        console.log(json)
+        console.log(JSON.parse(json))
+      }
+    });
+    await page.goto("http://javacommons.html-5.me/01-json.php?", { waitUntil: "domcontentloaded" })
     BROWSER.close()
   })()
 
