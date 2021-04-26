@@ -47,10 +47,7 @@ const VIEWPORT = {
   let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/01-json.php");
   console.log("result1=", result1);
 
-  let result2 = null;
-  while(result2===null) {
-    result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/02-json-get.php", data);
-  }
+  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/02-json-get.php", data, 5);
   console.log("result2=", result2);
 
   BROWSER.close();
@@ -160,7 +157,7 @@ async function parseSearchResult(sr_item) {
   return result;
 }
 
-async function jsonRequest(browser, url, data = null) {
+async function jsonRequestOnce(browser, url, data = null) {
   try {
     let json = JSON.stringify(data);
     let url2 = new URL(url);
@@ -170,11 +167,11 @@ async function jsonRequest(browser, url, data = null) {
     page.on('response', async (response) => {
       if (!response.url().startsWith(url + "?")) return;
       console.log('XHR response received:' + response.url());
-      const json = await response.text();
-      if (json.startsWith("{") || json.startsWith("[")) {
-        //console.log(json);
-        //console.log(JSON.parse(json));
-        result = JSON.parse(json);
+      const text = await response.text();
+      if (text.startsWith("{") || text.startsWith("[")) {
+        result = JSON.parse(text);
+      } else {
+        console.log("response.text=", text);
       }
     });
     await page.setCacheEnabled(false);
@@ -184,6 +181,16 @@ async function jsonRequest(browser, url, data = null) {
   } catch (e) {
     return null;
   }
+}
+
+async function jsonRequest(browser, url, data = null, retry = 0) {
+  let result = null;
+  if (retry < 0) retry = 0;
+  let count = retry + 1;
+  while (result === null && (count--) > 0) {
+    result = await jsonRequestOnce(BROWSER, url, data);
+  }
+  return result;
 }
 
 async function urlTest() {
