@@ -40,12 +40,14 @@ const VIEWPORT = {
   for (let sr_item of sr) {
     let rec = await parseSearchResult(sr_item);
     console.log("rec=", rec);
+    data.push(rec);
   }
 
   let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php");
   console.log("result1=", result1);
 
-  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: "https://qiita.com/search?q=created%3A2021-01-01&sort=created" });
+  //let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: "https://qiita.com/search?q=created%3A2021-01-01&sort=created" });
+  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", data);
   console.log("result2=", result2);
 
   BROWSER.close();
@@ -99,7 +101,7 @@ async function parseSearchResult(sr_item) {
 async function jsonRequest(browser, url, data = null) {
   let json = JSON.stringify(data);
   let url2 = new URL(url);
-  url2.searchParams.append("json", json);
+  url2.searchParams.append("data", json);
   let result = null;
   let page = await browser.newPage();
   page.on('response', async (response) => {
