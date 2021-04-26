@@ -47,7 +47,10 @@ const VIEWPORT = {
   let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/01-json.php");
   console.log("result1=", result1);
 
-  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/02-json-get.php", data);
+  let result2 = null;
+  while(result2===null) {
+    result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/test/02-json-get.php", data);
+  }
   console.log("result2=", result2);
 
   BROWSER.close();
@@ -67,7 +70,7 @@ const VIEWPORT = {
 function datetostr(date, format, is12hours) {
   var weekday = ["日", "月", "火", "水", "木", "金", "土"];
   if (!format) {
-      format = 'YYYY/MM/DD(WW) hh:mm:ss'
+    format = 'YYYY/MM/DD(WW) hh:mm:ss'
   }
   var year = date.getFullYear();
   var month = (date.getMonth() + 1);
@@ -79,33 +82,33 @@ function datetostr(date, format, is12hours) {
 
   var ampm = hours < 12 ? 'AM' : 'PM';
   if (is12hours) {
-      hours = hours % 12;
-      hours = (hours != 0) ? hours : 12; // 0時は12時と表示する
+    hours = hours % 12;
+    hours = (hours != 0) ? hours : 12; // 0時は12時と表示する
   }
 
   var replaceStrArray =
-      {
-          'YYYY': year,
-          'Y': year,
-          'MM': ('0' + (month)).slice(-2),
-          'M': month,
-          'DD': ('0' + (day)).slice(-2),
-          'D': day,
-          'WW': weekday,
-          'hh': ('0' + hours).slice(-2),
-          'h': hours,
-          'mm': ('0' + minutes).slice(-2),
-          'm': minutes,
-          'ss': ('0' + secounds).slice(-2),
-          's': secounds,
-          'AP': ampm,
-      };
+  {
+    'YYYY': year,
+    'Y': year,
+    'MM': ('0' + (month)).slice(-2),
+    'M': month,
+    'DD': ('0' + (day)).slice(-2),
+    'D': day,
+    'WW': weekday,
+    'hh': ('0' + hours).slice(-2),
+    'h': hours,
+    'mm': ('0' + minutes).slice(-2),
+    'm': minutes,
+    'ss': ('0' + secounds).slice(-2),
+    's': secounds,
+    'AP': ampm,
+  };
 
   var replaceStr = '(' + Object.keys(replaceStrArray).join('|') + ')';
   var regex = new RegExp(replaceStr, 'g');
 
   ret = format.replace(regex, function (str) {
-      return replaceStrArray[str];
+    return replaceStrArray[str];
   });
 
   return ret;
@@ -158,25 +161,29 @@ async function parseSearchResult(sr_item) {
 }
 
 async function jsonRequest(browser, url, data = null) {
-  let json = JSON.stringify(data);
-  let url2 = new URL(url);
-  url2.searchParams.append("data", json);
-  let result = null;
-  let page = await browser.newPage();
-  page.on('response', async (response) => {
-    if (!response.url().startsWith(url + "?")) return;
-    console.log('XHR response received:' + response.url());
-    const json = await response.text();
-    if (json.startsWith("{") || json.startsWith("[")) {
-      //console.log(json);
-      //console.log(JSON.parse(json));
-      result = JSON.parse(json);
-    }
-  });
-  await page.setCacheEnabled(false);
-  await page.goto(url2, { waitUntil: "domcontentloaded" });
-  await page.close();
-  return result;
+  try {
+    let json = JSON.stringify(data);
+    let url2 = new URL(url);
+    url2.searchParams.append("data", json);
+    let result = null;
+    let page = await browser.newPage();
+    page.on('response', async (response) => {
+      if (!response.url().startsWith(url + "?")) return;
+      console.log('XHR response received:' + response.url());
+      const json = await response.text();
+      if (json.startsWith("{") || json.startsWith("[")) {
+        //console.log(json);
+        //console.log(JSON.parse(json));
+        result = JSON.parse(json);
+      }
+    });
+    await page.setCacheEnabled(false);
+    await page.goto(url2, { waitUntil: "domcontentloaded" });
+    await page.close();
+    return result;
+  } catch (e) {
+    return null;
+  }
 }
 
 async function urlTest() {
