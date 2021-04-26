@@ -108,7 +108,7 @@ async function jsonRequest(browser, url, data = null) {
     if (!response.url().startsWith(url + "?")) return;
     console.log('XHR response received:' + response.url());
     const json = await response.text();
-    if (!json.startsWith("<html>")) {
+    if (json.startsWith("{") || json.startsWith("[")) {
       //console.log(json);
       //console.log(JSON.parse(json));
       result = JSON.parse(json);
