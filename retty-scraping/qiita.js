@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const { createObjectCsvWriter } = require('csv-writer');
+const moment = require("moment");
 
 const OUTPUT_PATH = "qiita.tmp";
 let BROWSER;
@@ -58,6 +59,8 @@ const VIEWPORT = {
 
   console.log(datetostr(dt, 'Y/MM/DD-hh:mm:ss', false));
 
+  console.log(moment().toISOString());
+  console.log(moment().format());
 
 })();
 
@@ -148,7 +151,9 @@ async function parseSearchResult(sr_item) {
   result.tags = tagList;
   let dt = new Date();
   //console.log(datetostr(dt, 'Y/MM/DD-hh:mm:ss', false));
-  result.ts = datetostr(dt, 'Y/MM/DD-hh:mm:ss', false);
+  //result.ts = datetostr(dt, 'Y/MM/DD-hh:mm:ss', false);
+  //console.log(moment().format());
+  result.ts = moment().format();
   return result;
 }
 
