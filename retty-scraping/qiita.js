@@ -29,7 +29,8 @@ const VIEWPORT = {
 
   let data = [];
 
-  const url = "https://qiita.com/search?q=created%3A2021-01-01&sort=created"
+  const url = "https://qiita.com/search?q=created%3A2021-01-01&sort=created";
+  await page.setCacheEnabled(false);
   await page.goto(url, { waitUntil: "domcontentloaded" });
   const hitCount = await getTextBySelector(page, "#main > div > div.searchResultContainer_main > div.searchResultContainer_navigation > ul > li.active > a > span");
   console.log("総件数: " + hitCount);
@@ -79,6 +80,8 @@ const VIEWPORT = {
   await page2.goto("http://javacommons.html-5.me/01-json.php?t=1&i=2", { waitUntil: "domcontentloaded" });
   await page2.close();
 
+  await jsonRequest(BROWSER, "http://javacommons.html-5.me/01-json.php", { url: href });
+  /*
   let page3 = await BROWSER.newPage();
   page3.on('response', async (response) => {
     //console.log('XHR2 response received:' + response.url());
@@ -93,6 +96,7 @@ const VIEWPORT = {
   await page3.setCacheEnabled(false);
   await page3.goto("http://javacommons.html-5.me/01-json.php?t=2", { waitUntil: "domcontentloaded" });
   await page3.close();
+  */
 
   BROWSER.close();
 
@@ -105,6 +109,28 @@ const VIEWPORT = {
     console.log(parser.searchParams.get("q"));
 
 })();
+
+async function jsonRequest(browser, url, data) {
+  let json = JSON.stringify(data);
+  let url2 = new URL(url);
+  url2.searchParams.append("json", json);
+  let result = null;
+  let page = await browser.newPage();
+  page.on('response', async (response) => {
+    if (!response.url().startsWith(url + "?")) return;
+    console.log('XHR1 response received:' + response.url());
+    const json = await response.text();
+    if (!json.startsWith("<html>")) {
+      console.log(json);
+      console.log(JSON.parse(json));
+      result = JSON.parse(json);
+    }
+  });
+  await page.setCacheEnabled(false);
+  await page.goto(url2, { waitUntil: "domcontentloaded" });
+  await page.close();
+  return result;
+}
 
 /**
  * 新しく開いたページを取得
