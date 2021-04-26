@@ -1,7 +1,9 @@
 *.a
 *.bak
 *bxproj-journal
+*.c.orig
 *.cbproj.local
+*.cpp.orig
 *.class
 *.db
 *.db3
@@ -13,6 +15,9 @@
 *.gcda
 *.gcno
 *.gcov
+*.gz
+*.h.orig
+*.hpp.orig
 *.htm
 *.idb
 *.ilk
@@ -67,6 +72,7 @@ gradlew
 gradlew.bat
 Makefile*
 nimcache
+node_modules
 obj
 pubspec.lock
 release
