@@ -44,10 +44,12 @@ const VIEWPORT = {
     data.push(rec);
   }
 
-  let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/+test/01-json.php");
+  //let result1 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/+test/01-json.php");
+  let result1 = await jsonRequest(BROWSER, "http://qiita.javacommons.42web.io/01-json.php");
   console.log("result1=", result1);
 
-  let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/+test/02-json-get.php", data, false, 5);
+  //let result2 = await jsonRequest(BROWSER, "http://javacommons.html-5.me/+test/02-json-get.php", data, false, 5);
+  let result2 = await jsonRequest(BROWSER, "http://qiita.javacommons.42web.io/02-json-get.php", data, false, 5);
   console.log("result2=", result2);
 
   BROWSER.close();
